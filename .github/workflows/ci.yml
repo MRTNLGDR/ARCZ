@@ -56,35 +56,52 @@ jobs:
         run: python tools/materialize_upstreams.py --dry-run
 
   rust-workspace:
-    name: Rust stable workspace
+    name: Rust 1.97.1 workspace
     runs-on: ubuntu-24.04
-    timeout-minutes: 45
+    timeout-minutes: 60
     env:
-      RUSTUP_TOOLCHAIN: stable
+      RUSTUP_TOOLCHAIN: 1.97.1
     steps:
       - uses: actions/checkout@v4
-      - name: Install stable Rust toolchain
+      - name: Install Tauri Linux prerequisites
         run: |
-          rustup toolchain install stable --profile minimal --component rustfmt --component clippy
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libwebkit2gtk-4.1-dev \
+            build-essential \
+            curl \
+            wget \
+            file \
+            libxdo-dev \
+            libssl-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev \
+            libgtk-3-dev \
+            libglib2.0-dev \
+            pkg-config \
+            patchelf
+      - name: Install pinned Rust toolchain
+        run: |
+          rustup toolchain install 1.97.1 --profile minimal --component rustfmt --component clippy --target wasm32-unknown-unknown
           rustc --version
           cargo --version
       - name: Check workspace
-        run: cargo check --workspace --all-targets
+        run: cargo check --locked --workspace --all-targets
       - name: Test workspace
-        run: cargo test --workspace --all-targets
+        run: cargo test --locked --workspace --all-targets
       - name: Clippy
-        run: cargo clippy --workspace --all-targets -- -D warnings
+        run: cargo clippy --locked --workspace --all-targets -- -D warnings
       - name: Format
         run: cargo fmt --all -- --check
 
   integrity-report:
     name: Handoff integrity report
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    timeout-minutes: 45
     needs: [source-gates, rust-workspace]
     if: always()
     env:
-      RUSTUP_TOOLCHAIN: stable
+      RUSTUP_TOOLCHAIN: 1.97.1
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -93,12 +110,26 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Install Tauri Linux prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libwebkit2gtk-4.1-dev \
+            build-essential \
+            libxdo-dev \
+            libssl-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev \
+            libgtk-3-dev \
+            libglib2.0-dev \
+            pkg-config \
+            patchelf
       - name: Install report dependencies
         run: |
           python -m pip install -r requirements-dev.txt
           npm install --global typescript@5
-      - name: Install stable Rust toolchain
-        run: rustup toolchain install stable --profile minimal --component rustfmt
+      - name: Install pinned Rust toolchain
+        run: rustup toolchain install 1.97.1 --profile minimal --component rustfmt --target wasm32-unknown-unknown
       - name: Generate honest handoff report
         continue-on-error: true
         run: python tools/verify_handoff.py
