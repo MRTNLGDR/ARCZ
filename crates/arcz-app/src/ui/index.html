@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ARCZ Earth</title>
+<link rel="stylesheet" href="/earth/styles.css">
+</head>
+<body>
+<div class="app-shell">
+<header class="topbar"><div><strong>ARCZ</strong><span>EARTH / AUTHORING</span></div><nav><button data-cmd="workspace.status">Status</button><button data-cmd="scene.list">Cena</button><button data-cmd="capability.list">Capacidades</button><a href="/">Preview nativo</a></nav></header>
+<aside class="sidebar">
+<section><h2>Projeto</h2><div id="project-list" class="stack"></div></section>
+<section><h2>Pacotes locais</h2><div id="package-list" class="stack"></div></section>
+<section><h2>Comando</h2><input id="command-name" value="workspace.status" autocomplete="off"><textarea id="command-payload" spellcheck="false">{}</textarea><button id="run-command" class="primary">Executar</button></section>
+</aside>
+<main class="stage">
+<div class="stage-toolbar"><span id="status-pill">offline</span><button id="refresh">Atualizar</button><a href="/earth/scene" target="_blank">Scene JSON</a><a href="/earth/take" target="_blank">Take bands</a></div>
+<div class="world-card"><div class="globe"><div class="orbit"></div><div class="globe-core"></div></div><div><h1>Mundo editável, contexto em streaming</h1><p>O servidor Rust é a autoridade. Esta interface nunca inventa projetos, objetos ou capacidades que não estejam no runtime.</p><div id="runtime-summary" class="metrics"></div></div></div>
+<pre id="console">ARCZ Earth inicializando…</pre>
+</main>
+<footer><span id="footer-scene">carregando cena…</span><span id="footer-contract">carregando contrato…</span></footer>
+</div>
+<script src="/earth/data.js"></script>
+<script src="/earth/app.js"></script>
+</body>
+</html>
