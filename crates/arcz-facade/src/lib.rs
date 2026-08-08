@@ -69,4 +69,4 @@ pub fn layout(request: &FacadeRequest, selector: impl Fn(u32, u32) -> f64) -> Re
 #[derive(Debug, Error)]
 pub enum FacadeError { #[error("parâmetro de fachada inválido")] InvalidParameter }
 
-#[cfg(test)]mod tests{use super::*;#[test]fn terreo_comercial_e_diferenciado(){let l=layout(&FacadeRequest{width_m:12.,floors:3,floor_height_m:3.,preferred_module_width_m:3.,ground_floor_height_m:4.,balcony_probability:.5,commercial_ground_floor:true},|_,_|.8).unwrap();assert!(l.modules.iter().any(|m|m.kind==ModuleKind::Shopfront));}}
+#[cfg(test)]mod tests{use super::*;#[test]fn terreo_comercial_e_diferenciado(){let l=layout(&FacadeRequest{width_m:12.,floors:3,floor_height_m:3.,preferred_module_width_m:3.,ground_floor_height_m:4.,balcony_probability:0.5,commercial_ground_floor:true},|_,_|0.8).unwrap();assert!(l.modules.iter().any(|m|m.kind==ModuleKind::Shopfront));}}
