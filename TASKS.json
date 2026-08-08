@@ -1,0 +1,1594 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-08-06T18:28:36.492240Z",
+  "rules": {
+    "order": "dependency then priority",
+    "done_requires": "all acceptance criteria and no related FAILED/BLOCKED checks",
+    "no_mock": true,
+    "offline_core": true
+  },
+  "tasks": [
+    {
+      "id": "ARCZ-000",
+      "priority": "P0",
+      "title": "Compile and verify full Rust workspace",
+      "state": "BLOCKED",
+      "depends_on": [],
+      "required_inputs": [
+        "Rust 1.82+ installed"
+      ],
+      "acceptance_criteria": [
+        "cargo fmt --check passes",
+        "cargo check --workspace --all-targets passes",
+        "cargo test --workspace --all-targets passes"
+      ],
+      "implementation_warnings": [
+        "Do not remove tests or lower rust-version to hide errors"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "code",
+        "tests",
+        "validation report update",
+        "status update"
+      ]
+    },
+    {
+      "id": "ARCZ-001",
+      "priority": "P0",
+      "title": "End-to-end generation worker with real minimal package",
+      "state": "READY",
+      "depends_on": [
+        "ARCZ-000"
+      ],
+      "required_inputs": [
+        "local source package imported",
+        "worker binary built"
+      ],
+      "acceptance_criteria": [
+        "terrain/roads/parcels/buildings job completes",
+        "GLB non-empty and hash verified",
+        "replay equivalent for same seed"
+      ],
+      "implementation_warnings": [
+        "No generated dummy package in production path"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "code",
+        "tests",
+        "validation report update",
+        "status update"
+      ]
+    },
+    {
+      "id": "ARCZ-002",
+      "priority": "P0",
+      "title": "Cesium real staging/commit/rollback leak test",
+      "state": "READY",
+      "depends_on": [
+        "ARCZ-001",
+        "ARCZ-031"
+      ],
+      "required_inputs": [
+        "browser smoke harness"
+      ],
+      "acceptance_criteria": [
+        "100 cycles without residual primitives/listeners",
+        "late epoch output discarded",
+        "rollback restores previous scene"
+      ],
+      "implementation_warnings": [
+        "Never expose raw viewer to plugin"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "code",
+        "tests",
+        "validation report update",
+        "status update"
+      ]
+    },
+    {
+      "id": "ARCZ-003",
+      "priority": "P0",
+      "title": "Project JSON V1 to V2 migration runner",
+      "state": "READY_FOR_REAL_CORPUS_VALIDATION",
+      "depends_on": [],
+      "required_inputs": [
+        "corpus somente-leitura de projetos históricos reais"
+      ],
+      "acceptance_criteria": [
+        "idempotent migration",
+        "backup before write",
+        "failure restores old file",
+        "old behavior preserved"
+      ],
+      "implementation_warnings": [
+        "Implementação entregue em arcz_server/project_migrations.py; não criar segunda migração",
+        "Nunca testar sobre o único original do usuário",
+        "Não marcar DONE até provar abertura/salvamento do corpus real"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "code",
+        "tests",
+        "validation report update",
+        "status update"
+      ],
+      "evidence_available": [
+        "migração pura/idempotente",
+        "backup atômico",
+        "recusa de schema futuro sem overwrite",
+        "testes Python automatizados",
+        "docs/contracts/PROJECT_MIGRATION.md"
+      ]
+    },
+    {
+      "id": "ARCZ-004",
+      "priority": "P0",
+      "title": "OSM/Overture local importer to generator input package",
+      "state": "READY",
+      "depends_on": [
+        "ARCZ-000"
+      ],
+      "required_inputs": [
+        "licensed local PBF/GeoParquet fixtures"
+      ],
+      "acceptance_criteria": [
+        "roads/buildings/landuse parsed locally",
+        "source IDs/provenance preserved",
+        "package hashes validate"
+      ],
+      "implementation_warnings": [
+        "No Overpass runtime dependency"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "code",
+        "tests",
+        "validation report update",
+        "status update"
+      ]
+    },
+    {
+      "id": "ARCZ-005",
+      "priority": "P0",
+      "title": "DEM local importer, reprojection and resampling",
+      "state": "READY",
+      "depends_on": [
+        "ARCZ-000"
+      ],
+      "required_inputs": [
+        "GeoTIFF/DEM fixtures"
+      ],
+      "acceptance_criteria": [
+        "grid matches active ENU",
+        "nodata handled",
+        "vertical error recorded",
+        "tile borders match"
+      ],
+      "implementation_warnings": [
+        "Do not silently flatten missing DEM"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "code",
+        "tests",
+        "validation report update",
+        "status update"
+      ]
+    },
+    {
+      "id": "ARCZ-006",
+      "priority": "P0",
+      "title": "Offline geocoder bulk indexer",
+      "state": "READY",
+      "depends_on": [],
+      "required_inputs": [
+        "licensed address/place dataset"
+      ],
+      "acceptance_criteria": [
+        "incremental import",
+        "normalized/FTS search",
+        "bbox/scale preserved",
+        "no network"
+      ],
+      "implementation_warnings": [
+        "Do not infer cadastral lot from geocoder street line"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "code",
+        "tests",
+        "validation report update",
+        "status update"
+      ]
+    },
+    {
+      "id": "ARCZ-007",
+      "priority": "P1",
+      "title": "Robust complex roof solver",
+      "state": "READY",
+      "depends_on": [
+        "ARCZ-000"
+      ],
+      "required_inputs": [
+        "adversarial footprint corpus"
+      ],
+      "acceptance_criteria": [
+        "straight skeleton or validated wavefront",
+        "gable/hip/shed mixed volumes",
+        "no self-intersection",
+        "fallback chain audited"
+      ],
+      "implementation_warnings": [
+        "Current flat fallback stays until replacement passes corpus"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "code",
+        "tests",
+        "validation report update",
+        "status update"
+      ]
+    },
+    {
+      "id": "ARCZ-008",
+      "priority": "P1",
+      "title": "Parcel inference from blocks and street fronts",
+      "state": "READY",
+      "depends_on": [
+        "ARCZ-004"
+      ],
+      "required_inputs": [
+        "block/road fixtures"
+      ],
+      "acceptance_criteria": [
+        "access/frontage/area constraints",
+        "corner handling",
+        "confidence and estimated flags",
+        "no overlap"
+      ],
+      "implementation_warnings": [
+        "Never present inferred parcel as cadastral"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "code",
+        "tests",
+        "validation report update",
+        "status update"
+      ]
+    },
+    {
+      "id": "ARCZ-009",
+      "priority": "P1",
+      "title": "Terrain adaptation, cut/fill and retaining walls",
+      "state": "READY",
+      "depends_on": [
+        "ARCZ-005",
+        "ARCZ-008"
+      ],
+      "required_inputs": [
+        "slope fixtures"
+      ],
+      "acceptance_criteria": [
+        "platform strategy deterministic",
+        "road access connected",
+        "no tile cracks",
+        "budget respected"
+      ],
+      "implementation_warnings": [
+        "Validate retaining wall dimensions"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "code",
+        "tests",
+        "validation report update",
+        "status update"
+      ]
+    },
+    {
+      "id": "ARCZ-010",
+      "priority": "P1",
+      "title": "Regional house grammar calibration",
+      "state": "READY",
+      "depends_on": [
+        "ARCZ-007",
+        "ARCZ-008",
+        "ARCZ-009"
+      ],
+      "required_inputs": [
+        "profiles and licensed reference measurements"
+      ],
+      "acceptance_criteria": [
+        "all minimum typologies",
+        "doors/windows/garage plausible",
+        "LOD0-4",
+        "locked overrides preserved"
+      ],
+      "implementation_warnings": [
+        "No free-form AI geometry"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "code",
+        "tests",
+        "validation report update",
+        "status update"
+      ]
+    },
+    {
+      "id": "ARCZ-011",
+      "priority": "P1",
+      "title": "Midrise building and facade grammar completion",
+      "state": "READY",
+      "depends_on": [
+        "ARCZ-007",
+        "ARCZ-009"
+      ],
+      "required_inputs": [
+        "profile fixtures"
+      ],
+      "acceptance_criteria": [
+        "base/body/crown/technical roof",
+        "facade grid/shafts/balconies",
+        "ground retail",
+        "instancing and atlas"
+      ],
+      "implementation_warnings": [
+        "No full apartment interiors in city LOD"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "code",
+        "tests",
+        "validation report update",
+        "status update"
+      ]
+    },
+    {
+      "id": "ARCZ-012",
+      "priority": "P1",
+      "title": "Vegetation asset registry and impostor pipeline",
+      "state": "READY",
+      "depends_on": [
+        "ARCZ-000"
+      ],
+      "required_inputs": [
+        "licensed local GLB/textures"
+      ],
+      "acceptance_criteria": [
+        "biome functional variants",
+        "EXT_mesh_gpu_instancing",
+        "impostors generated locally",
+        "exclusions honored"
+      ],
+      "implementation_warnings": [
+        "No remote asset URLs"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "code",
+        "tests",
+        "validation report update",
+        "status update"
+      ]
+    },
+    {
+      "id": "ARCZ-013",
+      "priority": "P1",
+      "title": "Material atlas and texture validation pipeline",
+      "state": "READY",
+      "depends_on": [
+        "ARCZ-000"
+      ],
+      "required_inputs": [
+        "licensed local textures"
+      ],
+      "acceptance_criteria": [
+        "KTX2/atlas manifests",
+        "texel density policy",
+        "UV variation",
+        "license/provenance retained"
+      ],
+      "implementation_warnings": [
+        "No image used without license/hash"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "code",
+        "tests",
+        "validation report update",
+        "status update"
+      ]
+    },
+    {
+      "id": "ARCZ-014",
+      "priority": "P1",
+      "title": "Differential regeneration and ownership merge",
+      "state": "READY",
+      "depends_on": [
+        "ARCZ-001"
+      ],
+      "required_inputs": [
+        "override fixtures"
+      ],
+      "acceptance_criteria": [
+        "GENERATED/OVERRIDDEN/LOCKED/DETACHED/DELETED_BY_USER honored",
+        "only dependent tiles regenerate",
+        "undo command complete"
+      ],
+      "implementation_warnings": [
+        "Tombstones must survive save/reopen"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "code",
+        "tests",
+        "validation report update",
+        "status update"
+      ]
+    },
+    {
+      "id": "ARCZ-015",
+      "priority": "P1",
+      "title": "Four concrete shell modes integrated into existing UI",
+      "state": "READY",
+      "depends_on": [
+        "ARCZ-002"
+      ],
+      "required_inputs": [
+        "UI host mapping"
+      ],
+      "acceptance_criteria": [
+        "one card instance globally",
+        "mode listeners cleaned",
+        "current app behavior remains default",
+        "safe zones/multiview wired"
+      ],
+      "implementation_warnings": [
+        "Do not grow app/ui.js"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "code",
+        "tests",
+        "validation report update",
+        "status update"
+      ]
+    },
+    {
+      "id": "ARCZ-016",
+      "priority": "P1",
+      "title": "Timeline integration with camera, objects and environment",
+      "state": "READY",
+      "depends_on": [
+        "ARCZ-015"
+      ],
+      "required_inputs": [
+        "camera/environment adapters"
+      ],
+      "acceptance_criteria": [
+        "position/quaternion/scalars sampled",
+        "quick starts editable",
+        "camera target per frame",
+        "old takes migrated"
+      ],
+      "implementation_warnings": [
+        "No frame callback may throw"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "code",
+        "tests",
+        "validation report update",
+        "status update"
+      ]
+    },
+    {
+      "id": "ARCZ-017",
+      "priority": "P1",
+      "title": "Resumable local image-sequence renderer",
+      "state": "READY",
+      "depends_on": [
+        "ARCZ-016"
+      ],
+      "required_inputs": [
+        "frame capture adapter"
+      ],
+      "acceptance_criteria": [
+        "PNG sequence checkpoint",
+        "skip valid frames",
+        "preflight memory",
+        "failed frame report",
+        "subframe accumulation"
+      ],
+      "implementation_warnings": [
+        "EXR only if actual local encoder supports it"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "code",
+        "tests",
+        "validation report update",
+        "status update"
+      ]
+    },
+    {
+      "id": "ARCZ-018",
+      "priority": "P2",
+      "title": "Camera/export JSON and compositor tracking",
+      "state": "READY",
+      "depends_on": [
+        "ARCZ-016"
+      ],
+      "required_inputs": [
+        "coordinate fixtures"
+      ],
+      "acceptance_criteria": [
+        "local/global coordinates documented",
+        "track points exported",
+        "round-trip tolerance tested"
+      ],
+      "implementation_warnings": [
+        "Do not claim After Effects JSX until generated/tested"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "code",
+        "tests",
+        "validation report update",
+        "status update"
+      ]
+    },
+    {
+      "id": "ARCZ-019",
+      "priority": "P2",
+      "title": "Panorama package importer and local catalog",
+      "state": "READY",
+      "depends_on": [
+        "ARCZ-004"
+      ],
+      "required_inputs": [
+        "licensed panoramas"
+      ],
+      "acceptance_criteria": [
+        "image hashes/metadata verified",
+        "sequence navigation",
+        "heading sync",
+        "privacy metadata"
+      ],
+      "implementation_warnings": [
+        "Google Street View bytes prohibited"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "code",
+        "tests",
+        "validation report update",
+        "status update"
+      ]
+    },
+    {
+      "id": "ARCZ-020",
+      "priority": "P2",
+      "title": "Street capture privacy pipeline",
+      "state": "NOT_STARTED",
+      "depends_on": [
+        "ARCZ-019"
+      ],
+      "required_inputs": [
+        "local vision models"
+      ],
+      "acceptance_criteria": [
+        "faces/plates detection and irreversible publish copy blur",
+        "manual review",
+        "removal workflow"
+      ],
+      "implementation_warnings": [
+        "Original private copy access controlled"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "code",
+        "tests",
+        "validation report update",
+        "status update"
+      ]
+    },
+    {
+      "id": "ARCZ-021",
+      "priority": "P2",
+      "title": "Street depth/SLAM/reconstruction adapter",
+      "state": "NOT_STARTED",
+      "depends_on": [
+        "ARCZ-019",
+        "ARCZ-024"
+      ],
+      "required_inputs": [
+        "local depth/SLAM models"
+      ],
+      "acceptance_criteria": [
+        "6DoF metadata and confidence",
+        "no geometry applied without validation",
+        "cancelable jobs"
+      ],
+      "implementation_warnings": [
+        "Keep optional and decoupled"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "code",
+        "tests",
+        "validation report update",
+        "status update"
+      ]
+    },
+    {
+      "id": "ARCZ-022",
+      "priority": "P1",
+      "title": "Local model installer/registry integrity workflow",
+      "state": "READY",
+      "depends_on": [],
+      "required_inputs": [
+        "licensed model files supplied by user"
+      ],
+      "acceptance_criteria": [
+        "manifest/checksum/license/device requirements",
+        "atomic install",
+        "remove without project corruption"
+      ],
+      "implementation_warnings": [
+        "No automatic remote download in offline_strict"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "code",
+        "tests",
+        "validation report update",
+        "status update"
+      ]
+    },
+    {
+      "id": "ARCZ-023",
+      "priority": "P1",
+      "title": "Style/roof/palette/landcover local AI adapters",
+      "state": "READY",
+      "depends_on": [
+        "ARCZ-022"
+      ],
+      "required_inputs": [
+        "installed local models and evaluation datasets"
+      ],
+      "acceptance_criteria": [
+        "structured schema outputs",
+        "confidence thresholds",
+        "cache by model/input/params hash",
+        "fallback procedural"
+      ],
+      "implementation_warnings": [
+        "No free text applied as parameters"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "code",
+        "tests",
+        "validation report update",
+        "status update"
+      ]
+    },
+    {
+      "id": "ARCZ-024",
+      "priority": "P1",
+      "title": "Depth estimator local adapter",
+      "state": "READY",
+      "depends_on": [
+        "ARCZ-022"
+      ],
+      "required_inputs": [
+        "installed model"
+      ],
+      "acceptance_criteria": [
+        "depth units/scale documented",
+        "confidence and checksum",
+        "CPU/GPU fallback",
+        "cancelable"
+      ],
+      "implementation_warnings": [
+        "Depth is derived evidence, not cadastral truth"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "code",
+        "tests",
+        "validation report update",
+        "status update"
+      ]
+    },
+    {
+      "id": "ARCZ-025",
+      "priority": "P2",
+      "title": "Local diffusion passes and tiled 8K upscale",
+      "state": "NOT_STARTED",
+      "depends_on": [
+        "ARCZ-017",
+        "ARCZ-022",
+        "ARCZ-024"
+      ],
+      "required_inputs": [
+        "local diffusion/upscale models"
+      ],
+      "acceptance_criteria": [
+        "beauty/depth/normal/object masks",
+        "overlap and fixed seed",
+        "geometry edge deviation gate",
+        "static image stable"
+      ],
+      "implementation_warnings": [
+        "Video remains experimental until temporal gate passes"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "code",
+        "tests",
+        "validation report update",
+        "status update"
+      ]
+    },
+    {
+      "id": "ARCZ-026",
+      "priority": "P2",
+      "title": "Temporal consistency gate for diffusion video",
+      "state": "NOT_STARTED",
+      "depends_on": [
+        "ARCZ-025"
+      ],
+      "required_inputs": [
+        "test takes"
+      ],
+      "acceptance_criteria": [
+        "flicker metrics",
+        "rejection thresholds",
+        "frame provenance",
+        "explicit experimental flag"
+      ],
+      "implementation_warnings": [
+        "Never market as stable before gate"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "code",
+        "tests",
+        "validation report update",
+        "status update"
+      ]
+    },
+    {
+      "id": "ARCZ-027",
+      "priority": "P2",
+      "title": "Orthographic view generation and section/elevation pipeline",
+      "state": "READY",
+      "depends_on": [
+        "ARCZ-016",
+        "ARCZ-000"
+      ],
+      "required_inputs": [
+        "scene fixtures"
+      ],
+      "acceptance_criteria": [
+        "orthographic projections",
+        "poché reuse",
+        "scale metadata",
+        "solar data"
+      ],
+      "implementation_warnings": [
+        "Use real scene geometry"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "code",
+        "tests",
+        "validation report update",
+        "status update"
+      ]
+    },
+    {
+      "id": "ARCZ-028",
+      "priority": "P2",
+      "title": "Technical sheet templates and PDF/export adapter",
+      "state": "READY",
+      "depends_on": [
+        "ARCZ-027"
+      ],
+      "required_inputs": [
+        "local template/assets"
+      ],
+      "acceptance_criteria": [
+        "SVG composition",
+        "font/license audit",
+        "page sizes",
+        "deterministic export"
+      ],
+      "implementation_warnings": [
+        "PDF adapter must be real local tool, not empty wrapper"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "code",
+        "tests",
+        "validation report update",
+        "status update"
+      ]
+    },
+    {
+      "id": "ARCZ-029",
+      "priority": "P0",
+      "title": "Full offline acceptance on target Windows machine",
+      "state": "BLOCKED",
+      "depends_on": [
+        "ARCZ-001",
+        "ARCZ-003",
+        "ARCZ-004",
+        "ARCZ-005",
+        "ARCZ-006",
+        "ARCZ-000",
+        "ARCZ-031",
+        "ARCZ-032"
+      ],
+      "required_inputs": [
+        "target hardware and local datasets"
+      ],
+      "acceptance_criteria": [
+        "all steps in OFFLINE_ACCEPTANCE pass",
+        "socket audit clean",
+        "save/reopen/render/export pass"
+      ],
+      "implementation_warnings": [
+        "This gate is mandatory for release"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "code",
+        "tests",
+        "validation report update",
+        "status update"
+      ]
+    },
+    {
+      "id": "ARCZ-030",
+      "priority": "P0",
+      "title": "Performance budgets and long-run soak",
+      "state": "READY",
+      "depends_on": [
+        "ARCZ-001",
+        "ARCZ-002"
+      ],
+      "required_inputs": [
+        "target hardware profiles"
+      ],
+      "acceptance_criteria": [
+        "budget estimate vs actual measured",
+        "tile eviction stable",
+        "2h camera movement no autosave starvation",
+        "no monotonic leak"
+      ],
+      "implementation_warnings": [
+        "Do not tune by removing validation"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "code",
+        "tests",
+        "validation report update",
+        "status update"
+      ]
+    },
+    {
+      "id": "ARCZ-031",
+      "priority": "P0",
+      "title": "Install and verify local CesiumJS 1.143 vendor",
+      "state": "BLOCKED",
+      "depends_on": [],
+      "required_inputs": [
+        "licensed local CesiumJS 1.143 Build/Cesium directory or ZIP",
+        "local license file"
+      ],
+      "acceptance_criteria": [
+        "tools/vendor_cesium.py completes atomically",
+        "manifest contains hashes for Cesium.js, widgets and NaturalEarthII",
+        "cesium_local_vendor gate passes",
+        "index loads with network physically blocked"
+      ],
+      "implementation_warnings": [
+        "Do not replace missing bytes with CDN links",
+        "Do not mark complete without local license and SHA-256 manifest"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "vendor manifest",
+        "validation report update",
+        "browser network trace"
+      ]
+    },
+    {
+      "id": "ARCZ-032",
+      "priority": "P0",
+      "title": "Vendor Python wheels and Rust crates for air-gapped build",
+      "state": "BLOCKED",
+      "depends_on": [
+        "ARCZ-000"
+      ],
+      "required_inputs": [
+        "authorized dependency staging machine",
+        "platform-specific Python wheels",
+        "cargo registry access on staging machine"
+      ],
+      "acceptance_criteria": [
+        "pip install succeeds with --no-index",
+        "cargo check/test succeeds with net.offline=true",
+        "dependency licenses and hashes recorded",
+        "no runtime download path exists"
+      ],
+      "implementation_warnings": [
+        "Build dependencies may be staged externally; runtime must remain local",
+        "Never commit secrets or user-specific absolute paths"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "wheel/crate manifests",
+        "offline build log",
+        "license report"
+      ]
+    },
+    {
+      "id": "ARCZ-AED-001",
+      "priority": "P0",
+      "title": "Materialize pinned Aedifex upstream and controlled fork",
+      "state": "BLOCKED",
+      "depends_on": [],
+      "required_inputs": [
+        "local checkout or authorized import access",
+        "Bun and dependency cache"
+      ],
+      "acceptance_criteria": [
+        "commit and MIT license match lock",
+        "upstream immutable copy hashed",
+        "overlay applies cleanly",
+        "offline build and upstream tests pass"
+      ],
+      "implementation_warnings": [
+        "never substitute another fork as upstream",
+        "no runtime package download"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "vendor manifest",
+        "build log",
+        "test report",
+        "licenses"
+      ]
+    },
+    {
+      "id": "ARCZ-AED-002",
+      "priority": "P0",
+      "title": "Browser E2E Region to Floorplanner to globe",
+      "state": "BLOCKED",
+      "depends_on": [
+        "ARCZ-AED-001",
+        "ARCZ-031"
+      ],
+      "required_inputs": [
+        "Aedifex build",
+        "Cesium vendor"
+      ],
+      "acceptance_criteria": [
+        "select lot and open editor",
+        "save revision",
+        "export non-empty GLB",
+        "validate hash",
+        "publish at correct north/elevation",
+        "return to editable revision"
+      ],
+      "implementation_warnings": [
+        "GLB is readonly derivative",
+        "verify origin and contentWindow for postMessage"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "screenshots",
+        "network trace",
+        "database events",
+        "artifact hashes"
+      ]
+    },
+    {
+      "id": "ARCZ-AED-003",
+      "priority": "P0",
+      "title": "100-cycle Floorplanner lifecycle and revision concurrency gate",
+      "state": "BLOCKED",
+      "depends_on": [
+        "ARCZ-AED-002"
+      ],
+      "required_inputs": [
+        "real browser harness"
+      ],
+      "acceptance_criteria": [
+        "no orphan sidecar process/listener/WebGL context",
+        "conflict is visible",
+        "late export rejected",
+        "memory stabilizes"
+      ],
+      "implementation_warnings": [
+        "do not disable validation to pass soak"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "soak log",
+        "memory trace",
+        "event trace"
+      ]
+    },
+    {
+      "id": "ARCZ-AED-004",
+      "priority": "P0",
+      "title": "Compile and test arcz-cad/arcz-bim/arcz-aedifex",
+      "state": "BLOCKED",
+      "depends_on": [
+        "ARCZ-000"
+      ],
+      "required_inputs": [
+        "Rust toolchain and vendored crates"
+      ],
+      "acceptance_criteria": [
+        "cargo fmt/check/test pass",
+        "roundtrip loss report tests pass",
+        "golden geometry pass"
+      ],
+      "implementation_warnings": [
+        "source existence is not compilation"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "cargo logs",
+        "goldens",
+        "benchmarks"
+      ]
+    },
+    {
+      "id": "ARCZ-AED-005",
+      "priority": "P1",
+      "title": "Per-kind mass conversion to CadDocument",
+      "state": "READY",
+      "depends_on": [
+        "ARCZ-AED-004",
+        "ARCZ-AED-001"
+      ],
+      "required_inputs": [
+        "golden Aedifex scenes"
+      ],
+      "acceptance_criteria": [
+        "all registered kinds mapped or preserved in compat payload",
+        "no silent field loss",
+        "feature-flag rollback",
+        "parity reports"
+      ],
+      "implementation_warnings": [
+        "convert incrementally in dependency order"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "coverage matrix",
+        "loss reports",
+        "tests"
+      ]
+    },
+    {
+      "id": "ARCZ-AED-006",
+      "priority": "P1",
+      "title": "Replace transitional sidecar iframe with unified Tauri React host",
+      "state": "READY",
+      "depends_on": [
+        "ARCZ-AED-003",
+        "ARCZ-AED-005"
+      ],
+      "required_inputs": [
+        "Tauri shell integration branch"
+      ],
+      "acceptance_criteria": [
+        "same contracts and projects open",
+        "no iframe",
+        "single lifecycle",
+        "plugins and tools preserved"
+      ],
+      "implementation_warnings": [
+        "do not attempt before parity/lifecycle gates"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "E2E parity",
+        "migration test",
+        "rollback path"
+      ]
+    },
+    {
+      "id": "ARCZ-AED-007",
+      "priority": "P0",
+      "title": "Install local prompt/translation/render models",
+      "state": "BLOCKED",
+      "depends_on": [],
+      "required_inputs": [
+        "licensed model weights and manifests"
+      ],
+      "acceptance_criteria": [
+        "enhance and translate return model provenance",
+        "diffusion/upscale models pass fixtures",
+        "offline/no egress verified"
+      ],
+      "implementation_warnings": [
+        "no static response fallback",
+        "record license/checksum/VRAM"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "model manifests",
+        "evaluation report",
+        "network audit"
+      ],
+      "last_verified_at": "2026-08-06T18:28:36.492240Z",
+      "partial_progress": "Broker, manifests e fluxos de prompt/render existem; ausência de pesos retorna erro estruturado, nunca saída simulada.",
+      "partial_evidence": [
+        "local_ai_broker_tests",
+        "prompt_bundle_roundtrip"
+      ],
+      "current_blocker": "pesos locais não materializados"
+    },
+    {
+      "id": "ARCZ-AED-008",
+      "priority": "P0",
+      "title": "Execute real Blender Cycles photoreal render",
+      "state": "BLOCKED",
+      "depends_on": [
+        "ARCZ-AED-002"
+      ],
+      "required_inputs": [
+        "Blender local executable",
+        "scene fixture",
+        "HDRI/materials with licenses"
+      ],
+      "acceptance_criteria": [
+        "beauty/depth/normal/object masks produced",
+        "manifest checksums valid",
+        "cancel/resume tested",
+        "no empty success artifact"
+      ],
+      "implementation_warnings": [
+        "worker contract alone is not a rendered image"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "frames",
+        "manifest",
+        "render log",
+        "timings"
+      ],
+      "last_verified_at": "2026-08-06T18:28:36.492240Z",
+      "partial_progress": "Worker Blender real implementado para importar GLB Aedifex, câmera física, Cycles/Eevee, passes e manifest; high/ultra bloqueia sem GLB real.",
+      "partial_evidence": [
+        "photoreal_worker_contract",
+        "real_aedifex_glb_high_ultra_gate"
+      ],
+      "current_blocker": "Blender/Cycles não instalado"
+    },
+    {
+      "id": "ARCZ-AED-009",
+      "priority": "P1",
+      "title": "Visual and accessibility validation of global panel behavior",
+      "state": "BLOCKED",
+      "depends_on": [
+        "ARCZ-AED-002"
+      ],
+      "required_inputs": [
+        "browser E2E"
+      ],
+      "acceptance_criteria": [
+        "collapsed by default",
+        "hover/focus opens",
+        "pin persists",
+        "keyboard/reduced motion accessible",
+        "responsive screenshots"
+      ],
+      "implementation_warnings": [
+        "hover cannot be the only access path"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "screenshots",
+        "axe report",
+        "viewport matrix"
+      ],
+      "last_verified_at": "2026-08-06T18:28:36.492240Z",
+      "partial_progress": "Dock implementado/testado para collapsed default, fine-pointer hover, touch/click, foco, teclado, pin, resize e reduced motion.",
+      "partial_evidence": [
+        "41 JavaScript tests passed",
+        "typescript_overlay_syntax"
+      ],
+      "current_blocker": "browser visual/axe/viewport matrix não executado"
+    },
+    {
+      "id": "ARCZ-AED-010",
+      "priority": "P1",
+      "title": "Community patch admission pipeline",
+      "state": "READY",
+      "depends_on": [
+        "ARCZ-AED-001"
+      ],
+      "required_inputs": [
+        "candidate commit or plugin"
+      ],
+      "acceptance_criteria": [
+        "license/asset provenance verified",
+        "diff isolated",
+        "security/tests pass",
+        "rollback documented"
+      ],
+      "implementation_warnings": [
+        "never blind-merge divergent forks"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "audit record",
+        "patch manifest",
+        "tests"
+      ]
+    },
+    {
+      "id": "ARCZ-AED-011",
+      "priority": "P0",
+      "title": "Connect native Aedifex ghost preview to the single global chat",
+      "state": "BLOCKED",
+      "depends_on": [
+        "ARCZ-AED-001",
+        "ARCZ-AED-002"
+      ],
+      "required_inputs": [
+        "compiled pinned Aedifex editor/core/viewer",
+        "real ValidatedOperation adapter"
+      ],
+      "acceptance_criteria": [
+        "dry-run operations become native translucent ghosts",
+        "confirm commits exactly the previewed revision",
+        "reject restores complete original nodes",
+        "undo groups one approved proposal",
+        "diff and visual preview hashes correspond"
+      ],
+      "implementation_warnings": [
+        "Do not mount a second AIChatPanel",
+        "Do not treat JSON diff as visual ghost parity"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "code",
+        "tests",
+        "validation report update",
+        "status update",
+        "hashes/logs where applicable"
+      ],
+      "last_verified_at": "2026-08-06T18:28:36.492240Z",
+      "partial_progress": "Tool-run preview/diff/review existe; a sobreposição fantasma nativa depende da montagem do editor upstream compilado.",
+      "partial_evidence": [
+        "mcp_preview_approval_revision_contract"
+      ],
+      "current_blocker": "checkout/build/E2E Aedifex ausentes"
+    },
+    {
+      "id": "ARCZ-AED-012",
+      "priority": "P0",
+      "title": "Run generated upstream inventory and fail-closed conversion coverage",
+      "state": "BLOCKED",
+      "depends_on": [
+        "ARCZ-AED-001"
+      ],
+      "required_inputs": [
+        "materialized pinned checkout"
+      ],
+      "acceptance_criteria": [
+        "all packages/apps/plugins/kinds/tools/routes/env/URLs/network calls inventoried",
+        "no UNMAPPED/REVIEW_REQUIRED/BLOCKED items",
+        "inventory and report hashes recorded"
+      ],
+      "implementation_warnings": [
+        "Never approve coverage from the hand-written ledger alone"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "code",
+        "tests",
+        "validation report update",
+        "status update",
+        "hashes/logs where applicable"
+      ],
+      "last_verified_at": "2026-08-06T18:28:36.492240Z",
+      "partial_progress": "Matriz canônica gerada do lock, schema-validada e hash-verificada; inventário do checkout real permanece pendente.",
+      "partial_evidence": [
+        "tools/build_aedifex_conversion_matrix.py",
+        "integrations/aedifex/CONVERSION_MATRIX.json",
+        "sha256:4718a2cb82d5cd83c6eeb72bb1bbd014fac9fad6a8fa27d9c3a9b3a7f9b5aaa4",
+        "119 pytest passed"
+      ],
+      "current_blocker": "checkout pinado não materializado"
+    },
+    {
+      "id": "ARCZ-AED-013",
+      "priority": "P0",
+      "title": "Execute all 46 node-kind browser smoke and round-trip tests",
+      "state": "BLOCKED",
+      "depends_on": [
+        "ARCZ-AED-001",
+        "ARCZ-AED-002"
+      ],
+      "required_inputs": [
+        "compiled editor",
+        "golden scene corpus"
+      ],
+      "acceptance_criteria": [
+        "each kind create/update/save/reopen/export",
+        "relationships and metadata preserved",
+        "no console errors",
+        "plugin kinds included"
+      ],
+      "implementation_warnings": [
+        "Do not hide unsupported kinds from the registry"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "code",
+        "tests",
+        "validation report update",
+        "status update",
+        "hashes/logs where applicable"
+      ]
+    },
+    {
+      "id": "ARCZ-AED-014",
+      "priority": "P0",
+      "title": "Execute every admitted MCP tool family through the global chat bridge",
+      "state": "BLOCKED",
+      "depends_on": [
+        "ARCZ-AED-001",
+        "ARCZ-AED-011"
+      ],
+      "required_inputs": [
+        "compiled MCP package",
+        "revisioned test projects"
+      ],
+      "acceptance_criteria": [
+        "read tools autoexecute only when allowed",
+        "mutations require preview/approval",
+        "revision conflict blocks commit",
+        "undo/redo/export/validation tested",
+        "tool result audit complete"
+      ],
+      "implementation_warnings": [
+        "Do not hardcode a reduced tool list"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "code",
+        "tests",
+        "validation report update",
+        "status update",
+        "hashes/logs where applicable"
+      ],
+      "last_verified_at": "2026-08-06T18:28:36.492240Z",
+      "partial_progress": "Bridge global implementada em fonte com catálogo MCP dinâmico, leitura real, preview isolado, aprovação/rejeição, expected_revision, auditoria e rollback.",
+      "partial_evidence": [
+        "python_pytest",
+        "typescript_overlay_syntax",
+        "single_chat_mount_test"
+      ],
+      "current_blocker": "pacote MCP upstream ainda não compilado"
+    },
+    {
+      "id": "ARCZ-AED-015",
+      "priority": "P0",
+      "title": "Validate real IFC import and rollback",
+      "state": "BLOCKED",
+      "depends_on": [
+        "ARCZ-AED-001"
+      ],
+      "required_inputs": [
+        "web-ifc WASM",
+        "licensed IFC fixtures"
+      ],
+      "acceptance_criteria": [
+        "IFC bytes convert locally",
+        "scene commits transactionally",
+        "invalid IFC restores prior scene",
+        "quantities/levels/openings verified",
+        "license/provenance recorded"
+      ],
+      "implementation_warnings": [
+        "No remote IFC service",
+        "No success on empty scene"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "code",
+        "tests",
+        "validation report update",
+        "status update",
+        "hashes/logs where applicable"
+      ]
+    },
+    {
+      "id": "ARCZ-AED-016",
+      "priority": "P1",
+      "title": "Expose planner, proposals, templates and room analysis in the single chat",
+      "state": "BLOCKED",
+      "depends_on": [
+        "ARCZ-AED-001",
+        "ARCZ-AED-011"
+      ],
+      "required_inputs": [
+        "compiled upstream AI modules"
+      ],
+      "acceptance_criteria": [
+        "one history only",
+        "proposal switching/confirm/reject works",
+        "planning context includes region/revision",
+        "room analyzer uses live scene",
+        "no provider route"
+      ],
+      "implementation_warnings": [
+        "Preserve native behavior; do not recreate shallow substitutes"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "code",
+        "tests",
+        "validation report update",
+        "status update",
+        "hashes/logs where applicable"
+      ]
+    },
+    {
+      "id": "ARCZ-AED-017",
+      "priority": "P1",
+      "title": "Build per-kind Aedifex↔Rust parity corpus and loss reports",
+      "state": "READY",
+      "depends_on": [
+        "ARCZ-AED-004",
+        "ARCZ-AED-013"
+      ],
+      "required_inputs": [
+        "golden Aedifex scenes",
+        "compiled Rust workspace"
+      ],
+      "acceptance_criteria": [
+        "46 kinds classified",
+        "A→R→A round-trip",
+        "zero silent loss",
+        "geometry/semantics golden tests",
+        "feature flags and rollback"
+      ],
+      "implementation_warnings": [
+        "A kind remains Aedifex-authoritative until its own gate passes"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "code",
+        "tests",
+        "validation report update",
+        "status update",
+        "hashes/logs where applicable"
+      ]
+    },
+    {
+      "id": "ARCZ-AED-018",
+      "priority": "P1",
+      "title": "Unify ARCZ and Aedifex into a single Tauri/React host",
+      "state": "READY",
+      "depends_on": [
+        "ARCZ-AED-002",
+        "ARCZ-AED-003",
+        "ARCZ-AED-014"
+      ],
+      "required_inputs": [
+        "validated sidecar parity baseline"
+      ],
+      "acceptance_criteria": [
+        "no iframe/postMessage",
+        "one React tree and design system",
+        "shared lifecycle/shortcuts/focus",
+        "local APIs/workers preserved",
+        "clean install/recovery"
+      ],
+      "implementation_warnings": [
+        "Do not remove sidecar before parity and rollback evidence"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "code",
+        "tests",
+        "validation report update",
+        "status update",
+        "hashes/logs where applicable"
+      ]
+    },
+    {
+      "id": "ARCZ-033",
+      "priority": "P0",
+      "title": "Validate Windows portable installer and lifecycle on a clean machine",
+      "state": "BLOCKED",
+      "depends_on": [
+        "ARCZ-031",
+        "ARCZ-AED-001"
+      ],
+      "required_inputs": [
+        "Windows 11 target",
+        "PowerShell 5.1+",
+        "vendored Aedifex/Cesium",
+        "local wheelhouse or explicit import_assisted"
+      ],
+      "acceptance_criteria": [
+        "install.ps1 completes without hidden manual setup",
+        "run.bat opens ARCZ and Floorplanner",
+        "stop.bat terminates gateway and sidecar",
+        "restart preserves projects",
+        "uninstall preserves user data unless explicitly requested",
+        "logs and runtime-preflight.json explain every failure"
+      ],
+      "implementation_warnings": [
+        "Do not mark passed from static parsing",
+        "Do not ship empty Setup.exe/MSI"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "clean-machine transcript",
+        "PowerShell exit codes",
+        "screenshots",
+        "logs",
+        "validation report update",
+        "status update"
+      ]
+    },
+    {
+      "id": "ARCZ-034",
+      "priority": "P1",
+      "title": "Validate Docker Compose universal runtime with local vendors",
+      "state": "BLOCKED",
+      "depends_on": [
+        "ARCZ-031",
+        "ARCZ-AED-001"
+      ],
+      "required_inputs": [
+        "Docker Engine with Compose",
+        "vendored Aedifex sidecar",
+        "vendored CesiumJS"
+      ],
+      "acceptance_criteria": [
+        "docker compose config passes",
+        "image builds",
+        "interactive preflight passes in container",
+        "gateway health passes",
+        "data/log/export volumes persist",
+        "offline_strict egress test passes"
+      ],
+      "implementation_warnings": [
+        "Docker is an alternative, never the sole runtime",
+        "Do not bypass interactive preflight in CMD"
+      ],
+      "owner": "next_implementation_agent",
+      "evidence_required": [
+        "compose config",
+        "build log",
+        "health log",
+        "offline test",
+        "validation report update"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "arcz://schemas/timeline.schema.json",
+  "title": "ARCZ Timeline",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "fps",
+    "duration_frames",
+    "tracks"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "fps": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 240
+    },
+    "duration_frames": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "tracks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "target",
+          "property",
+          "value_type",
+          "keyframes"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "target": {
+            "type": "string"
+          },
+          "property": {
+            "type": "string"
+          },
+          "value_type": {
+            "enum": [
+              "number",
+              "vector3",
+              "quaternion",
+              "boolean",
+              "string",
+              "object"
+            ]
+          },
+          "keyframes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "frame",
+                "value",
+                "interpolation"
+              ],
+              "properties": {
+                "frame": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "value": {},
+                "interpolation": {
+                  "enum": [
+                    "hold",
+                    "linear",
+                    "bezier",
+                    "hermite",
+                    "slerp",
+                    "geodesic",
+                    "log_altitude"
+                  ]
+                },
+                "in_tangent": {},
+                "out_tangent": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

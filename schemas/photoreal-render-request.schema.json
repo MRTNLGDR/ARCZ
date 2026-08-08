@@ -1,0 +1,367 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "arcz://schemas/photoreal-render-request.schema.json",
+  "title": "Photoreal Render Request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "floorplanner_project_id",
+    "revision",
+    "camera",
+    "resolution",
+    "format",
+    "passes",
+    "reference_media",
+    "enhancement",
+    "output_name"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "floorplanner_project_id": {
+      "type": "string"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "camera": {
+      "type": "object",
+      "required": [
+        "position",
+        "target",
+        "focal_length_mm"
+      ],
+      "properties": {
+        "position": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "target": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "focal_length_mm": {
+          "type": "number",
+          "minimum": 8,
+          "maximum": 800
+        },
+        "aperture": {
+          "type": "number",
+          "minimum": 0.7,
+          "maximum": 64
+        },
+        "focus_distance_m": {
+          "type": "number",
+          "minimum": 0.01
+        },
+        "sensor_width_mm": {
+          "type": "number",
+          "minimum": 4,
+          "maximum": 100
+        },
+        "shift_x": {
+          "type": "number",
+          "minimum": -2,
+          "maximum": 2
+        },
+        "shift_y": {
+          "type": "number",
+          "minimum": -2,
+          "maximum": 2
+        },
+        "clip_start_m": {
+          "type": "number",
+          "minimum": 0.001,
+          "maximum": 1000
+        },
+        "clip_end_m": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 10000000
+        },
+        "vertical_correction": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": true
+    },
+    "resolution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "width",
+        "height"
+      ],
+      "properties": {
+        "width": {
+          "type": "integer",
+          "minimum": 64,
+          "maximum": 16384
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 64,
+          "maximum": 16384
+        }
+      }
+    },
+    "format": {
+      "type": "string",
+      "enum": [
+        "png",
+        "jpg",
+        "exr"
+      ]
+    },
+    "passes": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "beauty",
+          "depth",
+          "normals",
+          "object_ids",
+          "semantic_masks",
+          "material_masks",
+          "sky_mask"
+        ]
+      }
+    },
+    "reference_media": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "enhancement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode"
+      ],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": [
+            "none",
+            "material",
+            "vegetation",
+            "people_vehicles",
+            "weather_time",
+            "full_photoreal"
+          ]
+        },
+        "model_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "prompt": {
+          "type": "string"
+        },
+        "negative_prompt": {
+          "type": "string"
+        },
+        "seed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "geometry_guard_px": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 64
+        }
+      }
+    },
+    "output_name": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._-]+$"
+    },
+    "generation_epoch": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "scene_export_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "quality": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "preview",
+        "balanced",
+        "high",
+        "ultra"
+      ]
+    },
+    "engine": {
+      "type": "string",
+      "enum": [
+        "cycles",
+        "eevee"
+      ]
+    },
+    "render_settings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "samples": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 8192
+        },
+        "denoise": {
+          "type": "boolean"
+        },
+        "device": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "cpu",
+            "gpu"
+          ]
+        },
+        "tile_size": {
+          "type": "integer",
+          "minimum": 32,
+          "maximum": 2048
+        },
+        "transparent_background": {
+          "type": "boolean"
+        },
+        "color_management": {
+          "type": "string",
+          "enum": [
+            "AgX",
+            "Filmic",
+            "Standard"
+          ]
+        },
+        "look": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "motion_blur": {
+          "type": "boolean"
+        },
+        "motion_blur_shutter": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 2
+        },
+        "max_memory_mb": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 512,
+          "maximum": 262144
+        }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "world_mode": {
+          "type": "string",
+          "enum": [
+            "nishita",
+            "studio",
+            "transparent"
+          ]
+        },
+        "strength": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "sun_elevation_deg": {
+          "type": "number",
+          "minimum": -10,
+          "maximum": 90
+        },
+        "sun_rotation_deg": {
+          "type": "number",
+          "minimum": -360,
+          "maximum": 360
+        },
+        "sun_energy": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "haze": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "cloud_density": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "ground_color": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "prefixItems": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          ]
+        }
+      }
+    }
+  }
+}

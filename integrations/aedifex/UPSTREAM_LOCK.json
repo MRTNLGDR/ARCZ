@@ -1,0 +1,138 @@
+{
+  "schema_version": 3,
+  "repository": "TangSY/aedifex",
+  "commit": "5319368bae16500ca5267f6f8d68b36c9586d5bb",
+  "branch": "main",
+  "license": "MIT",
+  "captured_at": "2026-08-06T20:00:00Z",
+  "integration_strategy": "UNIFIED_AUTHORING_HOST_WITH_ARCZ_EARTH_DOMAIN",
+  "plugin_api_version": 2,
+  "packages": {
+    "@aedifex/core": {
+      "version": "0.10.0",
+      "path": "packages/core/package.json",
+      "required": true
+    },
+    "@aedifex/viewer": {
+      "version": "0.10.0",
+      "path": "packages/viewer/package.json",
+      "required": true
+    },
+    "@aedifex/editor": {
+      "version": "0.9.3",
+      "path": "packages/editor/package.json",
+      "required": true
+    },
+    "@aedifex/mcp": {
+      "version": "0.3.3",
+      "path": "packages/mcp/package.json",
+      "required": true
+    },
+    "@aedifex/nodes": {
+      "version": "0.2.0",
+      "path": "packages/nodes/package.json",
+      "required": true
+    },
+    "@aedifex/plugin-trees": {
+      "version": "0.1.1",
+      "path": "packages/plugin-trees/package.json",
+      "required": true
+    },
+    "@aedifex/ifc-converter": {
+      "version": "0.1.3",
+      "path": "packages/ifc-converter/package.json",
+      "required": true
+    }
+  },
+  "required_workspace_paths": [
+    "LICENSE",
+    "package.json",
+    "bun.lock",
+    "apps/editor/package.json",
+    "apps/ifc-converter/package.json",
+    "packages/core/package.json",
+    "packages/viewer/package.json",
+    "packages/editor/package.json",
+    "packages/mcp/package.json",
+    "packages/nodes/package.json",
+    "packages/plugin-trees/package.json",
+    "packages/ifc-converter/package.json"
+  ],
+  "required_node_kinds": [
+    "site",
+    "building",
+    "level",
+    "wall",
+    "fence",
+    "slab",
+    "ceiling",
+    "door",
+    "window",
+    "cabinet",
+    "cabinet-module",
+    "item",
+    "column",
+    "elevator",
+    "roof",
+    "roof-segment",
+    "stair",
+    "stair-segment",
+    "zone",
+    "guide",
+    "scan",
+    "measurement",
+    "construction-dimension",
+    "structural-grid",
+    "box-vent",
+    "ridge-vent",
+    "turbine-vent",
+    "cupola",
+    "eyebrow-vent",
+    "chimney",
+    "solar-panel",
+    "skylight",
+    "dormer",
+    "gutter",
+    "downspout",
+    "duct-segment",
+    "duct-fitting",
+    "duct-terminal",
+    "hvac-equipment",
+    "lineset",
+    "liquid-line",
+    "pipe-segment",
+    "pipe-fitting",
+    "pipe-trap",
+    "shelf",
+    "spawn"
+  ],
+  "required_tool_families": [
+    "scene-query",
+    "measurement",
+    "construction",
+    "rooms",
+    "patch",
+    "levels",
+    "walls",
+    "items",
+    "openings",
+    "zones",
+    "duplicate",
+    "delete",
+    "undo-redo",
+    "export-json",
+    "export-glb",
+    "validation",
+    "collisions",
+    "templates",
+    "scene-lifecycle",
+    "variants",
+    "photo-to-scene"
+  ],
+  "notes": [
+    "Pin imutável; atualizações entram por auditoria diferencial.",
+    "O upstream preservado nunca é editado; overlays são aplicados somente ao fork controlado.",
+    "Aedifex é a autoridade do documento arquitetônico editável; ARCZ Earth é o domínio geoespacial e de publicação.",
+    "O host final é único (Tauri/React). O sidecar Next é apenas etapa de compatibilidade removível."
+  ]
+}

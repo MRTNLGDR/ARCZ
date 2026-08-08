@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "arcz://schemas/tile-plan.schema.json",
+  "title": "Tile Plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "generation_epoch",
+    "zoom",
+    "tiles"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "generation_epoch": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "zoom": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 22
+    },
+    "tiles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "key",
+          "z",
+          "x",
+          "y",
+          "ring",
+          "priority",
+          "state"
+        ],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "z": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 22
+          },
+          "x": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "y": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "ring": {
+            "enum": [
+              "HERO",
+              "NEAR",
+              "MEDIUM",
+              "DISTANT"
+            ]
+          },
+          "priority": {
+            "type": "number"
+          },
+          "state": {
+            "enum": [
+              "MISSING",
+              "QUEUED",
+              "FETCHING",
+              "PREPARING",
+              "GENERATING",
+              "VALIDATING",
+              "READY",
+              "APPLYING",
+              "ACTIVE",
+              "EVICTING",
+              "FAILED_RETRYABLE",
+              "FAILED_PERMANENT",
+              "CANCELLED"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

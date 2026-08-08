@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "arcz://schemas/panel-layout.schema.json",
+  "title": "ARCZ Panel Layout",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "panels"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "panels": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "pinned",
+          "collapsed",
+          "width"
+        ],
+        "properties": {
+          "pinned": {
+            "type": "boolean"
+          },
+          "collapsed": {
+            "type": "boolean"
+          },
+          "width": {
+            "type": "number",
+            "minimum": 240,
+            "maximum": 720
+          },
+          "active_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "side": {
+            "type": "string",
+            "enum": [
+              "left",
+              "right"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,4 @@
+import { EventBus } from "../core/eventos.js";
+export class EarthToStreetTransition{constructor({cameraAdapter,panoramaViewer,durationMs=1200}){this.camera=cameraAdapter;this.viewer=panoramaViewer;this.durationMs=durationMs;this.events=new EventBus();this.running=false;}
+ async enter(frame,{signal}={}){if(this.running)throw new Error("Transição já em execução");this.running=true;try{this.events.emit("start",{frame});await this.camera.flyTo({lon:frame.lon,lat:frame.lat,alt:frame.alt||3,heading:frame.heading||0,pitch:-5,durationMs:this.durationMs,signal});if(signal?.aborted)throw signal.reason;await this.viewer.load(frame.image);this.viewer.setView({heading:frame.heading||0,pitch:frame.pitch||0});this.events.emit("entered",{frame});}finally{this.running=false;}}
+ async exit({position,signal}={}){this.events.emit("exit-start",{});await this.camera.flyTo({...position,durationMs:this.durationMs,signal});this.events.emit("exited",{});}}

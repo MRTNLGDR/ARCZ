@@ -1,0 +1,7 @@
+import { GovernanceClient } from "./governance-client.js";
+function n(tag,cls="",text=""){const x=document.createElement(tag);if(cls)x.className=cls;if(text)x.textContent=text;return x;}
+export class GovernancePanel {
+ constructor({client=new GovernanceClient()}={}){this.client=client;}
+ async mount(host){this.host=host;const refresh=n("button","arcz-button","Atualizar");refresh.type="button";this.body=n("div","arcz-stack");host.append(refresh,this.body);refresh.addEventListener("click",()=>this.refresh());await this.refresh();}
+ async refresh(){this.body.replaceChildren(n("div","arcz-panel-state","Lendo fonte real…"));try{const s=await this.client.snapshot();this.body.replaceChildren();this.body.append(n("div","arcz-metric",`Estado ${s.state} · ${s.summary.progressPercent.toFixed(1)}%`),n("div","arcz-panel-state",`${s.summary.doneTasks}/${s.summary.totalTasks} tarefas · ${s.summary.openAlerts} alertas`));const tasks=n("div","arcz-list");for(const t of s.tasks.filter(x=>x.status!=="DONE").slice(0,12))tasks.append(n("div","arcz-governance-row",`${t.id} · ${t.title}`));this.body.append(n("h3","","Pendências reais"),tasks);const alerts=n("div","arcz-list");for(const a of s.alerts.filter(x=>x.status==="OPEN").slice(0,10))alerts.append(n("div",`arcz-alert arcz-alert--${a.severity.toLowerCase()}`,`${a.id} · ${a.fact}`));this.body.append(n("h3","","Alertas"),alerts);}catch(error){this.body.replaceChildren(n("div","arcz-panel-error",error.message));}}
+}

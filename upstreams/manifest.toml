@@ -1,0 +1,42 @@
+schema_version = 1
+policy = "immutable-upstream + ARCZ adapters/ports; never blind-merge"
+
+[[source]]
+id = "aedifex"
+repository = "https://github.com/TangSY/aedifex.git"
+commit = "5319368bae16500ca5267f6f8d68b36c9586d5bb"
+branch = "main"
+license = "MIT"
+path = "upstreams/sources/aedifex"
+integration = "authoring-reference + compatibility-sidecar + Rust parity oracle"
+editable = false
+
+[[source]]
+id = "cesiumjs"
+repository = "https://github.com/CesiumGS/cesium.git"
+commit = "6d5d8b1f0725b6f831b336463f4b11c98023427b"
+branch = "main"
+license = "Apache-2.0"
+path = "upstreams/sources/cesium"
+integration = "globe/web-sidecar + 3D Tiles reference"
+editable = false
+
+[[source]]
+id = "kepler-gl"
+repository = "https://github.com/keplergl/kepler.gl.git"
+commit = "621bb236fb33f0f6de9dbd730c2e18edac40b764"
+branch = "master"
+license = "MIT"
+path = "upstreams/sources/kepler-gl"
+integration = "geospatial analytics/web-sidecar; ARCZ scene remains authoritative"
+editable = false
+
+[[source]]
+id = "ifcopenshell-bonsai"
+repository = "https://github.com/IfcOpenShell/IfcOpenShell.git"
+commit = "7ed8584edc6609654cea608d699348c9cca7ce5d"
+branch = "v0.8.0"
+license = "LGPL-3.0-or-later; bonsai subtree GPL-3.0-or-later"
+path = "upstreams/sources/ifcopenshell"
+integration = "IFC engine boundary; Bonsai reference/optional external Blender worker"
+editable = false

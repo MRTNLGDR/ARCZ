@@ -1,0 +1,287 @@
+{
+  "schema_version": 3,
+  "upstream_commit": "5319368bae16500ca5267f6f8d68b36c9586d5bb",
+  "generated_at": "2026-08-06T23:30:00Z",
+  "status_definitions": {
+    "VERIFIED": "code and applicable automated gate executed",
+    "IMPLEMENTED_SOURCE_BROWSER_BLOCKED": "source/contract exists but real Aedifex/Cesium browser runtime unavailable",
+    "BLOCKED_BY_UPSTREAM_BUILD": "requires materialized and compiled pinned upstream",
+    "CONTRACT_READY_MODELS_BLOCKED": "local contract exists but weights/runtime absent",
+    "NOT_IMPLEMENTED_GATES_DEFINED": "no operational parity code; acceptance gates documented"
+  },
+  "authority": {
+    "editable_document": "revisioned Aedifex SceneSnapshot stored by ARCZ FloorplannerStore",
+    "world": "ARCZ WGS84/ECEF/ENU, active region, terrain, context, procedural world, jobs and render",
+    "globe_representation": "readonly content-addressed GLB derivative with GeoAnchor and generation_epoch",
+    "target_compute": "ARCZ CadDocument/BimDocument only after per-kind parity gates",
+    "single_chat": "ARCZ Global Chat with imported Aedifex MCP tools and one history",
+    "transitional_host": "sandboxed loopback sidecar while ARCZ frontend remains no-bundler ES modules",
+    "final_host": "single Tauri/React workspace without iframe"
+  },
+  "packages": [
+    {
+      "id": "@aedifex/core",
+      "version": "0.10.0",
+      "role": "scene graph, schemas, store, undo/redo and Plugin API",
+      "authority": "aedifex-building-kernel",
+      "source_status": "PINNED_NOT_MATERIALIZED",
+      "integration_status": "OVERLAY_AND_CONTRACT_READY",
+      "runtime_status": "BLOCKED_BY_UPSTREAM_BUILD"
+    },
+    {
+      "id": "@aedifex/viewer",
+      "version": "0.10.0",
+      "role": "Three/R3F/WebGPU viewport, selection and node rendering",
+      "authority": "aedifex-building-kernel",
+      "source_status": "PINNED_NOT_MATERIALIZED",
+      "integration_status": "OVERLAY_AND_CONTRACT_READY",
+      "runtime_status": "BLOCKED_BY_UPSTREAM_BUILD"
+    },
+    {
+      "id": "@aedifex/editor",
+      "version": "0.9.3",
+      "role": "Floorplanner, inspector, catalog, authoring tools and AI UX",
+      "authority": "aedifex-building-kernel",
+      "source_status": "PINNED_NOT_MATERIALIZED",
+      "integration_status": "OVERLAY_AND_CONTRACT_READY",
+      "runtime_status": "BLOCKED_BY_UPSTREAM_BUILD"
+    },
+    {
+      "id": "@aedifex/mcp",
+      "version": "0.3.3",
+      "role": "headless SceneBridge, tools, storage and live events",
+      "authority": "aedifex-building-kernel",
+      "source_status": "PINNED_NOT_MATERIALIZED",
+      "integration_status": "OVERLAY_AND_CONTRACT_READY",
+      "runtime_status": "BLOCKED_BY_UPSTREAM_BUILD"
+    },
+    {
+      "id": "@aedifex/nodes",
+      "version": "0.2.0",
+      "role": "all admitted built-in node kinds",
+      "authority": "aedifex-building-kernel",
+      "source_status": "PINNED_NOT_MATERIALIZED",
+      "integration_status": "OVERLAY_AND_CONTRACT_READY",
+      "runtime_status": "BLOCKED_BY_UPSTREAM_BUILD"
+    },
+    {
+      "id": "@aedifex/plugin-trees",
+      "version": "0.1.1",
+      "role": "local vegetation plugin and host panel",
+      "authority": "aedifex-building-kernel",
+      "source_status": "PINNED_NOT_MATERIALIZED",
+      "integration_status": "OVERLAY_AND_CONTRACT_READY",
+      "runtime_status": "BLOCKED_BY_UPSTREAM_BUILD"
+    },
+    {
+      "id": "@aedifex/ifc-converter",
+      "version": "0.1.3",
+      "role": "local IFC to Aedifex scene conversion",
+      "authority": "aedifex-building-kernel",
+      "source_status": "PINNED_NOT_MATERIALIZED",
+      "integration_status": "OVERLAY_AND_CONTRACT_READY",
+      "runtime_status": "BLOCKED_BY_UPSTREAM_BUILD"
+    }
+  ],
+  "node_kinds": [
+    "site",
+    "building",
+    "level",
+    "wall",
+    "fence",
+    "slab",
+    "ceiling",
+    "door",
+    "window",
+    "cabinet",
+    "cabinet-module",
+    "item",
+    "column",
+    "elevator",
+    "roof",
+    "roof-segment",
+    "stair",
+    "stair-segment",
+    "zone",
+    "guide",
+    "scan",
+    "measurement",
+    "construction-dimension",
+    "structural-grid",
+    "box-vent",
+    "ridge-vent",
+    "turbine-vent",
+    "cupola",
+    "eyebrow-vent",
+    "chimney",
+    "solar-panel",
+    "skylight",
+    "dormer",
+    "gutter",
+    "downspout",
+    "duct-segment",
+    "duct-fitting",
+    "duct-terminal",
+    "hvac-equipment",
+    "lineset",
+    "liquid-line",
+    "pipe-segment",
+    "pipe-fitting",
+    "pipe-trap",
+    "shelf",
+    "spawn"
+  ],
+  "node_kind_count": 46,
+  "tool_families": [
+    "scene-query",
+    "measurement",
+    "construction",
+    "rooms",
+    "patch",
+    "levels",
+    "walls",
+    "items",
+    "openings",
+    "zones",
+    "duplicate",
+    "delete",
+    "undo-redo",
+    "export-json",
+    "export-glb",
+    "validation",
+    "collisions",
+    "templates",
+    "scene-lifecycle",
+    "variants",
+    "photo-to-scene"
+  ],
+  "capabilities": [
+    {
+      "id": "scene-authority",
+      "description": "revisioned SceneSnapshot, optimistic concurrency, hashes and events",
+      "status": "VERIFIED_BACKEND"
+    },
+    {
+      "id": "floorplanner-over-globe",
+      "description": "interactive Cesium and Aedifex split workspace",
+      "status": "IMPLEMENTED_SOURCE_BROWSER_BLOCKED"
+    },
+    {
+      "id": "context-layers",
+      "description": "hash-verified readonly terrain/roads/context inside Aedifex",
+      "status": "IMPLEMENTED_SOURCE_BROWSER_BLOCKED"
+    },
+    {
+      "id": "glb-roundtrip",
+      "description": "real R3F GLB export, binary validation, atomic content store",
+      "status": "VERIFIED_GATEWAY_BROWSER_EXPORT_BLOCKED"
+    },
+    {
+      "id": "ifc-import",
+      "description": "local IFC converter with transactional rollback",
+      "status": "IMPLEMENTED_SOURCE_BUILD_BLOCKED"
+    },
+    {
+      "id": "node-registry",
+      "description": "dynamic UI over all registered node kinds/plugins",
+      "status": "IMPLEMENTED_SOURCE_BUILD_BLOCKED"
+    },
+    {
+      "id": "global-chat",
+      "description": "one persistent chat for ARCZ and Aedifex tools",
+      "status": "VERIFIED_BACKEND_AND_JS"
+    },
+    {
+      "id": "mcp-tool-runs",
+      "description": "dry-run, approval/reject, revision guard, request/result hashes",
+      "status": "VERIFIED_BACKEND"
+    },
+    {
+      "id": "aedifex-ghost-preview",
+      "description": "native translucent preview/confirm/reject integrated into global chat",
+      "status": "BLOCKED_BY_UPSTREAM_BUILD"
+    },
+    {
+      "id": "agent-planner-proposals",
+      "description": "upstream planner/templates/proposals/room analyzer exposed globally",
+      "status": "PRESERVED_UPSTREAM_ADAPTER_PENDING"
+    },
+    {
+      "id": "prompt-library",
+      "description": "versioning, duplicate, archive, import/export, compile",
+      "status": "VERIFIED"
+    },
+    {
+      "id": "prompt-enhance-translate",
+      "description": "local model inference with cache/provenance",
+      "status": "CONTRACT_READY_MODELS_BLOCKED"
+    },
+    {
+      "id": "reference-media",
+      "description": "real bytes, preview, roles, weights, license, provenance",
+      "status": "VERIFIED"
+    },
+    {
+      "id": "photoreal-workspace",
+      "description": "4K/8K camera/passes/references/preflight/jobs",
+      "status": "IMPLEMENTED_SOURCE_RUNTIME_BLOCKED"
+    },
+    {
+      "id": "cinematic-earth",
+      "description": "real Cesium atmosphere and sequential callback-based flight",
+      "status": "VERIFIED_MATH_BROWSER_BLOCKED"
+    },
+    {
+      "id": "collapsible-panels",
+      "description": "collapsed/hover/focus/pin/resize/persist",
+      "status": "VERIFIED_JS"
+    },
+    {
+      "id": "rust-kind-parity",
+      "description": "Aedifex kinds mapped to Cad/Bim documents with loss reports",
+      "status": "NOT_IMPLEMENTED_GATES_DEFINED"
+    },
+    {
+      "id": "unified-tauri-host",
+      "description": "single in-process React/Tauri host, no iframe",
+      "status": "NOT_IMPLEMENTED_AFTER_PARITY"
+    }
+  ],
+  "arcz_global_additions": [
+    "region/lot import and GeoAnchor",
+    "globe publication",
+    "procedural regional surroundings",
+    "single auditable global chat",
+    "versioned prompt library and local language tools",
+    "content-addressed reference media",
+    "photoreal queue and passes",
+    "cinema",
+    "Street",
+    "source packages",
+    "governance",
+    "budgets/jobs/provenance"
+  ],
+  "forbidden": [
+    "remote iframe",
+    "unverified postMessage",
+    "second editable building copy",
+    "GLB as authoritative save",
+    "direct remote AI dependency",
+    "silent loss of unsupported fields",
+    "blind merge of forks",
+    "claiming parity from a hand-written checklist without generated inventory"
+  ],
+  "migration_policy": {
+    "wave_0": "reproduce and inventory pinned upstream unchanged",
+    "wave_1": "revision/context/authority contracts",
+    "wave_2": "interactive globe + Floorplanner and validated GLB publication",
+    "wave_3": "full upstream feature/browser parity",
+    "wave_4": "single chat, prompts, media and visual ghost adapter",
+    "wave_5": "map each kind to Rust with loss reports and golden tests",
+    "wave_6": "move pure compute behind feature flags",
+    "wave_7": "unify host in Tauri/React",
+    "wave_8": "photoreal/cinema runtime",
+    "wave_9": "technical documentation and release"
+  },
+  "authoritative_human_ledger": "docs/integration/AEDIFEX_CAPABILITY_LEDGER_V10.md"
+}

@@ -1,0 +1,231 @@
+{
+  "schema_version": 4,
+  "upstream_commit": "5319368bae16500ca5267f6f8d68b36c9586d5bb",
+  "strategy": "AEDIFEX_BUILDING_AUTHORING_KERNEL_INSIDE_ARCZ_WORLD_CORE",
+  "policy": "Upstream original is immutable; overlays are applied only to a controlled working copy, are independently removable, and never transfer world-coordinate authority away from ARCZ.",
+  "patches": [
+    {
+      "id": "ARCAED-001",
+      "kind": "overlay-app",
+      "source": "integrations/aedifex/overlay/apps/arcz-floorplanner",
+      "destination": "apps/arcz-floorplanner",
+      "purpose": "ARCZ-controlled Floorplanner shell with complete upstream editor surfaces",
+      "authority": "AEDIFEX_AUTHORING",
+      "reversible": true,
+      "test_gate": [
+        "typescript_overlay_syntax",
+        "aedifex_vendor_and_build"
+      ]
+    },
+    {
+      "id": "ARCAED-002",
+      "kind": "overlay-package",
+      "source": "integrations/aedifex/overlay/packages/arcz-bridge",
+      "destination": "packages/arcz-bridge",
+      "purpose": "GeoAnchor, revision, media, context-layer and export bridge",
+      "authority": "SHARED_BRIDGE",
+      "reversible": true,
+      "test_gate": [
+        "typescript_overlay_syntax",
+        "python_pytest"
+      ]
+    },
+    {
+      "id": "ARCAED-003",
+      "kind": "workspace-merge",
+      "destination": "package.json",
+      "purpose": "Register ARCZ overlay workspaces without replacing upstream packages",
+      "authority": "BUILD_GOVERNANCE",
+      "reversible": true,
+      "test_gate": [
+        "aedifex_vendor_and_build"
+      ]
+    },
+    {
+      "id": "ARCAED-004",
+      "kind": "route-replacement",
+      "destination": "apps/arcz-floorplanner/app/api/ai/chat/route.ts",
+      "purpose": "Replace provider-dependent AI route with the ARCZ Local AI Broker",
+      "authority": "SHARED_BRIDGE",
+      "reversible": true,
+      "test_gate": [
+        "typescript_overlay_syntax",
+        "python_pytest"
+      ]
+    },
+    {
+      "id": "ARCAED-005",
+      "kind": "runtime-policy",
+      "destination": "apps/arcz-floorplanner/lib/bootstrap.ts",
+      "purpose": "Load only built-in and admitted local plugins with duplicate/schema guards",
+      "authority": "BUILD_GOVERNANCE",
+      "reversible": true,
+      "test_gate": [
+        "typescript_overlay_syntax",
+        "core_contains_no_hardcoded_remote_url"
+      ]
+    },
+    {
+      "id": "ARCAED-006",
+      "kind": "roundtrip",
+      "destination": "apps/arcz-floorplanner/app/ui/arcz-scene-export-bridge.tsx",
+      "purpose": "Export the actual Aedifex R3F scene as a revision-bound validated GLB derivative",
+      "authority": "SHARED_BRIDGE",
+      "reversible": true,
+      "test_gate": [
+        "typescript_overlay_syntax",
+        "python_pytest",
+        "javascript_tests"
+      ]
+    },
+    {
+      "id": "ARCAED-007",
+      "kind": "panel-policy",
+      "destination": "apps/arcz-floorplanner/app/ui/arcz-panel-behavior.tsx",
+      "purpose": "Collapsed-by-default panels with hover reveal, pinning and persisted dimensions",
+      "authority": "AEDIFEX_AUTHORING",
+      "reversible": true,
+      "test_gate": [
+        "typescript_overlay_syntax",
+        "javascript_tests"
+      ]
+    },
+    {
+      "id": "ARCAED-008",
+      "kind": "overlay-package",
+      "source": "integrations/aedifex/overlay/packages/arcz-aedifex-tools",
+      "destination": "packages/arcz-aedifex-tools",
+      "purpose": "Revision-aware Aedifex MCP catalog/invocation used by the global chat",
+      "authority": "SHARED_BRIDGE",
+      "reversible": true,
+      "test_gate": [
+        "typescript_overlay_syntax",
+        "python_pytest"
+      ]
+    },
+    {
+      "id": "ARCAED-009",
+      "kind": "route",
+      "destination": "apps/arcz-floorplanner/app/api/arcz/tools/*",
+      "purpose": "Authenticated loopback bridge for global ARCZ chat tool calls",
+      "authority": "SHARED_BRIDGE",
+      "reversible": true,
+      "test_gate": [
+        "typescript_overlay_syntax",
+        "python_pytest"
+      ]
+    },
+    {
+      "id": "ARCAED-010",
+      "kind": "import-consolidation",
+      "destination": "apps/arcz-floorplanner/app/ui/arcz-import-export-panel.tsx",
+      "purpose": "Single transactional IFC/Aedifex JSON import path using @aedifex/ifc-converter with visual rollback and revision persistence",
+      "authority": "AEDIFEX_AUTHORING",
+      "reversible": true,
+      "test_gate": [
+        "typescript_overlay_syntax",
+        "javascript_tests"
+      ]
+    },
+    {
+      "id": "ARCAED-011",
+      "kind": "context-layers",
+      "destination": "apps/arcz-floorplanner/app/ui/arcz-context-layers.tsx",
+      "purpose": "Mount verified terrain, roads and surroundings as immutable ENU/Aedifex context excluded from authoring exports",
+      "authority": "BUILD_GOVERNANCE",
+      "reversible": true,
+      "test_gate": [
+        "typescript_overlay_syntax",
+        "aedifex_vendor_and_build"
+      ]
+    },
+    {
+      "id": "ARCAED-012",
+      "kind": "bridge-session",
+      "destination": "app/floorplanner/floorplanner-host.js",
+      "purpose": "Bind every bidirectional postMessage to origin, source, project and a cryptographic session channel",
+      "authority": "SHARED_BRIDGE",
+      "reversible": true,
+      "test_gate": [
+        "javascript_tests",
+        "javascript_syntax"
+      ]
+    },
+    {
+      "id": "ARCAED-013",
+      "kind": "coverage-gate",
+      "destination": "tools/aedifex/inventory_upstream.py",
+      "purpose": "Inventory every upstream package, app, plugin, node kind, MCP tool, route, env and network surface; fail closed when unclassified",
+      "authority": "SHARED_BRIDGE",
+      "reversible": true,
+      "test_gate": [
+        "python_pytest",
+        "javascript_tests"
+      ]
+    },
+    {
+      "id": "ARCAED-014",
+      "kind": "airgapped-build",
+      "destination": "tools/build_aedifex_sidecar.py",
+      "purpose": "Build from the controlled fork only after coverage approval and publish local web-ifc WASM with integrity hashes",
+      "authority": "ARCZ_WORLD",
+      "reversible": true,
+      "test_gate": [
+        "python_pytest",
+        "javascript_tests"
+      ]
+    },
+    {
+      "id": "ARCAED-015",
+      "kind": "photoreal",
+      "source": "app/render;arcz_server/photoreal.py",
+      "destination": "Render mode",
+      "purpose": "real preflight and local 4K/8K render job contract without fake output",
+      "authority": "ARCZ_WORLD",
+      "reversible": true,
+      "test_gate": [
+        "photoreal_worker_contract",
+        "python_pytest",
+        "javascript_tests"
+      ]
+    },
+    {
+      "id": "ARCAED-016",
+      "kind": "cinematic-world",
+      "source": "app/earth/cinematic-globe.js",
+      "destination": "Globe mode",
+      "purpose": "real Cesium atmosphere and sequential callback-based Earth flight",
+      "authority": "ARCZ_WORLD",
+      "reversible": true,
+      "test_gate": [
+        "javascript_tests",
+        "javascript_syntax"
+      ]
+    },
+    {
+      "id": "ARCAED-017",
+      "kind": "upstream-inventory",
+      "source": "arcz_server/aedifex_inventory.py",
+      "destination": "materialization gate",
+      "purpose": "fail-closed inventory and conversion coverage of every upstream surface",
+      "authority": "BUILD_GOVERNANCE",
+      "reversible": true,
+      "test_gate": [
+        "python_pytest",
+        "resource_schema_validation"
+      ]
+    },
+    {
+      "id": "ARCAED-018",
+      "kind": "route-contract-fix",
+      "source": "arcz_server/v2_router.py",
+      "destination": "API v2",
+      "purpose": "correct version/duplicate/archive prompt and tool-run detail/approve/reject routes",
+      "authority": "SHARED_BRIDGE",
+      "reversible": true,
+      "test_gate": [
+        "python_pytest"
+      ]
+    }
+  ]
+}

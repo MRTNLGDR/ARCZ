@@ -1,0 +1,363 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "arcz://schemas/regional-profile.schema.json",
+  "title": "Regional Style Profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "version",
+    "scope",
+    "architecture",
+    "roofs",
+    "facades",
+    "vegetation",
+    "roads",
+    "metadata"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]+$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "country",
+        "region_type"
+      ],
+      "properties": {
+        "country": {
+          "anyOf": [
+            {
+              "const": "*"
+            },
+            {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 3
+            }
+          ]
+        },
+        "state": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "biome": {
+          "type": "string"
+        },
+        "region_type": {
+          "type": "string"
+        }
+      }
+    },
+    "architecture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "building_mix",
+        "floor_ranges",
+        "setbacks_m",
+        "lot_coverage_range",
+        "wall_probability"
+      ],
+      "properties": {
+        "building_mix": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "floor_ranges": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "prefixItems": [
+              {
+                "type": "integer",
+                "minimum": 1
+              },
+              {
+                "type": "integer",
+                "minimum": 1
+              }
+            ],
+            "minItems": 2,
+            "maxItems": 2
+          }
+        },
+        "setbacks_m": {
+          "type": "object",
+          "required": [
+            "front",
+            "side",
+            "rear"
+          ],
+          "properties": {
+            "front": {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "type": "number",
+                  "minimum": 0
+                },
+                {
+                  "type": "number",
+                  "minimum": 0
+                }
+              ],
+              "minItems": 2,
+              "maxItems": 2
+            },
+            "side": {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "type": "number",
+                  "minimum": 0
+                },
+                {
+                  "type": "number",
+                  "minimum": 0
+                }
+              ],
+              "minItems": 2,
+              "maxItems": 2
+            },
+            "rear": {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "type": "number",
+                  "minimum": 0
+                },
+                {
+                  "type": "number",
+                  "minimum": 0
+                }
+              ],
+              "minItems": 2,
+              "maxItems": 2
+            }
+          },
+          "additionalProperties": false
+        },
+        "lot_coverage_range": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "number",
+              "minimum": 0.05,
+              "maximum": 0.95
+            },
+            {
+              "type": "number",
+              "minimum": 0.05,
+              "maximum": 0.95
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "wall_probability": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "roofs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "types",
+        "pitch_deg",
+        "eave_m",
+        "materials"
+      ],
+      "properties": {
+        "types": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "pitch_deg": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 75
+            },
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 75
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "eave_m": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 5
+            },
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 5
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "materials": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        }
+      }
+    },
+    "facades": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "palette",
+        "materials",
+        "window_ratios",
+        "balcony_probability"
+      ],
+      "properties": {
+        "palette": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "items": {
+            "type": "string",
+            "pattern": "^#[0-9A-Fa-f]{6}$"
+          }
+        },
+        "materials": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "window_ratios": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number",
+            "minimum": 0.05,
+            "maximum": 0.95
+          }
+        },
+        "balcony_probability": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "vegetation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "biome_profile",
+        "street_tree_density",
+        "lot_green_ratio"
+      ],
+      "properties": {
+        "biome_profile": {
+          "type": "string"
+        },
+        "street_tree_density": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "number",
+              "minimum": 0
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "lot_green_ratio": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        }
+      }
+    },
+    "roads": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "confidence",
+        "license"
+      ],
+      "properties": {
+        "source": {
+          "type": "string"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "license": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

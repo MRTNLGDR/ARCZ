@@ -1,0 +1,14 @@
+[package]
+name = "arcz-aedifex"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+description = "Intercâmbio loss-aware e georreferenciado entre Aedifex e ARCZ"
+
+[dependencies]
+arcz-cad.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+thiserror.workspace = true

@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "arcz://schemas/geo-anchor.schema.json",
+  "title": "ARCZ ↔ Aedifex Geo Anchor",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "origin_wgs84",
+    "north_rotation_deg",
+    "vertical_offset_m",
+    "axis_policy"
+  ],
+  "properties": {
+    "origin_wgs84": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "prefixItems": [
+        {
+          "type": "number",
+          "minimum": -180,
+          "maximum": 180
+        },
+        {
+          "type": "number",
+          "minimum": -90,
+          "maximum": 90
+        },
+        {
+          "type": "number"
+        }
+      ]
+    },
+    "north_rotation_deg": {
+      "type": "number",
+      "minimum": -360,
+      "maximum": 360
+    },
+    "vertical_offset_m": {
+      "type": "number",
+      "minimum": -12000,
+      "maximum": 12000
+    },
+    "axis_policy": {
+      "const": "AEDIFEX_X_EAST_Y_UP_Z_SOUTH"
+    }
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "arcz://schemas/floorplanner-scene-revision.schema.json",
+  "title": "Floorplanner Scene Revision",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "scene",
+    "expected_revision",
+    "origin"
+  ],
+  "properties": {
+    "scene": {
+      "$ref": "aedifex-scene.schema.json"
+    },
+    "expected_revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "origin": {
+      "type": "string",
+      "enum": [
+        "editor",
+        "mcp",
+        "import",
+        "procedural_promotion",
+        "recovery",
+        "migration"
+      ]
+    },
+    "author": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "message": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "metadata": {
+      "type": "object"
+    }
+  }
+}

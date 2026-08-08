@@ -1,0 +1,29 @@
+{
+  "version": "0.0.2",
+  "configurations": [
+    {
+      "name": "arcz-local-gateway",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["servidor.py", "8123"],
+      "port": 8123,
+      "autoPort": false
+    },
+    {
+      "name": "arcz-native-engine-generic",
+      "runtimeExecutable": "cargo",
+      "runtimeArgs": [
+        "run",
+        "--release",
+        "-p",
+        "arcz-app",
+        "--",
+        "--serve",
+        "8099",
+        "--offline-strict"
+      ],
+      "port": 8099,
+      "autoPort": false,
+      "note": "Modelo, região e projeto são selecionados pelo estado/API; nunca há empreendimento fixo no launcher."
+    }
+  ]
+}

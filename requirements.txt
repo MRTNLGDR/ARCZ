@@ -1,0 +1,5 @@
+# Dependências do runtime Python local. Em release air-gapped, instalar apenas
+# a partir de vendor/python/wheelhouse com hashes/manifesto próprios.
+jsonschema>=4.23,<5
+pyproj>=3.7,<4
+Pillow>=11,<12

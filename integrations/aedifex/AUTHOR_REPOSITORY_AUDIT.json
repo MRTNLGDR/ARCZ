@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "audited_at": "2026-08-06T18:30:00Z",
+  "scope": "public repositories returned for GitHub account TangSY",
+  "repository_count": 15,
+  "policy": "admit only unique, relevant, permissively licensed, local/offline-compatible capability after code/commit/license/security audit",
+  "repositories": [
+    {
+      "repository": "TangSY/aedifex",
+      "classification": "SELECTED_AUTHORING_KERNEL",
+      "relevance": "direct",
+      "decision": "PINNED_AND_INTEGRATED_BY_OVERLAY",
+      "evidence": "code/package/README/commit inspected",
+      "notes": "authoritative building authoring kernel"
+    },
+    {
+      "repository": "TangSY/dailydawn",
+      "classification": "UNCLASSIFIED_METADATA_ONLY",
+      "relevance": "unknown",
+      "decision": "NOT_ADMITTED_WITHOUT_CODE_AND_LICENSE_AUDIT",
+      "evidence": "repository metadata only",
+      "notes": "no inferred capability is treated as fact"
+    },
+    {
+      "repository": "TangSY/echarts-map-demo",
+      "classification": "ADMIN_BOUNDARY_IMPORT_REFERENCE",
+      "relevance": "adjacent",
+      "decision": "NOT_MERGED_REMOTE_API_PATTERN_CONFLICTS_WITH_OFFLINE_CORE",
+      "evidence": "README inspected",
+      "notes": "ideas may inform an optional administrative-boundary importer that materializes local packages"
+    },
+    {
+      "repository": "TangSY/edge-next-starter",
+      "classification": "CLOUD_STARTER_REFERENCE",
+      "relevance": "low",
+      "decision": "REJECTED_FOR_CORE_CLOUD_FIRST_CONFLICT",
+      "evidence": "README inspected",
+      "notes": "Cloudflare/D1/R2/KV deployment conflicts with ARCZ local-first desktop authority"
+    },
+    {
+      "repository": "TangSY/hxkj",
+      "classification": "UNCLASSIFIED_METADATA_ONLY",
+      "relevance": "unknown",
+      "decision": "NOT_ADMITTED_WITHOUT_CODE_AND_LICENSE_AUDIT",
+      "evidence": "repository metadata only",
+      "notes": "no inferred capability is treated as fact"
+    },
+    {
+      "repository": "TangSY/kepler.gl",
+      "classification": "GIS_ANALYTICS_REFERENCE",
+      "relevance": "adjacent",
+      "decision": "NOT_MERGED_OVERLAPS_ARCZ_AND_DEFAULTS_TO_PROVIDER_TOKEN",
+      "evidence": "README inspected",
+      "notes": "large geospatial analytics UI; evaluate later as optional local analytics plugin only after MapLibre/offline fork audit"
+    },
+    {
+      "repository": "TangSY/multiple-list-demo",
+      "classification": "UNRELATED_DEMO",
+      "relevance": "none",
+      "decision": "NOT_ADMITTED",
+      "evidence": "repository metadata",
+      "notes": "demo is not part of the architecture authoring domain"
+    },
+    {
+      "repository": "TangSY/near-color-change",
+      "classification": "POSSIBLE_IMAGE_UTILITY_METADATA_ONLY",
+      "relevance": "low",
+      "decision": "REVIEW_ONLY_IF_A_REAL_GAP_APPEARS",
+      "evidence": "repository metadata only",
+      "notes": "do not import by name; code/license/diff audit required first"
+    },
+    {
+      "repository": "TangSY/PDFMathTranslate",
+      "classification": "DOCUMENT_TRANSLATION_REFERENCE",
+      "relevance": "adjacent",
+      "decision": "NOT_MERGED_PROVIDER_HEAVY_AND_OUTSIDE_BUILDING_CORE",
+      "evidence": "README inspected",
+      "notes": "potential future local PDF translation worker; prompt translation already belongs to Local AI Broker"
+    },
+    {
+      "repository": "TangSY/react-hash-calendar",
+      "classification": "UNRELATED_UI_LIBRARY",
+      "relevance": "none",
+      "decision": "NOT_ADMITTED",
+      "evidence": "repository metadata",
+      "notes": "calendar widget is not an Aedifex/ARCZ capability"
+    },
+    {
+      "repository": "TangSY/TangSY",
+      "classification": "PROFILE_REPOSITORY",
+      "relevance": "none",
+      "decision": "NOT_ADMITTED",
+      "evidence": "repository metadata",
+      "notes": "profile repository"
+    },
+    {
+      "repository": "TangSY/vue-hash-calendar",
+      "classification": "UNRELATED_UI_LIBRARY",
+      "relevance": "none",
+      "decision": "NOT_ADMITTED",
+      "evidence": "repository metadata",
+      "notes": "calendar widget is not an Aedifex/ARCZ capability"
+    },
+    {
+      "repository": "TangSY/vue-img-onerror",
+      "classification": "UNRELATED_UI_UTILITY",
+      "relevance": "none",
+      "decision": "NOT_ADMITTED",
+      "evidence": "repository metadata",
+      "notes": "no unique product capability required"
+    },
+    {
+      "repository": "TangSY/vue3-hash-calendar",
+      "classification": "UNRELATED_UI_LIBRARY",
+      "relevance": "none",
+      "decision": "NOT_ADMITTED",
+      "evidence": "repository metadata",
+      "notes": "calendar widget is not an Aedifex/ARCZ capability"
+    },
+    {
+      "repository": "TangSY/webfunny_monitor",
+      "classification": "OBSERVABILITY_REFERENCE",
+      "relevance": "low",
+      "decision": "NOT_MERGED_EXTERNAL_MONITORING_STACK_NOT_NEEDED_FOR_LOCAL_CORE",
+      "evidence": "repository metadata",
+      "notes": "ARCZ keeps local diagnostics; future admission requires privacy/offline/license audit"
+    }
+  ],
+  "result": {
+    "selected": [
+      "TangSY/aedifex"
+    ],
+    "adjacent_reference": [
+      "TangSY/kepler.gl",
+      "TangSY/echarts-map-demo",
+      "TangSY/PDFMathTranslate"
+    ],
+    "rejected_or_deferred": 11
+  },
+  "warning": "Repository metadata is not source-code admission. Only Aedifex received package/symbol-level integration mapping in this handoff."
+}

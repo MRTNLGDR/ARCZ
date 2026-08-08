@@ -1,0 +1,2040 @@
+{
+  "schema_version": 1,
+  "upstream": {
+    "repository": "TangSY/aedifex",
+    "commit": "5319368bae16500ca5267f6f8d68b36c9586d5bb",
+    "license": "MIT",
+    "plugin_api_version": 2
+  },
+  "decision": {
+    "selected": "INTEGRATE_AEDIFEX_AS_BUILDING_AUTHORING_KERNEL",
+    "world_core": "ARCZ_EARTH",
+    "final_host": "SINGLE_TAURI_REACT_HOST",
+    "transitional_host": "SANDBOXED_LOOPBACK_SIDECAR",
+    "rejected": [
+      "REPLACE_WORLD_CORE",
+      "GLB_AS_EDITABLE_SOURCE",
+      "REMOTE_RUNTIME",
+      "BIG_BANG_RUST_REWRITE"
+    ]
+  },
+  "authorities": {
+    "ARCZ": [
+      "WGS84/ECEF/ENU",
+      "region/lot",
+      "terrain/context",
+      "procedural world",
+      "jobs/budget",
+      "cinema",
+      "render",
+      "Street",
+      "provenance"
+    ],
+    "AEDIFEX": [
+      "parametric building document",
+      "2D/3D authoring",
+      "all node kinds",
+      "materials/catalog",
+      "plugins",
+      "IFC",
+      "MCP building operations"
+    ],
+    "DERIVED": [
+      "readonly GLB",
+      "semantic manifest",
+      "GeoAnchor",
+      "revision/hash",
+      "render passes"
+    ]
+  },
+  "packages": [
+    {
+      "id": "@aedifex/core",
+      "source": "packages/core/package.json",
+      "authority": "AEDIFEX",
+      "integration": "native scene schemas/store/history/registry remain authoritative",
+      "target": "controlled Aedifex fork + ARCZ overlay",
+      "status": "LOCKED_AND_MAPPED_BUILD_BLOCKED",
+      "loss_policy": "NO_SOURCE_REWRITE; PATCH_MANIFEST_ONLY",
+      "tests": [
+        "commit/version/license lock",
+        "offline build",
+        "upstream tests",
+        "ARCZ overlay syntax/E2E"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_MISSING",
+        "BUN_BUILD_NOT_EXECUTED"
+      ]
+    },
+    {
+      "id": "@aedifex/viewer",
+      "source": "packages/viewer/package.json",
+      "authority": "AEDIFEX",
+      "integration": "native Three/R3F viewport mounted by the controlled host",
+      "target": "controlled Aedifex fork + ARCZ overlay",
+      "status": "LOCKED_AND_MAPPED_BUILD_BLOCKED",
+      "loss_policy": "NO_SOURCE_REWRITE; PATCH_MANIFEST_ONLY",
+      "tests": [
+        "commit/version/license lock",
+        "offline build",
+        "upstream tests",
+        "ARCZ overlay syntax/E2E"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_MISSING",
+        "BUN_BUILD_NOT_EXECUTED"
+      ]
+    },
+    {
+      "id": "@aedifex/editor",
+      "source": "packages/editor/package.json",
+      "authority": "AEDIFEX",
+      "integration": "single Floorplanner/inspector/catalog/tool surface",
+      "target": "controlled Aedifex fork + ARCZ overlay",
+      "status": "LOCKED_AND_MAPPED_BUILD_BLOCKED",
+      "loss_policy": "NO_SOURCE_REWRITE; PATCH_MANIFEST_ONLY",
+      "tests": [
+        "commit/version/license lock",
+        "offline build",
+        "upstream tests",
+        "ARCZ overlay syntax/E2E"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_MISSING",
+        "BUN_BUILD_NOT_EXECUTED"
+      ]
+    },
+    {
+      "id": "@aedifex/mcp",
+      "source": "packages/mcp/package.json",
+      "authority": "SHARED",
+      "integration": "in-memory MCP catalog bridged to ARCZ revisions and approvals",
+      "target": "controlled Aedifex fork + ARCZ overlay",
+      "status": "LOCKED_AND_MAPPED_BUILD_BLOCKED",
+      "loss_policy": "NO_SOURCE_REWRITE; PATCH_MANIFEST_ONLY",
+      "tests": [
+        "commit/version/license lock",
+        "offline build",
+        "upstream tests",
+        "ARCZ overlay syntax/E2E"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_MISSING",
+        "BUN_BUILD_NOT_EXECUTED"
+      ]
+    },
+    {
+      "id": "@aedifex/nodes",
+      "source": "packages/nodes/package.json",
+      "authority": "AEDIFEX",
+      "integration": "builtinPlugin loads every locked native node kind",
+      "target": "controlled Aedifex fork + ARCZ overlay",
+      "status": "LOCKED_AND_MAPPED_BUILD_BLOCKED",
+      "loss_policy": "NO_SOURCE_REWRITE; PATCH_MANIFEST_ONLY",
+      "tests": [
+        "commit/version/license lock",
+        "offline build",
+        "upstream tests",
+        "ARCZ overlay syntax/E2E"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_MISSING",
+        "BUN_BUILD_NOT_EXECUTED"
+      ]
+    },
+    {
+      "id": "@aedifex/plugin-trees",
+      "source": "packages/plugin-trees/package.json",
+      "authority": "AEDIFEX_PLUGIN",
+      "integration": "local Plugin API v2 admission for trees/flowers/grass",
+      "target": "controlled Aedifex fork + ARCZ overlay",
+      "status": "LOCKED_AND_MAPPED_BUILD_BLOCKED",
+      "loss_policy": "NO_SOURCE_REWRITE; PATCH_MANIFEST_ONLY",
+      "tests": [
+        "commit/version/license lock",
+        "offline build",
+        "upstream tests",
+        "ARCZ overlay syntax/E2E"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_MISSING",
+        "BUN_BUILD_NOT_EXECUTED"
+      ]
+    },
+    {
+      "id": "@aedifex/ifc-converter",
+      "source": "packages/ifc-converter/package.json",
+      "authority": "AEDIFEX_IMPORT",
+      "integration": "local web-ifc conversion in a transactional ARCZ panel",
+      "target": "controlled Aedifex fork + ARCZ overlay",
+      "status": "LOCKED_AND_MAPPED_BUILD_BLOCKED",
+      "loss_policy": "NO_SOURCE_REWRITE; PATCH_MANIFEST_ONLY",
+      "tests": [
+        "commit/version/license lock",
+        "offline build",
+        "upstream tests",
+        "ARCZ overlay syntax/E2E"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_MISSING",
+        "BUN_BUILD_NOT_EXECUTED"
+      ]
+    }
+  ],
+  "apps": [
+    {
+      "id": "apps/editor",
+      "authority": "REFERENCE_HOST_ONLY",
+      "integration": "features folded into the single ARCZ floorplanner host; standalone app not shipped",
+      "source": "apps/editor",
+      "target": "@arcz/aedifex-floorplanner",
+      "status": "MAPPED_BUILD_BLOCKED",
+      "loss_policy": "NO_DUPLICATE_PROJECT_STORE",
+      "tests": [
+        "one Editor mount",
+        "one chat",
+        "one revision store"
+      ]
+    },
+    {
+      "id": "apps/ifc-converter",
+      "authority": "REFERENCE_UI_ONLY",
+      "integration": "converter package mounted in the unified Import/Export panel",
+      "source": "apps/ifc-converter",
+      "target": "ArczImportExportPanel",
+      "status": "SOURCE_INTEGRATED_BUILD_BLOCKED",
+      "loss_policy": "TRANSACTIONAL_ROLLBACK",
+      "tests": [
+        "local WASM copy",
+        "scene validation",
+        "revision conflict",
+        "rollback"
+      ]
+    }
+  ],
+  "plugins": [
+    {
+      "id": "@aedifex/plugin-trees",
+      "authority": "AEDIFEX_PLUGIN_API_V2",
+      "integration": "treesPlugin plus treesHostPanel loaded once with duplicate guard and local assets",
+      "source": "packages/plugin-trees",
+      "target": "controlled floorplanner host",
+      "status": "SOURCE_INTEGRATED_BUILD_BLOCKED",
+      "loss_policy": "PLUGIN_PAYLOAD_PRESERVED",
+      "tests": [
+        "serialization",
+        "clean unload",
+        "SSR-safe admission",
+        "asset license/provenance"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING"
+      ]
+    }
+  ],
+  "node_kinds": [
+    {
+      "id": "site",
+      "category": "hierarchy_site",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-cad-document/site-hierarchy",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.site",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "building",
+      "category": "hierarchy_site",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-cad-document/site-hierarchy",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.building",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "level",
+      "category": "hierarchy_site",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-cad-document/site-hierarchy",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.level",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "wall",
+      "category": "architecture_envelope",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-cad-document/architectural-elements",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.wall",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "fence",
+      "category": "architecture_envelope",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-cad-document/architectural-elements",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.fence",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "slab",
+      "category": "architecture_envelope",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-cad-document/architectural-elements",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.slab",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "ceiling",
+      "category": "architecture_envelope",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-cad-document/architectural-elements",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.ceiling",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "door",
+      "category": "architecture_envelope",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-cad-document/architectural-elements",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.door",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "window",
+      "category": "architecture_envelope",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-cad-document/architectural-elements",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.window",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "cabinet",
+      "category": "catalog_furniture",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-bim-document/catalog-instances",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.cabinet",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "cabinet-module",
+      "category": "catalog_furniture",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-bim-document/catalog-instances",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.cabinet-module",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "item",
+      "category": "catalog_furniture",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-bim-document/catalog-instances",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.item",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "column",
+      "category": "architecture_envelope",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-cad-document/architectural-elements",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.column",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "elevator",
+      "category": "vertical_circulation",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-cad-document/circulation",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.elevator",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "roof",
+      "category": "roof_system",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-roof + arcz-cad-document/roof-accessories",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.roof",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "roof-segment",
+      "category": "roof_system",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-roof + arcz-cad-document/roof-accessories",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.roof-segment",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "stair",
+      "category": "vertical_circulation",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-cad-document/circulation",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.stair",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "stair-segment",
+      "category": "vertical_circulation",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-cad-document/circulation",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.stair-segment",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "zone",
+      "category": "architecture_envelope",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-cad-document/architectural-elements",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.zone",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "guide",
+      "category": "documentation_context",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-cad-document/annotations",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.guide",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "scan",
+      "category": "documentation_context",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-cad-document/annotations",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.scan",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "measurement",
+      "category": "documentation_context",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-cad-document/annotations",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.measurement",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "construction-dimension",
+      "category": "documentation_context",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-cad-document/annotations",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.construction-dimension",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "structural-grid",
+      "category": "hierarchy_site",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-cad-document/site-hierarchy",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.structural-grid",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "box-vent",
+      "category": "roof_system",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-roof + arcz-cad-document/roof-accessories",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.box-vent",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "ridge-vent",
+      "category": "roof_system",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-roof + arcz-cad-document/roof-accessories",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.ridge-vent",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "turbine-vent",
+      "category": "roof_system",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-roof + arcz-cad-document/roof-accessories",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.turbine-vent",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "cupola",
+      "category": "roof_system",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-roof + arcz-cad-document/roof-accessories",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.cupola",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "eyebrow-vent",
+      "category": "roof_system",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-roof + arcz-cad-document/roof-accessories",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.eyebrow-vent",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "chimney",
+      "category": "roof_system",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-roof + arcz-cad-document/roof-accessories",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.chimney",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "solar-panel",
+      "category": "roof_system",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-roof + arcz-cad-document/roof-accessories",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.solar-panel",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "skylight",
+      "category": "roof_system",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-roof + arcz-cad-document/roof-accessories",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.skylight",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "dormer",
+      "category": "roof_system",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-roof + arcz-cad-document/roof-accessories",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.dormer",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "gutter",
+      "category": "roof_system",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-roof + arcz-cad-document/roof-accessories",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.gutter",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "downspout",
+      "category": "roof_system",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-roof + arcz-cad-document/roof-accessories",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.downspout",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "duct-segment",
+      "category": "mep_hvac_plumbing",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-bim-document/mep",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.duct-segment",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "duct-fitting",
+      "category": "mep_hvac_plumbing",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-bim-document/mep",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.duct-fitting",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "duct-terminal",
+      "category": "mep_hvac_plumbing",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-bim-document/mep",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.duct-terminal",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "hvac-equipment",
+      "category": "mep_hvac_plumbing",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-bim-document/mep",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.hvac-equipment",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "lineset",
+      "category": "mep_hvac_plumbing",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-bim-document/mep",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.lineset",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "liquid-line",
+      "category": "mep_hvac_plumbing",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-bim-document/mep",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.liquid-line",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "pipe-segment",
+      "category": "mep_hvac_plumbing",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-bim-document/mep",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.pipe-segment",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "pipe-fitting",
+      "category": "mep_hvac_plumbing",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-bim-document/mep",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.pipe-fitting",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "pipe-trap",
+      "category": "mep_hvac_plumbing",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-bim-document/mep",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.pipe-trap",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "shelf",
+      "category": "catalog_furniture",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-bim-document/catalog-instances",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.shelf",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "spawn",
+      "category": "hierarchy_site",
+      "source": "@aedifex/nodes",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-cad-document/site-hierarchy",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.spawn",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    }
+  ],
+  "extension_node_kinds": [
+    {
+      "id": "trees:tree",
+      "category": "nature_plugin",
+      "source": "@aedifex/plugin-trees",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-vegetation/plugin-adapter",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.trees:tree",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "trees:flower",
+      "category": "nature_plugin",
+      "source": "@aedifex/plugin-trees",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-vegetation/plugin-adapter",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.trees:flower",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    },
+    {
+      "id": "trees:grass",
+      "category": "nature_plugin",
+      "source": "@aedifex/plugin-trees",
+      "authority": "AEDIFEX_BUILDING_AUTHORING_KERNEL",
+      "document_authority": "AEDIFEX",
+      "integration": "native registry → editor/viewport/tools → immutable ARCZ revision → validated export",
+      "globe_policy": "READONLY_GLB_DERIVATIVE",
+      "target": "arcz-vegetation/plugin-adapter",
+      "rust_parity": "NOT_MIGRATED_UNTIL_GOLDEN_AND_ROUNDTRIP_GATES_PASS",
+      "loss_policy": "FAIL_CLOSED_WITH_PER_FIELD_LOSS_REPORT",
+      "feature_flag": "arcz.aedifex.rust_parity.trees:grass",
+      "status": "PRESERVED_IN_PINNED_UPSTREAM_BUILD_BLOCKED",
+      "tests": [
+        "generated upstream inventory coverage",
+        "native schema/serialization tests from pinned upstream",
+        "Aedifex↔ARCZ golden round-trip before Rust activation",
+        "GLB derivative hash/revision/GeoAnchor validation"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING",
+        "RUST_KIND_PARITY_NOT_PROVEN"
+      ]
+    }
+  ],
+  "tool_families": [
+    {
+      "id": "scene-query",
+      "authority": "AEDIFEX_MCP_WITH_ARCZ_TRANSACTION_GUARD",
+      "integration": "dynamic MCP catalog; host injects project_id/expected_revision; result hash and audit trail",
+      "source": "@aedifex/mcp",
+      "target": "ARCZ Global Chat tool run",
+      "status": "SOURCE_INTEGRATED_RUNTIME_BUILD_BLOCKED",
+      "execution_policy": "AUTO_READ",
+      "revision_guard": true,
+      "audit": true,
+      "loss_policy": "NO_TEXT_ONLY_SUCCESS; REAL_TOOL_RESULT_REQUIRED",
+      "tests": [
+        "tool catalog contract",
+        "preview/approve/reject",
+        "optimistic revision conflict",
+        "request/result hash"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING"
+      ]
+    },
+    {
+      "id": "measurement",
+      "authority": "AEDIFEX_MCP_WITH_ARCZ_TRANSACTION_GUARD",
+      "integration": "dynamic MCP catalog; host injects project_id/expected_revision; result hash and audit trail",
+      "source": "@aedifex/mcp",
+      "target": "ARCZ Global Chat tool run",
+      "status": "SOURCE_INTEGRATED_RUNTIME_BUILD_BLOCKED",
+      "execution_policy": "AUTO_READ",
+      "revision_guard": true,
+      "audit": true,
+      "loss_policy": "NO_TEXT_ONLY_SUCCESS; REAL_TOOL_RESULT_REQUIRED",
+      "tests": [
+        "tool catalog contract",
+        "preview/approve/reject",
+        "optimistic revision conflict",
+        "request/result hash"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING"
+      ]
+    },
+    {
+      "id": "construction",
+      "authority": "AEDIFEX_MCP_WITH_ARCZ_TRANSACTION_GUARD",
+      "integration": "dynamic MCP catalog; host injects project_id/expected_revision; result hash and audit trail",
+      "source": "@aedifex/mcp",
+      "target": "ARCZ Global Chat tool run",
+      "status": "SOURCE_INTEGRATED_RUNTIME_BUILD_BLOCKED",
+      "execution_policy": "PREVIEW_APPROVE_MUTATION",
+      "revision_guard": true,
+      "audit": true,
+      "loss_policy": "NO_TEXT_ONLY_SUCCESS; REAL_TOOL_RESULT_REQUIRED",
+      "tests": [
+        "tool catalog contract",
+        "preview/approve/reject",
+        "optimistic revision conflict",
+        "request/result hash"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING"
+      ]
+    },
+    {
+      "id": "rooms",
+      "authority": "AEDIFEX_MCP_WITH_ARCZ_TRANSACTION_GUARD",
+      "integration": "dynamic MCP catalog; host injects project_id/expected_revision; result hash and audit trail",
+      "source": "@aedifex/mcp",
+      "target": "ARCZ Global Chat tool run",
+      "status": "SOURCE_INTEGRATED_RUNTIME_BUILD_BLOCKED",
+      "execution_policy": "PREVIEW_APPROVE_MUTATION",
+      "revision_guard": true,
+      "audit": true,
+      "loss_policy": "NO_TEXT_ONLY_SUCCESS; REAL_TOOL_RESULT_REQUIRED",
+      "tests": [
+        "tool catalog contract",
+        "preview/approve/reject",
+        "optimistic revision conflict",
+        "request/result hash"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING"
+      ]
+    },
+    {
+      "id": "patch",
+      "authority": "AEDIFEX_MCP_WITH_ARCZ_TRANSACTION_GUARD",
+      "integration": "dynamic MCP catalog; host injects project_id/expected_revision; result hash and audit trail",
+      "source": "@aedifex/mcp",
+      "target": "ARCZ Global Chat tool run",
+      "status": "SOURCE_INTEGRATED_RUNTIME_BUILD_BLOCKED",
+      "execution_policy": "PREVIEW_APPROVE_MUTATION",
+      "revision_guard": true,
+      "audit": true,
+      "loss_policy": "NO_TEXT_ONLY_SUCCESS; REAL_TOOL_RESULT_REQUIRED",
+      "tests": [
+        "tool catalog contract",
+        "preview/approve/reject",
+        "optimistic revision conflict",
+        "request/result hash"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING"
+      ]
+    },
+    {
+      "id": "levels",
+      "authority": "AEDIFEX_MCP_WITH_ARCZ_TRANSACTION_GUARD",
+      "integration": "dynamic MCP catalog; host injects project_id/expected_revision; result hash and audit trail",
+      "source": "@aedifex/mcp",
+      "target": "ARCZ Global Chat tool run",
+      "status": "SOURCE_INTEGRATED_RUNTIME_BUILD_BLOCKED",
+      "execution_policy": "PREVIEW_APPROVE_MUTATION",
+      "revision_guard": true,
+      "audit": true,
+      "loss_policy": "NO_TEXT_ONLY_SUCCESS; REAL_TOOL_RESULT_REQUIRED",
+      "tests": [
+        "tool catalog contract",
+        "preview/approve/reject",
+        "optimistic revision conflict",
+        "request/result hash"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING"
+      ]
+    },
+    {
+      "id": "walls",
+      "authority": "AEDIFEX_MCP_WITH_ARCZ_TRANSACTION_GUARD",
+      "integration": "dynamic MCP catalog; host injects project_id/expected_revision; result hash and audit trail",
+      "source": "@aedifex/mcp",
+      "target": "ARCZ Global Chat tool run",
+      "status": "SOURCE_INTEGRATED_RUNTIME_BUILD_BLOCKED",
+      "execution_policy": "PREVIEW_APPROVE_MUTATION",
+      "revision_guard": true,
+      "audit": true,
+      "loss_policy": "NO_TEXT_ONLY_SUCCESS; REAL_TOOL_RESULT_REQUIRED",
+      "tests": [
+        "tool catalog contract",
+        "preview/approve/reject",
+        "optimistic revision conflict",
+        "request/result hash"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING"
+      ]
+    },
+    {
+      "id": "items",
+      "authority": "AEDIFEX_MCP_WITH_ARCZ_TRANSACTION_GUARD",
+      "integration": "dynamic MCP catalog; host injects project_id/expected_revision; result hash and audit trail",
+      "source": "@aedifex/mcp",
+      "target": "ARCZ Global Chat tool run",
+      "status": "SOURCE_INTEGRATED_RUNTIME_BUILD_BLOCKED",
+      "execution_policy": "PREVIEW_APPROVE_MUTATION",
+      "revision_guard": true,
+      "audit": true,
+      "loss_policy": "NO_TEXT_ONLY_SUCCESS; REAL_TOOL_RESULT_REQUIRED",
+      "tests": [
+        "tool catalog contract",
+        "preview/approve/reject",
+        "optimistic revision conflict",
+        "request/result hash"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING"
+      ]
+    },
+    {
+      "id": "openings",
+      "authority": "AEDIFEX_MCP_WITH_ARCZ_TRANSACTION_GUARD",
+      "integration": "dynamic MCP catalog; host injects project_id/expected_revision; result hash and audit trail",
+      "source": "@aedifex/mcp",
+      "target": "ARCZ Global Chat tool run",
+      "status": "SOURCE_INTEGRATED_RUNTIME_BUILD_BLOCKED",
+      "execution_policy": "PREVIEW_APPROVE_MUTATION",
+      "revision_guard": true,
+      "audit": true,
+      "loss_policy": "NO_TEXT_ONLY_SUCCESS; REAL_TOOL_RESULT_REQUIRED",
+      "tests": [
+        "tool catalog contract",
+        "preview/approve/reject",
+        "optimistic revision conflict",
+        "request/result hash"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING"
+      ]
+    },
+    {
+      "id": "zones",
+      "authority": "AEDIFEX_MCP_WITH_ARCZ_TRANSACTION_GUARD",
+      "integration": "dynamic MCP catalog; host injects project_id/expected_revision; result hash and audit trail",
+      "source": "@aedifex/mcp",
+      "target": "ARCZ Global Chat tool run",
+      "status": "SOURCE_INTEGRATED_RUNTIME_BUILD_BLOCKED",
+      "execution_policy": "PREVIEW_APPROVE_MUTATION",
+      "revision_guard": true,
+      "audit": true,
+      "loss_policy": "NO_TEXT_ONLY_SUCCESS; REAL_TOOL_RESULT_REQUIRED",
+      "tests": [
+        "tool catalog contract",
+        "preview/approve/reject",
+        "optimistic revision conflict",
+        "request/result hash"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING"
+      ]
+    },
+    {
+      "id": "duplicate",
+      "authority": "AEDIFEX_MCP_WITH_ARCZ_TRANSACTION_GUARD",
+      "integration": "dynamic MCP catalog; host injects project_id/expected_revision; result hash and audit trail",
+      "source": "@aedifex/mcp",
+      "target": "ARCZ Global Chat tool run",
+      "status": "SOURCE_INTEGRATED_RUNTIME_BUILD_BLOCKED",
+      "execution_policy": "PREVIEW_APPROVE_MUTATION",
+      "revision_guard": true,
+      "audit": true,
+      "loss_policy": "NO_TEXT_ONLY_SUCCESS; REAL_TOOL_RESULT_REQUIRED",
+      "tests": [
+        "tool catalog contract",
+        "preview/approve/reject",
+        "optimistic revision conflict",
+        "request/result hash"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING"
+      ]
+    },
+    {
+      "id": "delete",
+      "authority": "AEDIFEX_MCP_WITH_ARCZ_TRANSACTION_GUARD",
+      "integration": "dynamic MCP catalog; host injects project_id/expected_revision; result hash and audit trail",
+      "source": "@aedifex/mcp",
+      "target": "ARCZ Global Chat tool run",
+      "status": "SOURCE_INTEGRATED_RUNTIME_BUILD_BLOCKED",
+      "execution_policy": "PREVIEW_APPROVE_MUTATION",
+      "revision_guard": true,
+      "audit": true,
+      "loss_policy": "NO_TEXT_ONLY_SUCCESS; REAL_TOOL_RESULT_REQUIRED",
+      "tests": [
+        "tool catalog contract",
+        "preview/approve/reject",
+        "optimistic revision conflict",
+        "request/result hash"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING"
+      ]
+    },
+    {
+      "id": "undo-redo",
+      "authority": "AEDIFEX_MCP_WITH_ARCZ_TRANSACTION_GUARD",
+      "integration": "dynamic MCP catalog; host injects project_id/expected_revision; result hash and audit trail",
+      "source": "@aedifex/mcp",
+      "target": "ARCZ Global Chat tool run",
+      "status": "SOURCE_INTEGRATED_RUNTIME_BUILD_BLOCKED",
+      "execution_policy": "PREVIEW_APPROVE_MUTATION",
+      "revision_guard": true,
+      "audit": true,
+      "loss_policy": "NO_TEXT_ONLY_SUCCESS; REAL_TOOL_RESULT_REQUIRED",
+      "tests": [
+        "tool catalog contract",
+        "preview/approve/reject",
+        "optimistic revision conflict",
+        "request/result hash"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING"
+      ]
+    },
+    {
+      "id": "export-json",
+      "authority": "AEDIFEX_MCP_WITH_ARCZ_TRANSACTION_GUARD",
+      "integration": "dynamic MCP catalog; host injects project_id/expected_revision; result hash and audit trail",
+      "source": "@aedifex/mcp",
+      "target": "ARCZ Global Chat tool run",
+      "status": "SOURCE_INTEGRATED_RUNTIME_BUILD_BLOCKED",
+      "execution_policy": "CONFIRM_EXPORT",
+      "revision_guard": true,
+      "audit": true,
+      "loss_policy": "NO_TEXT_ONLY_SUCCESS; REAL_TOOL_RESULT_REQUIRED",
+      "tests": [
+        "tool catalog contract",
+        "preview/approve/reject",
+        "optimistic revision conflict",
+        "request/result hash"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING"
+      ]
+    },
+    {
+      "id": "export-glb",
+      "authority": "AEDIFEX_MCP_WITH_ARCZ_TRANSACTION_GUARD",
+      "integration": "dynamic MCP catalog; host injects project_id/expected_revision; result hash and audit trail",
+      "source": "@aedifex/mcp",
+      "target": "ARCZ Global Chat tool run",
+      "status": "SOURCE_INTEGRATED_RUNTIME_BUILD_BLOCKED",
+      "execution_policy": "CONFIRM_EXPORT",
+      "revision_guard": true,
+      "audit": true,
+      "loss_policy": "NO_TEXT_ONLY_SUCCESS; REAL_TOOL_RESULT_REQUIRED",
+      "tests": [
+        "tool catalog contract",
+        "preview/approve/reject",
+        "optimistic revision conflict",
+        "request/result hash"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING"
+      ]
+    },
+    {
+      "id": "validation",
+      "authority": "AEDIFEX_MCP_WITH_ARCZ_TRANSACTION_GUARD",
+      "integration": "dynamic MCP catalog; host injects project_id/expected_revision; result hash and audit trail",
+      "source": "@aedifex/mcp",
+      "target": "ARCZ Global Chat tool run",
+      "status": "SOURCE_INTEGRATED_RUNTIME_BUILD_BLOCKED",
+      "execution_policy": "AUTO_READ",
+      "revision_guard": true,
+      "audit": true,
+      "loss_policy": "NO_TEXT_ONLY_SUCCESS; REAL_TOOL_RESULT_REQUIRED",
+      "tests": [
+        "tool catalog contract",
+        "preview/approve/reject",
+        "optimistic revision conflict",
+        "request/result hash"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING"
+      ]
+    },
+    {
+      "id": "collisions",
+      "authority": "AEDIFEX_MCP_WITH_ARCZ_TRANSACTION_GUARD",
+      "integration": "dynamic MCP catalog; host injects project_id/expected_revision; result hash and audit trail",
+      "source": "@aedifex/mcp",
+      "target": "ARCZ Global Chat tool run",
+      "status": "SOURCE_INTEGRATED_RUNTIME_BUILD_BLOCKED",
+      "execution_policy": "AUTO_READ",
+      "revision_guard": true,
+      "audit": true,
+      "loss_policy": "NO_TEXT_ONLY_SUCCESS; REAL_TOOL_RESULT_REQUIRED",
+      "tests": [
+        "tool catalog contract",
+        "preview/approve/reject",
+        "optimistic revision conflict",
+        "request/result hash"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING"
+      ]
+    },
+    {
+      "id": "templates",
+      "authority": "AEDIFEX_MCP_WITH_ARCZ_TRANSACTION_GUARD",
+      "integration": "dynamic MCP catalog; host injects project_id/expected_revision; result hash and audit trail",
+      "source": "@aedifex/mcp",
+      "target": "ARCZ Global Chat tool run",
+      "status": "SOURCE_INTEGRATED_RUNTIME_BUILD_BLOCKED",
+      "execution_policy": "PREVIEW_APPROVE_MUTATION",
+      "revision_guard": true,
+      "audit": true,
+      "loss_policy": "NO_TEXT_ONLY_SUCCESS; REAL_TOOL_RESULT_REQUIRED",
+      "tests": [
+        "tool catalog contract",
+        "preview/approve/reject",
+        "optimistic revision conflict",
+        "request/result hash"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING"
+      ]
+    },
+    {
+      "id": "scene-lifecycle",
+      "authority": "AEDIFEX_MCP_WITH_ARCZ_TRANSACTION_GUARD",
+      "integration": "dynamic MCP catalog; host injects project_id/expected_revision; result hash and audit trail",
+      "source": "@aedifex/mcp",
+      "target": "ARCZ Global Chat tool run",
+      "status": "SOURCE_INTEGRATED_RUNTIME_BUILD_BLOCKED",
+      "execution_policy": "MIXED_FAIL_CLOSED",
+      "revision_guard": true,
+      "audit": true,
+      "loss_policy": "NO_TEXT_ONLY_SUCCESS; REAL_TOOL_RESULT_REQUIRED",
+      "tests": [
+        "tool catalog contract",
+        "preview/approve/reject",
+        "optimistic revision conflict",
+        "request/result hash"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING"
+      ]
+    },
+    {
+      "id": "variants",
+      "authority": "AEDIFEX_MCP_WITH_ARCZ_TRANSACTION_GUARD",
+      "integration": "dynamic MCP catalog; host injects project_id/expected_revision; result hash and audit trail",
+      "source": "@aedifex/mcp",
+      "target": "ARCZ Global Chat tool run",
+      "status": "SOURCE_INTEGRATED_RUNTIME_BUILD_BLOCKED",
+      "execution_policy": "PREVIEW_APPROVE_MUTATION",
+      "revision_guard": true,
+      "audit": true,
+      "loss_policy": "NO_TEXT_ONLY_SUCCESS; REAL_TOOL_RESULT_REQUIRED",
+      "tests": [
+        "tool catalog contract",
+        "preview/approve/reject",
+        "optimistic revision conflict",
+        "request/result hash"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING"
+      ]
+    },
+    {
+      "id": "photo-to-scene",
+      "authority": "AEDIFEX_MCP_WITH_ARCZ_TRANSACTION_GUARD",
+      "integration": "dynamic MCP catalog; host injects project_id/expected_revision; result hash and audit trail",
+      "source": "@aedifex/mcp",
+      "target": "ARCZ Global Chat tool run",
+      "status": "SOURCE_INTEGRATED_RUNTIME_BUILD_BLOCKED",
+      "execution_policy": "PREVIEW_APPROVE_MUTATION",
+      "revision_guard": true,
+      "audit": true,
+      "loss_policy": "NO_TEXT_ONLY_SUCCESS; REAL_TOOL_RESULT_REQUIRED",
+      "tests": [
+        "tool catalog contract",
+        "preview/approve/reject",
+        "optimistic revision conflict",
+        "request/result hash"
+      ],
+      "blockers": [
+        "AEDIFEX_UPSTREAM_BUILD_MISSING"
+      ]
+    }
+  ],
+  "global_modules": [
+    {
+      "id": "region-to-floorplanner",
+      "authority": "ARCZ",
+      "integration": "ModelingContextPackage + GeoAnchor + readonly hash-verified context layers",
+      "status": "VERIFIED_CONTRACT_BROWSER_BLOCKED"
+    },
+    {
+      "id": "single-global-chat",
+      "authority": "ARCZ",
+      "integration": "one history; ARCZ tools plus real Aedifex MCP catalog",
+      "status": "VERIFIED_BACKEND_AND_JS"
+    },
+    {
+      "id": "prompt-library",
+      "authority": "ARCZ",
+      "integration": "SQLite versions, compile, import/export hash, enhancer and translator through local broker",
+      "status": "VERIFIED_MODELS_OPTIONAL_BLOCKED"
+    },
+    {
+      "id": "reference-media",
+      "authority": "ARCZ",
+      "integration": "content-addressed verified image/video/audio/document/BIM/CAD/geodata/point-cloud/HDR library",
+      "status": "VERIFIED"
+    },
+    {
+      "id": "photoreal-render",
+      "authority": "ARCZ",
+      "integration": "Aedifex GLB → Blender/Cycles → passes → local diffusion/upscale optional → geometry guard",
+      "status": "SOURCE_VERIFIED_RUNTIME_BLOCKED"
+    },
+    {
+      "id": "cinematic-earth",
+      "authority": "ARCZ",
+      "integration": "Cesium globe, atmosphere, local procedural clouds, sequential camera callbacks, cancel/restore",
+      "status": "UNIT_VERIFIED_BROWSER_BLOCKED"
+    },
+    {
+      "id": "global-panel-dock",
+      "authority": "ARCZ",
+      "integration": "collapsed default, hover/focus/touch, pin, resize, persistence, ARIA tabs",
+      "status": "VERIFIED_JS"
+    }
+  ],
+  "community_sources": [
+    {
+      "id": "pablogventura/aedifex",
+      "source": "8eeec5d0917b04c29bb468b5682c9ec342a38198",
+      "authority": "REFERENCE_OR_PATCH_CANDIDATE_ONLY",
+      "integration": "site-oriented sample scene import and Punilla winter sun theme",
+      "status": "CANDIDATE_PATCH_AFTER_CODE_AND_ASSET_LICENSE_AUDIT",
+      "loss_policy": "NO_BLIND_MERGE",
+      "tests": [
+        "license",
+        "commit/diff",
+        "asset provenance",
+        "offline",
+        "plugin cleanup",
+        "rollback"
+      ]
+    },
+    {
+      "id": "arash-dn/aedifex",
+      "source": "3a65be5a1c69e58b14a770af6032bca2438ac4a3",
+      "authority": "REFERENCE_OR_PATCH_CANDIDATE_ONLY",
+      "integration": "upstream integration history mirroring reviewed rebuild",
+      "status": "LINEAGE_REFERENCE_ONLY",
+      "loss_policy": "NO_BLIND_MERGE",
+      "tests": [
+        "license",
+        "commit/diff",
+        "asset provenance",
+        "offline",
+        "plugin cleanup",
+        "rollback"
+      ]
+    },
+    {
+      "id": "junhuac/aedifex",
+      "source": "metadata-only",
+      "authority": "REFERENCE_OR_PATCH_CANDIDATE_ONLY",
+      "integration": "behind selected upstream with no current unique patch established",
+      "status": "REJECTED_AS_OBSOLETE",
+      "loss_policy": "NO_BLIND_MERGE",
+      "tests": [
+        "license",
+        "commit/diff",
+        "asset provenance",
+        "offline",
+        "plugin cleanup",
+        "rollback"
+      ]
+    },
+    {
+      "id": "mingchen666/aedifex",
+      "source": "metadata-only",
+      "authority": "REFERENCE_OR_PATCH_CANDIDATE_ONLY",
+      "integration": "highly divergent AI/UI/provider rewrite",
+      "status": "REFERENCE_ONLY_NO_BLIND_MERGE",
+      "loss_policy": "NO_BLIND_MERGE",
+      "tests": [
+        "license",
+        "commit/diff",
+        "asset provenance",
+        "offline",
+        "plugin cleanup",
+        "rollback"
+      ]
+    },
+    {
+      "id": "nyhxiaoning/aedifex-3d",
+      "source": "metadata-only",
+      "authority": "REFERENCE_OR_PATCH_CANDIDATE_ONLY",
+      "integration": "historical divergent fork with many assets and rewrites",
+      "status": "REFERENCE_ONLY_NO_BLIND_MERGE",
+      "loss_policy": "NO_BLIND_MERGE",
+      "tests": [
+        "license",
+        "commit/diff",
+        "asset provenance",
+        "offline",
+        "plugin cleanup",
+        "rollback"
+      ]
+    }
+  ],
+  "gates": [
+    {
+      "id": "python-tests",
+      "status": "PASSED",
+      "proof": "pytest suite in validation report",
+      "blocking": true
+    },
+    {
+      "id": "javascript-tests",
+      "status": "PASSED",
+      "proof": "node:test suite in validation report",
+      "blocking": true
+    },
+    {
+      "id": "aedifex-vendor-build",
+      "status": "BLOCKED",
+      "proof": "pinned checkout/Bun build unavailable in this environment",
+      "blocking": true
+    },
+    {
+      "id": "cesium-browser-e2e",
+      "status": "BLOCKED",
+      "proof": "local Cesium vendor and browser run unavailable",
+      "blocking": true
+    },
+    {
+      "id": "rust-parity",
+      "status": "BLOCKED",
+      "proof": "cargo/rustc and per-kind parity corpus unavailable",
+      "blocking": false
+    },
+    {
+      "id": "blender-photoreal",
+      "status": "BLOCKED",
+      "proof": "Blender/Cycles and local model weights unavailable",
+      "blocking": true
+    },
+    {
+      "id": "windows-installer-soak",
+      "status": "PENDING",
+      "proof": "requires target Alienware/Windows",
+      "blocking": true
+    }
+  ],
+  "counts": {
+    "packages": 7,
+    "apps": 2,
+    "plugins": 1,
+    "native_node_kinds": 46,
+    "extension_node_kinds": 3,
+    "tool_families": 21,
+    "global_modules": 7,
+    "community_sources": 5
+  },
+  "matrix_hash": "4718a2cb82d5cd83c6eeb72bb1bbd014fac9fad6a8fa27d9c3a9b3a7f9b5aaa4"
+}

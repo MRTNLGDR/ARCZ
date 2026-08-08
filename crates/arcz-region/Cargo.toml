@@ -1,0 +1,13 @@
+[package]
+name = "arcz-region"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+description = "Contexto geográfico, evidências e composição de perfis regionais do ARCZ"
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+arcz-determinism = { path = "../arcz-determinism" }

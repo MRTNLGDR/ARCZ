@@ -1,0 +1,13 @@
+[package]
+name = "arcz-agent"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+description = "Provider-agnostic planning and tool execution contracts for the ARCZ local agent"
+
+[dependencies]
+arcz-plugin-sdk.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true

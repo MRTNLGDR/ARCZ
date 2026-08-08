@@ -1,0 +1,3 @@
+Fixture geométrico sintético criado especificamente para testes do ARCZ.
+Não representa endereço, lote ou levantamento real. Licença: CC0-1.0.
+O uso em teste é explícito e sua provenance permanece marcada como fixture.

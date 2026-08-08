@@ -1,0 +1,12 @@
+[package]
+name = "arcz-tiles"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+description = "Identidade, máquina de estados e planejamento Web Mercator de tiles do ARCZ"
+
+[dependencies]
+serde.workspace = true
+thiserror.workspace = true
+arcz-determinism = { path = "../arcz-determinism" }

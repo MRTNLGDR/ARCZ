@@ -1,0 +1,12 @@
+[package]
+name = "arcz-plugin-sdk"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+description = "Stable capability and manifest contracts for ARCZ plugins"
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true

@@ -1,0 +1,13 @@
+[package]
+name = "arcz-jobs"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+description = "Gerenciamento de Jobs Persistentes do ARCZ com cancelamento e retomada"
+
+[dependencies]
+anyhow.workspace = true
+log.workspace = true
+serde.workspace = true
+serde_json.workspace = true

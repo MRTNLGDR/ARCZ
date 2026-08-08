@@ -1,0 +1,89 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/arcz-geo",
+    "crates/arcz-terrain",
+    "crates/arcz-model",
+    "crates/arcz-osm",
+    "crates/arcz-osm-cli",
+    "crates/arcz-biblioteca",
+    "crates/arcz-app",
+    "crates/arcz-tauri",
+    "crates/arcz-earth",
+    "crates/arcz-scene",
+    "crates/arcz-jobs",
+    "crates/arcz-provenance",
+    "crates/arcz-determinism",
+    "crates/arcz-budget",
+    "crates/arcz-validation",
+    "crates/arcz-region",
+    "crates/arcz-tiles",
+    "crates/arcz-roof",
+    "crates/arcz-facade",
+    "crates/arcz-vegetation",
+    "crates/arcz-procedural",
+    "crates/arcz-generation-cli",
+    "crates/arcz-cad",
+    "crates/arcz-bim",
+    "crates/arcz-aedifex",
+    "crates/arcz-plugin-sdk",
+    "crates/arcz-agent",
+    "crates/arcz-world",
+    "crates/arcz-plugin-host",
+]
+
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+rust-version = "1.82"
+
+[workspace.dependencies]
+arcz-geo = { path = "crates/arcz-geo" }
+arcz-terrain = { path = "crates/arcz-terrain" }
+arcz-model = { path = "crates/arcz-model" }
+arcz-osm = { path = "crates/arcz-osm" }
+arcz-biblioteca = { path = "crates/arcz-biblioteca" }
+arcz-determinism = { path = "crates/arcz-determinism" }
+arcz-budget = { path = "crates/arcz-budget" }
+arcz-validation = { path = "crates/arcz-validation" }
+arcz-region = { path = "crates/arcz-region" }
+arcz-tiles = { path = "crates/arcz-tiles" }
+arcz-roof = { path = "crates/arcz-roof" }
+arcz-facade = { path = "crates/arcz-facade" }
+arcz-vegetation = { path = "crates/arcz-vegetation" }
+arcz-procedural = { path = "crates/arcz-procedural" }
+arcz-cad = { path = "crates/arcz-cad" }
+arcz-bim = { path = "crates/arcz-bim" }
+arcz-aedifex = { path = "crates/arcz-aedifex" }
+arcz-plugin-sdk = { path = "crates/arcz-plugin-sdk" }
+arcz-agent = { path = "crates/arcz-agent" }
+arcz-world = { path = "crates/arcz-world" }
+arcz-plugin-host = { path = "crates/arcz-plugin-host" }
+gltf = { version = "1", default-features = false, features = [
+    "import",
+    "utils",
+    "names", # habilita Material::name() — usado nos rotulos de debug da GPU
+    "KHR_materials_unlit",
+] }
+
+anyhow = "1"
+thiserror = "2"
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "fs", "sync"] }
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "stream"] }
+image = { version = "0.25", default-features = false, features = ["png", "jpeg"] }
+sha2 = "0.10"
+zip = { version = "2", default-features = false, features = ["deflate"] }
+tiny_http = "0.12"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+bytemuck = { version = "1", features = ["derive"] }
+log = "0.4"
+env_logger = "0.11"
+rusqlite = { version = "0.32", features = ["bundled"] }
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1

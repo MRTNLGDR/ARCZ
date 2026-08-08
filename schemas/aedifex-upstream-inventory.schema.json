@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "arcz://schemas/aedifex-upstream-inventory.schema.json",
+  "title": "Aedifex upstream source inventory",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "repository", "commit", "root_license", "root_package",
+    "packages", "apps", "plugins", "node_kinds", "mcp_tools", "api_routes",
+    "environment_variables", "external_urls", "network_call_sites",
+    "inventory_hash", "generated_at", "counts"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "repository": { "const": "TangSY/aedifex" },
+    "commit": { "type": ["string", "null"], "pattern": "^[a-f0-9]{40}$" },
+    "root_license": { "type": ["string", "null"] },
+    "root_package": { "type": "object" },
+    "packages": { "$ref": "#/$defs/items" },
+    "apps": { "$ref": "#/$defs/items" },
+    "plugins": { "$ref": "#/$defs/items" },
+    "node_kinds": { "$ref": "#/$defs/items" },
+    "mcp_tools": { "$ref": "#/$defs/items" },
+    "api_routes": { "$ref": "#/$defs/items" },
+    "environment_variables": { "$ref": "#/$defs/items" },
+    "external_urls": { "$ref": "#/$defs/items" },
+    "network_call_sites": { "$ref": "#/$defs/items" },
+    "inventory_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "generated_at": { "type": "string" },
+    "counts": { "type": "object", "additionalProperties": { "type": "integer", "minimum": 0 } }
+  },
+  "$defs": {
+    "items": {
+      "type": "array",
+      "items": { "type": "object", "required": ["id"] }
+    }
+  }
+}

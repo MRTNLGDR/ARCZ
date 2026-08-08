@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "arcz://schemas/aedifex-scene.schema.json",
+  "title": "Aedifex Scene Graph Envelope",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "nodes",
+    "rootNodeIds"
+  ],
+  "properties": {
+    "nodes": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "id",
+          "type"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "type": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "rootNodeIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "collections": {
+      "type": [
+        "object",
+        "array"
+      ]
+    },
+    "sceneVersion": {
+      "type": [
+        "integer",
+        "string"
+      ]
+    },
+    "metadata": {
+      "type": "object"
+    }
+  }
+}

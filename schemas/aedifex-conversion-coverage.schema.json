@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "arcz://schemas/aedifex-conversion-coverage.schema.json",
+  "title": "Aedifex mass conversion coverage report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "inventory_hash", "policy_hash", "upstream_commit",
+    "ready", "entries", "blockers", "counts", "report_hash", "generated_at"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "inventory_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "policy_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "upstream_commit": { "type": ["string", "null"], "pattern": "^[a-f0-9]{40}$" },
+    "ready": { "type": "boolean" },
+    "entries": { "type": "array", "items": { "$ref": "#/$defs/entry" } },
+    "blockers": { "type": "array", "items": { "$ref": "#/$defs/entry" } },
+    "counts": { "type": "object" },
+    "report_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "generated_at": { "type": "string" }
+  },
+  "$defs": {
+    "entry": {
+      "type": "object",
+      "required": ["category", "id", "status"],
+      "properties": {
+        "category": { "type": "string" },
+        "id": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "additionalProperties": true
+    }
+  }
+}

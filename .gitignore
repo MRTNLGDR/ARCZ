@@ -1,0 +1,43 @@
+# Runtime local
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.sqlite3
+*.sqlite3-*
+jobs/*
+!jobs/.gitkeep
+data/indexes/*
+!data/indexes/.gitkeep
+scene/staging/*
+!scene/staging/.gitkeep
+cache*/**
+!cache*/.gitkeep
+
+# Builds
+/target/
+/dist/
+/build/
+
+# Assets e pesos instalados localmente; manifestos ficam versionados
+/vendor/cesium/Cesium/
+/vendor/cesium/manifest.json
+/vendor/cesium/LICENSE*
+/vendor/python/wheelhouse/
+/vendor/rust/vendor/
+/resources/models/installed/
+
+# Projetos/saídas do usuário
+/renders/
+/takes/
+/exportacoes/
+/fotos/
+/preview/
+
+.env.local
+.env
+.venv/
+logs/arcz.pid
+
+# Immutable upstream checkouts are materialized locally, never nested into this Git history
+/upstreams/sources/*
+!/upstreams/sources/.gitkeep

@@ -1,0 +1,73 @@
+{
+  "id": "atlantic_forest_coastal",
+  "version": "1.0.0",
+  "license": "MIT OR Apache-2.0",
+  "source": "ARCZ functional biome rules",
+  "layers": {
+    "groundcover": {
+      "spacing_m": [
+        0.15,
+        0.8
+      ],
+      "max_slope_deg": 42,
+      "asset_families": [
+        "ground.grass.humid",
+        "ground.weed.coastal"
+      ]
+    },
+    "shrubs": {
+      "spacing_m": [
+        1.2,
+        4.0
+      ],
+      "max_slope_deg": 48,
+      "asset_families": [
+        "shrub.native.dense",
+        "shrub.ornamental.humid"
+      ]
+    },
+    "street_tree_small": {
+      "spacing_m": [
+        6.0,
+        12.0
+      ],
+      "max_slope_deg": 18,
+      "asset_families": [
+        "tree.street.small.humid"
+      ]
+    },
+    "street_tree_medium": {
+      "spacing_m": [
+        8.0,
+        16.0
+      ],
+      "max_slope_deg": 22,
+      "asset_families": [
+        "tree.street.medium.humid"
+      ]
+    },
+    "forest_mass": {
+      "spacing_m": [
+        2.5,
+        7.0
+      ],
+      "max_slope_deg": 55,
+      "asset_families": [
+        "tree.forest.canopy.humid",
+        "tree.forest.understory.humid"
+      ]
+    }
+  },
+  "exclusion_m": {
+    "building": 1.2,
+    "road": 1.0,
+    "driveway": 0.5,
+    "water": 0.0
+  },
+  "lod": {
+    "hero_max_m": 120,
+    "near_max_m": 500,
+    "medium_max_m": 1800,
+    "impostor_after_m": 500
+  }
+}

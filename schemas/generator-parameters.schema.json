@@ -1,0 +1,613 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "arcz://schemas/generator-parameters.schema.json",
+  "title": "ARCZ procedural generator parameters",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "quality": {
+      "enum": [
+        "LEVE",
+        "EQUILIBRADO",
+        "ALTO",
+        "CINEMATICO"
+      ]
+    },
+    "terrain": {
+      "$ref": "#/$defs/terrain"
+    },
+    "parcels": {
+      "type": "array",
+      "maxItems": 100000,
+      "items": {
+        "$ref": "#/$defs/parcel"
+      }
+    },
+    "roads": {
+      "type": "array",
+      "maxItems": 100000,
+      "items": {
+        "$ref": "#/$defs/road"
+      }
+    },
+    "buildings": {
+      "type": "array",
+      "maxItems": 100000,
+      "items": {
+        "$ref": "#/$defs/building"
+      }
+    },
+    "vegetation_zones": {
+      "type": "array",
+      "maxItems": 100000,
+      "items": {
+        "$ref": "#/$defs/vegetationZone"
+      }
+    },
+    "materials": {
+      "type": "array",
+      "maxItems": 10000,
+      "items": {
+        "$ref": "#/$defs/material"
+      }
+    },
+    "allow_flat_terrain_fallback": {
+      "type": "boolean"
+    },
+    "flat_terrain": {
+      "$ref": "#/$defs/flatTerrain"
+    },
+    "allow_estimated_infill": {
+      "type": "boolean"
+    },
+    "estimated_infill": {
+      "$ref": "#/$defs/estimatedInfill"
+    },
+    "tile_plan": {
+      "$ref": "#/$defs/tilePlan"
+    },
+    "include_sidewalks": {
+      "type": "boolean"
+    },
+    "vegetation_density_multiplier": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 4
+    }
+  },
+  "$defs": {
+    "point": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        }
+      ],
+      "items": false,
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "polygon": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 100000,
+      "items": {
+        "$ref": "#/$defs/point"
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "type": "string"
+        },
+        "source_ref": {
+          "type": "string"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "estimated": {
+          "type": "boolean"
+        }
+      }
+    },
+    "terrain": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "origin_enu_m",
+        "columns",
+        "rows",
+        "cell_size_m",
+        "heights_m"
+      ],
+      "properties": {
+        "origin_enu_m": {
+          "$ref": "#/$defs/point"
+        },
+        "columns": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 8192
+        },
+        "rows": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 8192
+        },
+        "cell_size_m": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          ],
+          "items": false,
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "heights_m": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 16777216,
+          "items": {
+            "type": "number"
+          }
+        },
+        "material_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "flatTerrain": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "bounds_enu_m"
+      ],
+      "properties": {
+        "bounds_enu_m": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "items": false,
+          "minItems": 4,
+          "maxItems": 4
+        },
+        "elevation_m": {
+          "type": "number"
+        },
+        "resolution": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 4096
+        },
+        "material_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "parcel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "polygon_enu_m"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "polygon_enu_m": {
+          "$ref": "#/$defs/polygon"
+        },
+        "elevation_m": {
+          "type": "number"
+        },
+        "material_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        }
+      }
+    },
+    "road": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "centerline_enu_m",
+        "width_m"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "centerline_enu_m": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 100000,
+          "items": {
+            "$ref": "#/$defs/point"
+          }
+        },
+        "width_m": {
+          "type": "number",
+          "exclusiveMinimum": 0.5
+        },
+        "elevation_m": {
+          "type": "number"
+        },
+        "sidewalk_width_m": {
+          "type": "number",
+          "minimum": 0
+        },
+        "material_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sidewalk_material_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        }
+      }
+    },
+    "roof": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "flat",
+            "shed",
+            "gable",
+            "hip"
+          ]
+        },
+        "pitch_deg": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 75
+        },
+        "eave_m": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 5
+        }
+      }
+    },
+    "building": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "footprint_enu_m",
+        "height_m"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "footprint_enu_m": {
+          "$ref": "#/$defs/polygon"
+        },
+        "base_m": {
+          "type": "number"
+        },
+        "height_m": {
+          "type": "number",
+          "minimum": 2.2
+        },
+        "floors": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200
+        },
+        "category": {
+          "enum": [
+            "house",
+            "building",
+            "commercial",
+            "industrial"
+          ]
+        },
+        "roof": {
+          "$ref": "#/$defs/roof"
+        },
+        "wall_material_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "roof_material_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "glass_material_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "balcony_material_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "commercial_ground_floor": {
+          "type": "boolean"
+        },
+        "facade_module_width_m": {
+          "type": "number",
+          "minimum": 1.2,
+          "maximum": 6
+        },
+        "balcony_probability": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        }
+      }
+    },
+    "exclusionCircle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "center",
+        "radius_m"
+      ],
+      "properties": {
+        "center": {
+          "$ref": "#/$defs/point"
+        },
+        "radius_m": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "variant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "weight",
+        "scale_min",
+        "scale_max"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "weight": {
+          "type": "number",
+          "minimum": 0
+        },
+        "scale_min": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "scale_max": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      }
+    },
+    "vegetationZone": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "polygon_enu_m",
+        "target_count",
+        "minimum_distance_m"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "polygon_enu_m": {
+          "$ref": "#/$defs/polygon"
+        },
+        "base_m": {
+          "type": "number"
+        },
+        "target_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "minimum_distance_m": {
+          "type": "number",
+          "minimum": 0
+        },
+        "exclusions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/exclusionCircle"
+          }
+        },
+        "variants": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/variant"
+          }
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        }
+      }
+    },
+    "material": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "base_color"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "base_color": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "items": false,
+          "minItems": 4,
+          "maxItems": 4
+        },
+        "roughness": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "metallic": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "double_sided": {
+          "type": "boolean"
+        },
+        "alpha_mode": {
+          "enum": [
+            "OPAQUE",
+            "MASK",
+            "BLEND"
+          ]
+        }
+      }
+    },
+    "estimatedInfill": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "front_setback_m": {
+          "type": "number",
+          "minimum": 0
+        },
+        "side_setback_m": {
+          "type": "number",
+          "minimum": 0
+        },
+        "maximum_coverage": {
+          "type": "number",
+          "minimum": 0.05,
+          "maximum": 0.95
+        },
+        "house_height_m": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "number",
+              "minimum": 2.2
+            },
+            {
+              "type": "number",
+              "minimum": 2.2
+            }
+          ],
+          "items": false,
+          "minItems": 2,
+          "maxItems": 2
+        }
+      }
+    },
+    "tilePlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "focus",
+        "radius_m",
+        "zoom"
+      ],
+      "properties": {
+        "focus": {
+          "$ref": "#/$defs/point"
+        },
+        "radius_m": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "zoom": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 22
+        },
+        "rings_m": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "number",
+              "minimum": 0
+            }
+          ],
+          "items": false,
+          "minItems": 4,
+          "maxItems": 4
+        }
+      }
+    }
+  }
+}

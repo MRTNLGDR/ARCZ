@@ -1,0 +1,2955 @@
+{
+  "schema_version": 1,
+  "product": "ARCZ Earth + Aedifex Global",
+  "handoff_version": "10.1.0",
+  "generated_at": "2026-08-06T18:30:10.619764Z",
+  "source_export_manifest": "docs/audit/SOURCE_EXPORT_MANIFEST.json",
+  "verification": {
+    "overall": "BLOCKED",
+    "summary": {
+      "passed": 22,
+      "failed": 0,
+      "blocked": 9
+    },
+    "generated_at": "2026-08-06T18:28:36.492240Z",
+    "authoritative_report": "docs/audit/VALIDATION_REPORT.md",
+    "blockers": [
+      {
+        "name": "rustfmt_check",
+        "details": {
+          "reason": "cargo/rustfmt ausente neste ambiente",
+          "command": [
+            "cargo",
+            "fmt",
+            "--all",
+            "--",
+            "--check"
+          ]
+        }
+      },
+      {
+        "name": "cargo_check_workspace",
+        "details": {
+          "reason": "cargo/rustc ausente neste ambiente",
+          "command": [
+            "cargo",
+            "check",
+            "--workspace",
+            "--all-targets"
+          ]
+        }
+      },
+      {
+        "name": "cargo_test_workspace",
+        "details": {
+          "reason": "cargo/rustc ausente neste ambiente",
+          "command": [
+            "cargo",
+            "test",
+            "--workspace",
+            "--all-targets"
+          ]
+        }
+      },
+      {
+        "name": "windows_launcher_runtime",
+        "details": {
+          "reason": "PowerShell não está disponível neste ambiente; scripts Windows não foram executados",
+          "command": "powershell -NoProfile -ExecutionPolicy Bypass -File install.ps1 ..."
+        }
+      },
+      {
+        "name": "docker_compose_runtime",
+        "details": {
+          "reason": "Docker/Compose ausente; configuração universal não foi validada neste ambiente",
+          "command": "docker compose config && docker compose up --build"
+        }
+      },
+      {
+        "name": "cesium_local_vendor",
+        "details": {
+          "reason": "vendor CesiumJS foi excluído do arquivo de origem e precisa ser instalado localmente",
+          "missing": [
+            "vendor/cesium/Cesium/Cesium.js",
+            "vendor/cesium/Cesium/Widgets/widgets.css",
+            "vendor/cesium/Cesium/Assets/Textures/NaturalEarthII/tilemapresource.xml",
+            "vendor/cesium/LICENSE.md",
+            "vendor/cesium/manifest.json"
+          ],
+          "command": "python tools/vendor_cesium.py --source <local> --license-file <local> --version 1.143.0"
+        }
+      },
+      {
+        "name": "aedifex_vendor_and_build",
+        "details": {
+          "reason": "upstream/fork/build Aedifex pinados ainda não foram materializados e compilados",
+          "blockers": [
+            {
+              "code": "AEDIFEX_UPSTREAM_MISSING",
+              "files": [
+                "LICENSE",
+                "package.json",
+                "bun.lock",
+                "apps/editor/package.json",
+                "apps/ifc-converter/package.json",
+                "packages/core/package.json",
+                "packages/viewer/package.json",
+                "packages/editor/package.json",
+                "packages/mcp/package.json",
+                "packages/nodes/package.json",
+                "packages/plugin-trees/package.json",
+                "packages/ifc-converter/package.json"
+              ]
+            },
+            {
+              "code": "AEDIFEX_FORK_MISSING",
+              "files": [
+                "LICENSE",
+                "package.json",
+                "bun.lock",
+                "apps/editor/package.json",
+                "apps/ifc-converter/package.json",
+                "packages/core/package.json",
+                "packages/viewer/package.json",
+                "packages/editor/package.json",
+                "packages/mcp/package.json",
+                "packages/nodes/package.json",
+                "packages/plugin-trees/package.json",
+                "packages/ifc-converter/package.json"
+              ]
+            },
+            {
+              "code": "AEDIFEX_PACKAGE_MATRIX_INVALID",
+              "scope": "upstream",
+              "packages": [
+                {
+                  "name": "@aedifex/core",
+                  "path": "packages/core/package.json",
+                  "expected_version": "0.10.0",
+                  "exists": false,
+                  "valid": false,
+                  "error": "PACKAGE_MANIFEST_MISSING"
+                },
+                {
+                  "name": "@aedifex/viewer",
+                  "path": "packages/viewer/package.json",
+                  "expected_version": "0.10.0",
+                  "exists": false,
+                  "valid": false,
+                  "error": "PACKAGE_MANIFEST_MISSING"
+                },
+                {
+                  "name": "@aedifex/editor",
+                  "path": "packages/editor/package.json",
+                  "expected_version": "0.9.3",
+                  "exists": false,
+                  "valid": false,
+                  "error": "PACKAGE_MANIFEST_MISSING"
+                },
+                {
+                  "name": "@aedifex/mcp",
+                  "path": "packages/mcp/package.json",
+                  "expected_version": "0.3.3",
+                  "exists": false,
+                  "valid": false,
+                  "error": "PACKAGE_MANIFEST_MISSING"
+                },
+                {
+                  "name": "@aedifex/nodes",
+                  "path": "packages/nodes/package.json",
+                  "expected_version": "0.2.0",
+                  "exists": false,
+                  "valid": false,
+                  "error": "PACKAGE_MANIFEST_MISSING"
+                },
+                {
+                  "name": "@aedifex/plugin-trees",
+                  "path": "packages/plugin-trees/package.json",
+                  "expected_version": "0.1.1",
+                  "exists": false,
+                  "valid": false,
+                  "error": "PACKAGE_MANIFEST_MISSING"
+                },
+                {
+                  "name": "@aedifex/ifc-converter",
+                  "path": "packages/ifc-converter/package.json",
+                  "expected_version": "0.1.3",
+                  "exists": false,
+                  "valid": false,
+                  "error": "PACKAGE_MANIFEST_MISSING"
+                }
+              ]
+            },
+            {
+              "code": "AEDIFEX_PACKAGE_MATRIX_INVALID",
+              "scope": "fork",
+              "packages": [
+                {
+                  "name": "@aedifex/core",
+                  "path": "packages/core/package.json",
+                  "expected_version": "0.10.0",
+                  "exists": false,
+                  "valid": false,
+                  "error": "PACKAGE_MANIFEST_MISSING"
+                },
+                {
+                  "name": "@aedifex/viewer",
+                  "path": "packages/viewer/package.json",
+                  "expected_version": "0.10.0",
+                  "exists": false,
+                  "valid": false,
+                  "error": "PACKAGE_MANIFEST_MISSING"
+                },
+                {
+                  "name": "@aedifex/editor",
+                  "path": "packages/editor/package.json",
+                  "expected_version": "0.9.3",
+                  "exists": false,
+                  "valid": false,
+                  "error": "PACKAGE_MANIFEST_MISSING"
+                },
+                {
+                  "name": "@aedifex/mcp",
+                  "path": "packages/mcp/package.json",
+                  "expected_version": "0.3.3",
+                  "exists": false,
+                  "valid": false,
+                  "error": "PACKAGE_MANIFEST_MISSING"
+                },
+                {
+                  "name": "@aedifex/nodes",
+                  "path": "packages/nodes/package.json",
+                  "expected_version": "0.2.0",
+                  "exists": false,
+                  "valid": false,
+                  "error": "PACKAGE_MANIFEST_MISSING"
+                },
+                {
+                  "name": "@aedifex/plugin-trees",
+                  "path": "packages/plugin-trees/package.json",
+                  "expected_version": "0.1.1",
+                  "exists": false,
+                  "valid": false,
+                  "error": "PACKAGE_MANIFEST_MISSING"
+                },
+                {
+                  "name": "@aedifex/ifc-converter",
+                  "path": "packages/ifc-converter/package.json",
+                  "expected_version": "0.1.3",
+                  "exists": false,
+                  "valid": false,
+                  "error": "PACKAGE_MANIFEST_MISSING"
+                }
+              ]
+            },
+            {
+              "code": "AEDIFEX_LICENSE_UNVERIFIED"
+            },
+            {
+              "code": "AEDIFEX_COMMIT_UNVERIFIED"
+            },
+            {
+              "code": "AEDIFEX_FORK_COMMIT_UNVERIFIED"
+            },
+            {
+              "code": "AEDIFEX_UPSTREAM_INVENTORY_MISSING"
+            },
+            {
+              "code": "AEDIFEX_BRIDGE_BUILD_MISSING"
+            }
+          ],
+          "command": "python tools/vendor_aedifex.py --source <checkout-local> && python tools/build_aedifex_sidecar.py"
+        }
+      },
+      {
+        "name": "blender_photoreal_runtime",
+        "details": {
+          "reason": "Blender/Cycles local não instalado; o worker não pode produzir imagens reais",
+          "command": "instale Blender local e defina ARCZ_BLENDER=<caminho>"
+        }
+      },
+      {
+        "name": "local_ai_render_models",
+        "details": {
+          "reason": "modelos locais necessários não foram materializados/verificados",
+          "missing_tasks": [
+            "chat.global",
+            "prompt.enhance",
+            "prompt.translate",
+            "render-diffusion",
+            "upscale"
+          ],
+          "manifests": []
+        }
+      }
+    ]
+  },
+  "integrity": {
+    "algorithm": "sha256",
+    "manifest_self_excluded": true,
+    "sha256sums_self_excluded": true
+  },
+  "excluded": [
+    "MANIFESTO.json",
+    "SHA256SUMS.txt"
+  ],
+  "file_count": 531,
+  "total_bytes": 3675035,
+  "files": [
+    {
+      "path": ".cargo/config.offline.example.toml",
+      "bytes": 296,
+      "sha256": "e4577004ab695d96974cd29ea6a4fdb450b628e24b03355f5f1425147b4a0946"
+    },
+    {
+      "path": ".claude/launch.json",
+      "bytes": 663,
+      "sha256": "01f83c4487fcd75eeb28b0d40d78851ce644608347bab5343418236245f07a85"
+    },
+    {
+      "path": ".dockerignore",
+      "bytes": 154,
+      "sha256": "64d2bda9a1cc52609d9b0afe5bf8f05e2b137e42ab931125d198b12273577a22"
+    },
+    {
+      "path": ".env.example",
+      "bytes": 508,
+      "sha256": "4302e78ce53f1506f777dc05e7b7487cff73869194ee6e20d98227206ffa7be3"
+    },
+    {
+      "path": ".gitignore",
+      "bytes": 580,
+      "sha256": "2f673b8e758bcb7c35bec3b18bd80ed99bcf4ae575305c8d58e3dd79aacd13ff"
+    },
+    {
+      "path": "AGENTS.md",
+      "bytes": 2780,
+      "sha256": "dcc78135fc6090bf8f8aad085e235e7c24fc741a5c38fb8bfbedc90830e0dda0"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "bytes": 14717,
+      "sha256": "964807d9d5876a77a7d5389f6cc5b6e1a39126c530c4e11a30670aee02eacaff"
+    },
+    {
+      "path": "CLAUDE.md",
+      "bytes": 468,
+      "sha256": "4ba48ce702024cd3b4d75d356e3ca5bf300d9a085b9f25f18243321492aff200"
+    },
+    {
+      "path": "Cargo.toml",
+      "bytes": 2500,
+      "sha256": "79589d1cfd690bb5251c9df0374e8f4de89efe8f46f5ebe8259b6a0ccb68bc96"
+    },
+    {
+      "path": "Dockerfile",
+      "bytes": 701,
+      "sha256": "8cbfbc7989d2ce758b355f1f9b5dd90d92f416308304c378cd8647e6b294ad99"
+    },
+    {
+      "path": "IMPLEMENTATION_STATUS.json",
+      "bytes": 27474,
+      "sha256": "e16c47cc56d68d938e9ab80d0d98d1e11c9fd9650b984cfd189f0e30eb74e994"
+    },
+    {
+      "path": "LEIA-PRIMEIRO.md",
+      "bytes": 2471,
+      "sha256": "4800c962fc5e092a786da0f996356cc8a8b5e17a8d00d379cdcfda4dafbc40ee"
+    },
+    {
+      "path": "LICENSE",
+      "bytes": 810,
+      "sha256": "f268483809784983300b57a0812ee10eaf88e7794c96fb10d8eb32f6d49f94d1"
+    },
+    {
+      "path": "PLANO.md",
+      "bytes": 19081,
+      "sha256": "20831976f0f0931a6a6917195068ab6fab7fdd39100fd733cf54fa362365a3da"
+    },
+    {
+      "path": "QUICKSTART.md",
+      "bytes": 1886,
+      "sha256": "1cb1fb6fe2e9feec7476f5a1a1da4ce8065c931bdb46ce495e0d9a966a0a06cc"
+    },
+    {
+      "path": "README.md",
+      "bytes": 4749,
+      "sha256": "baf819b3342bbca68761a982e712d42487a703fed1593f9b7e918660ec51de0f"
+    },
+    {
+      "path": "ROADMAP.md",
+      "bytes": 1847,
+      "sha256": "c2b37d0efa324076254d7c60ee7a28512c2d6bb2afa6634af1459ab51d879e8e"
+    },
+    {
+      "path": "TASKS.json",
+      "bytes": 44463,
+      "sha256": "1d0b3b2719ba628c3f4762d502b7c216fa35757b756c2ba15a625fa0b38f5427"
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "bytes": 1102,
+      "sha256": "3b9440a4d0da68b9e55c0c87b042bbcf5377871ef1d3e5a77fefdca5720074dc"
+    },
+    {
+      "path": "app/ambiente.js",
+      "bytes": 35705,
+      "sha256": "46748e01341f51c6c32736a5c9f01a3e707cd4d0c6035f74d5368efbbc019f90"
+    },
+    {
+      "path": "app/camera.js",
+      "bytes": 6192,
+      "sha256": "716e9dba27951beb6a3f4141885724e62a761b88181336b3a668becdc373d20a"
+    },
+    {
+      "path": "app/cena.js",
+      "bytes": 24651,
+      "sha256": "da2c3906e55ec72892e05be1d6d61d6e7be4d178e3bae2c60cd3389c85713bda"
+    },
+    {
+      "path": "app/chat/chat-client.js",
+      "bytes": 1947,
+      "sha256": "9edbff9e56ca487ce49fe371ef6da911920c3dc4bc8c61996e99c57dbdb51410"
+    },
+    {
+      "path": "app/chat/chat-tool-policy.js",
+      "bytes": 1718,
+      "sha256": "af1a38eee1cfe487ff730bb06e9beacb3a5308631508f81afb0c9c8b0323a4ad"
+    },
+    {
+      "path": "app/chat/global-chat-panel.js",
+      "bytes": 10827,
+      "sha256": "9e779303e767aeb4366b2760315a16842b9631ef4ac3bfeb8b9526588a1483b6"
+    },
+    {
+      "path": "app/cine/README.md",
+      "bytes": 248,
+      "sha256": "442a1768a833f49c159ad401cd58e931649824dd9a44fe21e546b898ea2db7f7"
+    },
+    {
+      "path": "app/cine/export-camera.js",
+      "bytes": 947,
+      "sha256": "571ac41b5a1d5eb7c421773364f29d284268fb0e9a31d02535b797305518b2a1"
+    },
+    {
+      "path": "app/cine/interpolation.js",
+      "bytes": 2684,
+      "sha256": "1cbad9d5b0fc786e6b6c0ec521a50393dcfe62d257b134df7c6a1769c376b747"
+    },
+    {
+      "path": "app/cine/keyframes.js",
+      "bytes": 870,
+      "sha256": "bad7584d3f376b32b39e40f73017a6c3962b91699dc1426b9254b1f52c7e29fb"
+    },
+    {
+      "path": "app/cine/quick-starts.js",
+      "bytes": 1984,
+      "sha256": "7967c5e1bb5ff2525c1fbf7497d9d27e8a7c75fc6c77f4a6d962ed1edd2a7ff1"
+    },
+    {
+      "path": "app/cine/render-queue.js",
+      "bytes": 1989,
+      "sha256": "90df255a5ed452a559e037065cc618d1a7b8ab958c8aa4458170b25dc454aef1"
+    },
+    {
+      "path": "app/cine/timeline.js",
+      "bytes": 1293,
+      "sha256": "7332fb02ef5c2c40416e608515409228da77c1dbf6433a7803a312a9f847cfe2"
+    },
+    {
+      "path": "app/cine/tracks.js",
+      "bytes": 1172,
+      "sha256": "4d70681cdba3cdab8f14559908790e171d5537027a81af09f06484bad8c94f7c"
+    },
+    {
+      "path": "app/clima.js",
+      "bytes": 16079,
+      "sha256": "285c16e2adf879048489c52bee134af28cd5a531847a2b867879ec52aade58fb"
+    },
+    {
+      "path": "app/core/README.md",
+      "bytes": 281,
+      "sha256": "6a942df025fc1273467a7b373629ee49df01ac763e82ee686f931a985b14a19b"
+    },
+    {
+      "path": "app/core/api-client.js",
+      "bytes": 2892,
+      "sha256": "7f384b6438429ed29e5e6d7f25a6bfc7709d9806aabd591435ea17f3abb7edcb"
+    },
+    {
+      "path": "app/core/budget-client.js",
+      "bytes": 3204,
+      "sha256": "a5af30c6ef781e24a5c226f82376cceeddc982315be975b94037a6ec2cf1d8f6"
+    },
+    {
+      "path": "app/core/contexto.js",
+      "bytes": 3000,
+      "sha256": "b6776c03ea55344c65e014c741c6890a3b1cf68327943143fbfe385a22dd7bcf"
+    },
+    {
+      "path": "app/core/diagnostics.js",
+      "bytes": 903,
+      "sha256": "caa3e748005fba3cf58aeadb3d1bff434cf76863275fba9dad96b7e0ade8f80f"
+    },
+    {
+      "path": "app/core/eventos.js",
+      "bytes": 1690,
+      "sha256": "4b196885574e755e7c81bfd275a059c040f398a8c35cce42c677b3c15bf84781"
+    },
+    {
+      "path": "app/core/health.js",
+      "bytes": 1320,
+      "sha256": "f40dfa3f004e03eb57143e49299a80d3b8844f85f6cbd1628caa0da8c80788c4"
+    },
+    {
+      "path": "app/core/input-client.js",
+      "bytes": 826,
+      "sha256": "2001788095942f68a9763d0ddff327185249e26eeeebdf3882f9014abba244cd"
+    },
+    {
+      "path": "app/core/job-client.js",
+      "bytes": 3649,
+      "sha256": "cabcb2c1d3fc7c61a2209ca4075a844c653ae61a6411deabb2d4ea5964e9b12d"
+    },
+    {
+      "path": "app/core/local-ai-client.js",
+      "bytes": 859,
+      "sha256": "0134a1f376f7b2004be034758dcf8dae4f845f3e1083cd8105d158328c38a834"
+    },
+    {
+      "path": "app/core/network-mode.js",
+      "bytes": 3080,
+      "sha256": "22130e1d9604723e40eb4479fc55bb9e15a4e8c9dbf832d9d0e103dca53f759d"
+    },
+    {
+      "path": "app/core/origens.js",
+      "bytes": 1789,
+      "sha256": "54adefda301417ea9a610ed2a2b84b6071e73d12b7fbd68c035e4c2d39c1c1a4"
+    },
+    {
+      "path": "app/core/resource-tracker.js",
+      "bytes": 2421,
+      "sha256": "df54b6472f10c6b6c0275bb0f140b2b4b66f951614937d116435b30a3d102953"
+    },
+    {
+      "path": "app/core/safe-callback.js",
+      "bytes": 2198,
+      "sha256": "addcea12fd654aa17d32ad425567cedda5bd612af12eb04fe6e7169c3281e819"
+    },
+    {
+      "path": "app/core/scene-staging.js",
+      "bytes": 4177,
+      "sha256": "5284d31968d9cb6192272c896e5471f2ca69a4e057e14d0b956c8527c386726c"
+    },
+    {
+      "path": "app/core/schema.js",
+      "bytes": 3992,
+      "sha256": "68114ccc0905c3864f1df869500c0fc4d3511cf0050f114d684d97c491be1eae"
+    },
+    {
+      "path": "app/core/services.js",
+      "bytes": 2453,
+      "sha256": "393c34006b2189861b18534c9dd933dc0280ff2bb2aad3d59ef83758af4ba985"
+    },
+    {
+      "path": "app/core/transacao.js",
+      "bytes": 2803,
+      "sha256": "620a931e271c6a151f2435885d3c8bce8266746175f0ba90d4549beecadd20ea"
+    },
+    {
+      "path": "app/corte.js",
+      "bytes": 29744,
+      "sha256": "109e0aebc7a77abc0104dce10865b3c97436a6e158771af3e6688b433110ace8"
+    },
+    {
+      "path": "app/earth/cinematic-globe.js",
+      "bytes": 19410,
+      "sha256": "27399e66f4edbf81e494c58c7c7860422bffd5c7e2abc87d4caa5ec8cb012ed5"
+    },
+    {
+      "path": "app/entorno.js",
+      "bytes": 5571,
+      "sha256": "f3cb033a9b7299a97a4cbcdd5ccc5bc9aac7588d2dfce585f865dce77de46e08"
+    },
+    {
+      "path": "app/estado.js",
+      "bytes": 15978,
+      "sha256": "506a04f7bcbc184e5c70d1eaef1e2c3b2eb2dc036e1d61efa693e55a985a1a22"
+    },
+    {
+      "path": "app/estilo.css",
+      "bytes": 22517,
+      "sha256": "1167021252f7ad3df6818aa6f81191a344143b58abf1660f246b61908d7af8f0"
+    },
+    {
+      "path": "app/feedback.js",
+      "bytes": 5432,
+      "sha256": "b853e9234819b273dfebfa13c619dc38ddac63a7de6d126471a9ece3af66a6b0"
+    },
+    {
+      "path": "app/floorplanner/floorplanner-client.js",
+      "bytes": 3644,
+      "sha256": "665048696648666262024655794ff7062d4bb05c4fc66905c36e18a6e227335c"
+    },
+    {
+      "path": "app/floorplanner/floorplanner-host.js",
+      "bytes": 20370,
+      "sha256": "523eaa91c4a1389ab088f000d79f3232c99caba01387beb46dedff0e517db6ca"
+    },
+    {
+      "path": "app/floorplanner/modeling-context.js",
+      "bytes": 6728,
+      "sha256": "24b698cf021b2a2c430610e808768f0f16083192bb53967e843938b3161787a8"
+    },
+    {
+      "path": "app/floorplanner/site-authoring-layout.js",
+      "bytes": 2677,
+      "sha256": "626762538ed2917c9c21ea65868d34c5e3278f9fed48097b70e4dddb0c32d86f"
+    },
+    {
+      "path": "app/fusion-v6.css",
+      "bytes": 23988,
+      "sha256": "4c36e415739078bbd99f8c8f8278f0ede7efcc5871723711c8a1f8e96aec448a"
+    },
+    {
+      "path": "app/gizmo.js",
+      "bytes": 21841,
+      "sha256": "645a8e6d99c3da498c538da2efde55c8f65e5f4d489ee57924f2eba48fddea2d"
+    },
+    {
+      "path": "app/governance/governance-client.js",
+      "bytes": 228,
+      "sha256": "1c180ad68940b40f80712288b4857dc70a994290430cf12f1d32f3df98f29976"
+    },
+    {
+      "path": "app/governance/governance-panel.js",
+      "bytes": 1477,
+      "sha256": "9f43986582a3874466901a99c9b5963831ac892bf927d4467c5650ef42c0a51e"
+    },
+    {
+      "path": "app/historico.js",
+      "bytes": 2773,
+      "sha256": "be4222624d1766e3e7d5b05fd104be5bf62a1b29fb3b923aa55a3d59d3403084"
+    },
+    {
+      "path": "app/icones.js",
+      "bytes": 6811,
+      "sha256": "f0abf3477ced43a9d954adf68da933ebe43a9e91af1fdce6df1aa04be5e577f4"
+    },
+    {
+      "path": "app/lib.js",
+      "bytes": 18026,
+      "sha256": "38e0140125c6143706193c7171206c2f9bd9e3f0ad2027e2daef1919531e3e72"
+    },
+    {
+      "path": "app/main.js",
+      "bytes": 6698,
+      "sha256": "ff39addeec2a32d9a8b32f710aa054a21e55ea5b0edbb9e897782def98a75b92"
+    },
+    {
+      "path": "app/media/reference-media-client.js",
+      "bytes": 1345,
+      "sha256": "947db30010ac37383d80e0ae02a38ed1d35ddcc4292c9972b42645b55d662b70"
+    },
+    {
+      "path": "app/media/reference-media-model.js",
+      "bytes": 837,
+      "sha256": "fb884f8dfb5ef665a4594743ec226eb9f6fdabaa6914fc8c495d2e5665aa8ba7"
+    },
+    {
+      "path": "app/media/reference-media-panel.js",
+      "bytes": 10904,
+      "sha256": "abe34784533a58d0477bd9f77eac8da20102d8256e2469d9946ed5e39cd52235"
+    },
+    {
+      "path": "app/plugins/README.md",
+      "bytes": 234,
+      "sha256": "c69ffe66d6e3b23c3fec4f053421f4e0d33e4298f69b8cb2d0dede6f2d827ef4"
+    },
+    {
+      "path": "app/plugins/builtin/buildings.js",
+      "bytes": 1269,
+      "sha256": "45768c6845d761be99d82286a0c1d587becdacba65b25d116ad185537de935a7"
+    },
+    {
+      "path": "app/plugins/builtin/create-rust-generator.js",
+      "bytes": 2874,
+      "sha256": "2673c38007f9c581338d7a8d2250e3f13c3790a14bea5d432521f4290a01c73f"
+    },
+    {
+      "path": "app/plugins/builtin/houses.js",
+      "bytes": 1343,
+      "sha256": "a40c166a8d228eca53223062343750a1b1b7de87f53b3b125bf0fc86170d6606"
+    },
+    {
+      "path": "app/plugins/builtin/index.js",
+      "bytes": 403,
+      "sha256": "7ee01480d444c9e304e033c635892806a69d8ff48d0a55bd0c8eaefe8b4d25a2"
+    },
+    {
+      "path": "app/plugins/builtin/materials.js",
+      "bytes": 1090,
+      "sha256": "e9968bc5a22907fd0f3f87f6f5b0f264a5584d5c19d3c0d2a4bdeb3e7b7de38c"
+    },
+    {
+      "path": "app/plugins/builtin/parcels.js",
+      "bytes": 1087,
+      "sha256": "26ff8d487fe9ff918cc984511b2609aec170bc4b34369cc8f0832d8232717def"
+    },
+    {
+      "path": "app/plugins/builtin/roads.js",
+      "bytes": 1160,
+      "sha256": "fbc27119352b8fb8b5fad7559209c630b19dc74957d0b3be7b0c754bf6a920f9"
+    },
+    {
+      "path": "app/plugins/builtin/terrain.js",
+      "bytes": 1249,
+      "sha256": "3caf2dd20cb693f82edd52322ee0995f0de33476f05f9f84d4cd42c48c278275"
+    },
+    {
+      "path": "app/plugins/builtin/vegetation.js",
+      "bytes": 1394,
+      "sha256": "cd1b4ed6318eb3b07c2cf3ac5b53be6d4007062422a913bb7cd883e6839bcc59"
+    },
+    {
+      "path": "app/plugins/lifecycle.js",
+      "bytes": 980,
+      "sha256": "5c29b3e887ed51c162dfe42dc647d795714ea02b6d86901f38c17ddbe6def467"
+    },
+    {
+      "path": "app/plugins/loader.js",
+      "bytes": 920,
+      "sha256": "e2bdf3e2ca73b6697e431d5d6c9bd12fbfc64214967cf99a11eb836ae0daa91f"
+    },
+    {
+      "path": "app/plugins/orchestrator.js",
+      "bytes": 2450,
+      "sha256": "5cf845a15426683a3fbd09acb2a2fb0200890604f7cc98ce5f1b5509e39b4af3"
+    },
+    {
+      "path": "app/plugins/registry.js",
+      "bytes": 1582,
+      "sha256": "410f312e5007878ceb1be3bb2be26cc40a703c923143d403f2a7ba2243209628"
+    },
+    {
+      "path": "app/plugins/validator.js",
+      "bytes": 1869,
+      "sha256": "53d140e6115e9253f5c2c3b2703d2eb44bf0391b95b5afd7617fefa06cd09809"
+    },
+    {
+      "path": "app/posicionar.js",
+      "bytes": 14531,
+      "sha256": "137f6cb7629298ac6a27d164e867dd58c84316f9679d0077ed7fb635dad5ac3b"
+    },
+    {
+      "path": "app/procedural/README.md",
+      "bytes": 208,
+      "sha256": "532acc14ae483a45667b1cc55c2d5630aba3546395579c0653d3a6d09b0e5390"
+    },
+    {
+      "path": "app/procedural/diagnostics-ui.js",
+      "bytes": 713,
+      "sha256": "dcd0913ea845648dd9233886e28ddbad078ed74723babc2e93648c8493482c40"
+    },
+    {
+      "path": "app/procedural/generation-ui.js",
+      "bytes": 2229,
+      "sha256": "e601ae4c789c62e146c8b3c1c6ab6873e97dae15d43a0f1637e95a31740521e6"
+    },
+    {
+      "path": "app/procedural/overrides-ui.js",
+      "bytes": 1210,
+      "sha256": "0cab7fe60dbc375692c02599ebc8236ccd63a04c0c7f35e223e294a64bda43af"
+    },
+    {
+      "path": "app/procedural/profile-ui.js",
+      "bytes": 980,
+      "sha256": "8aebada82c0e017654454b2a6e12469de1630f4aa5ba20cd18f2e8dbe7cbd917"
+    },
+    {
+      "path": "app/prompts/prompt-library-client.js",
+      "bytes": 1766,
+      "sha256": "fd1b12037c32bbf50b0cf4c55f8037242de01233738e9756bb1a2ea576edb5c7"
+    },
+    {
+      "path": "app/prompts/prompt-library-model.js",
+      "bytes": 853,
+      "sha256": "7c5534fd3c4633ee78571a759e2f89166a2ecf4c87a5dfafb9b939fe187a9c53"
+    },
+    {
+      "path": "app/prompts/prompt-library-panel.js",
+      "bytes": 17587,
+      "sha256": "6fcc6b13aa2a247a080698ef5c8cfeea5006581fe0f3aa470aa1a01c24d0afc3"
+    },
+    {
+      "path": "app/qualidade.js",
+      "bytes": 15667,
+      "sha256": "e92bde88e7038a7f720258c0ee6f605bf5e950f57fb2e4b9dbbd62aa8da65378"
+    },
+    {
+      "path": "app/recorte.js",
+      "bytes": 10729,
+      "sha256": "5bbe764f54f14afef63a08dde2e6291ebbe163ca084c1f9594cbe977502e7fa3"
+    },
+    {
+      "path": "app/region/README.md",
+      "bytes": 231,
+      "sha256": "16a11f4cc3fcc2c470e9ac2f357064a7438a344a99d9bf1ba18370443ed280f2"
+    },
+    {
+      "path": "app/region/lot-drawing-adapter.js",
+      "bytes": 2045,
+      "sha256": "49f4f51a924e0137abad7d46f2c1f3482144e1a9de4cd34b5caa87e474818e6c"
+    },
+    {
+      "path": "app/region/profile-resolver.js",
+      "bytes": 1440,
+      "sha256": "5a28fcb86ee5a5883602ee75ddd38296e598fb08411a97e7ad6eb0a9e25d753b"
+    },
+    {
+      "path": "app/region/region-controller.js",
+      "bytes": 3251,
+      "sha256": "d511c2dee16c658eb50f6e1e58fae69a13dae2ea4aa80b6ccb31b87eb2216d47"
+    },
+    {
+      "path": "app/region/region-overlay.js",
+      "bytes": 1039,
+      "sha256": "ab4d2d6b000def5489e00c2dcd641872d5c61e2b4b556af4722bc994fe00f616"
+    },
+    {
+      "path": "app/region/region-selector.js",
+      "bytes": 2248,
+      "sha256": "a0c6ffabccf8fb883f3f72688af578dc33ac2ce048934234de0021138300cb34"
+    },
+    {
+      "path": "app/region/scale-policy.js",
+      "bytes": 1703,
+      "sha256": "a718eb147b32109300bf38bf64e7ee3f4274df1e94bf0c0e911337913e615b93"
+    },
+    {
+      "path": "app/relevo.js",
+      "bytes": 9646,
+      "sha256": "448608f9116ef87155d1730c60c5eb64cf32eb23e2f3168bc948c83bc1e863c9"
+    },
+    {
+      "path": "app/render/README.md",
+      "bytes": 178,
+      "sha256": "69c633dd27e035809aefdf57e57bf353aef13ebd99529c1d4e70dee438f455c0"
+    },
+    {
+      "path": "app/render/local-diffusion-client.js",
+      "bytes": 423,
+      "sha256": "228dfc2efd72499e32cce807ca31e53fc52f0efb35373065e43080ae40dea1b6"
+    },
+    {
+      "path": "app/render/pass-plan.js",
+      "bytes": 790,
+      "sha256": "841895b92d633105aa2a14ba8f23cc9c02990a70c861c56e7ef2df211ba4f7a6"
+    },
+    {
+      "path": "app/render/photoreal-client.js",
+      "bytes": 5987,
+      "sha256": "c983676b18acf8a216b3ee99434efb3574cd9b1f6f286b1c02d6aa3798d833ad"
+    },
+    {
+      "path": "app/render/photoreal-workspace.js",
+      "bytes": 17995,
+      "sha256": "c236c1272fc29a3d9f0af91145f598f1b42b0918e3fb647f705010c0e5d80d69"
+    },
+    {
+      "path": "app/runtime-v2.js",
+      "bytes": 1308,
+      "sha256": "6e59e5819da2df0cc7c2e397d06089b5b091bd1bb7eba3a135b1cff6dcaa3129"
+    },
+    {
+      "path": "app/sheets/README.md",
+      "bytes": 213,
+      "sha256": "63465ca3970368bde3caf34c3508186090006677faf20deb592c9f139beddecc"
+    },
+    {
+      "path": "app/sheets/sheet-client.js",
+      "bytes": 611,
+      "sha256": "0bcc724adc95909f7e5f7a99f4d37d37dcee8b498367465b4e7a7b4a55a466ce"
+    },
+    {
+      "path": "app/shell/README.md",
+      "bytes": 243,
+      "sha256": "3704f8eb62f9728d2b3eed0731c4b2515330f6ecad5a544f46263e0464704192"
+    },
+    {
+      "path": "app/shell/cards/mount-once.js",
+      "bytes": 752,
+      "sha256": "49fb967b100bcd631e963ba17ae841af6e9a91de11fd0e4b5306f67e0167c7f9"
+    },
+    {
+      "path": "app/shell/fusion-shared-state.js",
+      "bytes": 603,
+      "sha256": "b630bd9b3c2986a5f1454e561707ae357bbd5d9e0f9e4b3cdf7d046f3c7adde8"
+    },
+    {
+      "path": "app/shell/fusion-shell.js",
+      "bytes": 6893,
+      "sha256": "30e02b2c9250390a945bcbd2b72cb57dfdef10caa724669a64dee85f867060cb"
+    },
+    {
+      "path": "app/shell/modos/registry.js",
+      "bytes": 676,
+      "sha256": "faf4907f41e1eed0f5923c9a1e5f0d391e9c5c7fd42a8414565436982bad45ba"
+    },
+    {
+      "path": "app/shell/navbar/navbar.js",
+      "bytes": 739,
+      "sha256": "93d420542c1e9adb89a14028f587ab659f6f7bf26fda46bdcd803ac95c1e2409"
+    },
+    {
+      "path": "app/shell/paineis/collapsible-panel-dock.js",
+      "bytes": 13861,
+      "sha256": "f2b7d25f8493d9afa39c0871808b2cf815dcd3c65cfa6ba62793b2f02cf45b58"
+    },
+    {
+      "path": "app/shell/paineis/panel-host.js",
+      "bytes": 377,
+      "sha256": "c59935aee74b882998444fa7647fe1519f2a379fce0cb9da7cbcf279ff5e2d86"
+    },
+    {
+      "path": "app/shell/workspace.js",
+      "bytes": 958,
+      "sha256": "bf04fbc459481f33ef56ecf039c227aa4d75c1abb508d7fca35ce59797c36d6c"
+    },
+    {
+      "path": "app/sol.js",
+      "bytes": 8324,
+      "sha256": "efb4b39469e2c113d813ba57f92a3e39406d788502c4dbb2ffb322577abe48e2"
+    },
+    {
+      "path": "app/ui.js",
+      "bytes": 110094,
+      "sha256": "e6577a890e775394b1e9df77beddf620dacd1a67e34399158a029d1deba4a0df"
+    },
+    {
+      "path": "app/walk/README.md",
+      "bytes": 246,
+      "sha256": "4bf8a91b8e33bf969170386c651f6cdfa5ed1d4b18be515c972664e725ca5aed"
+    },
+    {
+      "path": "app/walk/earth-to-street.js",
+      "bytes": 950,
+      "sha256": "8ee1bc8c4fad7df3865e67d3ec23e501b29a89b79fc6be765e93c847656b5cf3"
+    },
+    {
+      "path": "app/walk/panorama-viewer.js",
+      "bytes": 4287,
+      "sha256": "0f4dcbe4b55b7ace05d1f4a402d8dacfc6b5b0d43ff3ce916a4ef75b3471c169"
+    },
+    {
+      "path": "app/walk/street-sequence.js",
+      "bytes": 1184,
+      "sha256": "db954eaf420288b751b4de931658fd67d3291e392b1243fae0d9c0e0a08efd21"
+    },
+    {
+      "path": "app/walk/walk-workspace.js",
+      "bytes": 4338,
+      "sha256": "7dac5ac0ddd8670faa590f9ebf596a655e58066a8b163df9be678ca98445a72d"
+    },
+    {
+      "path": "arcz_export.py",
+      "bytes": 26072,
+      "sha256": "6e2ff1098e17dda92635865d240757325595ede6dd6dd4973d0c38afd47269d8"
+    },
+    {
+      "path": "arcz_glb.py",
+      "bytes": 6923,
+      "sha256": "46cf5ab0221492266a17c6ed330d7d90b5bf4204082dee656fc788a0893f2817"
+    },
+    {
+      "path": "arcz_server/__init__.py",
+      "bytes": 584,
+      "sha256": "c074aa7937939611a4afac6ddd13887acd2795de5220b6efa7b5d5912adfff11"
+    },
+    {
+      "path": "arcz_server/aedifex_inventory.py",
+      "bytes": 16205,
+      "sha256": "1104e0d6c813815a8f7803ea553b7a22502026190c5a63852dd785ba4f49af32"
+    },
+    {
+      "path": "arcz_server/aedifex_registry.py",
+      "bytes": 17406,
+      "sha256": "92c4e61a56e962082c48968fd31698d77c717347d2d254a5ed75fe7f86fb39c9"
+    },
+    {
+      "path": "arcz_server/aedifex_runtime.py",
+      "bytes": 13381,
+      "sha256": "c9b6a5af8539df9b37e27cf27e6cfeddd07ae382ac91d9d5df884a0e9a755d11"
+    },
+    {
+      "path": "arcz_server/ai_broker.py",
+      "bytes": 9798,
+      "sha256": "49730fe9e3b18a9e26ae8d70cb7ec52696e04dbb40e7f4ba865fc12cc96d706a"
+    },
+    {
+      "path": "arcz_server/atomic_io.py",
+      "bytes": 1512,
+      "sha256": "8431c9e2a799e6b31f7e611f8e41b60f7eaf9c219752ef4dc075957b10ce4b74"
+    },
+    {
+      "path": "arcz_server/budget.py",
+      "bytes": 3833,
+      "sha256": "10fec8f10ce6bef69653d1cc4fd1af7fdd9396067424b6a8ac4a75d4bb4a06e2"
+    },
+    {
+      "path": "arcz_server/chat_workspace.py",
+      "bytes": 38448,
+      "sha256": "7a2538c9c59597974967def3cb449a6cde6a0950da29117b4375a7055a1891bd"
+    },
+    {
+      "path": "arcz_server/content_store.py",
+      "bytes": 1524,
+      "sha256": "71885d598137be81681e99d22780326f56d329327746191ac878599cd4916dfd"
+    },
+    {
+      "path": "arcz_server/diagnostics.py",
+      "bytes": 1855,
+      "sha256": "81d0545de0b01c8bf05f9996c92cce0cd1119943d6678eb3c2e0ebc86aac0ff4"
+    },
+    {
+      "path": "arcz_server/errors.py",
+      "bytes": 1462,
+      "sha256": "5ebdd0716faf963773530bf76647553d0e23e4a648eea0d8d9fc8522116c9ef7"
+    },
+    {
+      "path": "arcz_server/floorplanner_store.py",
+      "bytes": 21925,
+      "sha256": "64fea9a6a4ae72eaf1121498992bbec9fdae4785b7269b38b34cf031d31fd037"
+    },
+    {
+      "path": "arcz_server/generation_workers.py",
+      "bytes": 8738,
+      "sha256": "c03cee87d4ec88522ffc3c25fcff04881f8ebff3dfe462258be5eb6467fd7a70"
+    },
+    {
+      "path": "arcz_server/generator_contracts.py",
+      "bytes": 6456,
+      "sha256": "8acdf9148793bec02d3dbd217031d5b724327cb01112f934e09215dc8835b7fd"
+    },
+    {
+      "path": "arcz_server/geo_model_bridge.py",
+      "bytes": 16687,
+      "sha256": "11d527ff2c2bd103df08259231e971f68948094c41f9f6f1f7324e24d89be791"
+    },
+    {
+      "path": "arcz_server/geocoder.py",
+      "bytes": 4964,
+      "sha256": "3a131faa1083a708ca33da44c8f1889b649334cbef6919783ea4705574e76823"
+    },
+    {
+      "path": "arcz_server/governance.py",
+      "bytes": 3786,
+      "sha256": "6a5e282a0652c625767e0ab896c683c9fd6d9ddec4fa973e975ea01cb6990f83"
+    },
+    {
+      "path": "arcz_server/hardware.py",
+      "bytes": 2419,
+      "sha256": "d6347e951ef672f7edc52f3473ae65547c054e05aa4fb1c29bfc71f7822a1c47"
+    },
+    {
+      "path": "arcz_server/hashing.py",
+      "bytes": 694,
+      "sha256": "1fdd074dbb91f10a58443a013454fe6babafe5ec99d5bcf58bfa72621b9e4758"
+    },
+    {
+      "path": "arcz_server/image_guard.py",
+      "bytes": 2243,
+      "sha256": "cc60a78524b6590318f6aa42cf5a7670bd68ee9a575dbe4321f8d10fabb4279e"
+    },
+    {
+      "path": "arcz_server/input_assembler.py",
+      "bytes": 13297,
+      "sha256": "121fe3e590e0ddc47560eff2824c13df4a49ea3d6416ad13c515355eecfcd6ef"
+    },
+    {
+      "path": "arcz_server/jobs.py",
+      "bytes": 19588,
+      "sha256": "274da1589487415a2c7a93b3256928c5dc8134714c88c7280d8bdc5a1897d204"
+    },
+    {
+      "path": "arcz_server/network_policy.py",
+      "bytes": 3804,
+      "sha256": "9122b39b5cd3742cacfee4c968bd0ca3dd63bf4da7ffcadaf56a4150937fa73b"
+    },
+    {
+      "path": "arcz_server/panoramas.py",
+      "bytes": 2637,
+      "sha256": "556ec072ea024445136f32b2f203b1eedaeb73a4301e276ff17e7639066f4657"
+    },
+    {
+      "path": "arcz_server/photoreal.py",
+      "bytes": 11704,
+      "sha256": "64048106a32a4d87725f3a4069fde00827b2de3ba8a4162ba4cf1fb2f70d0f66"
+    },
+    {
+      "path": "arcz_server/plugin_catalog.py",
+      "bytes": 1695,
+      "sha256": "85e6cee1d5d823ed594dfa0dfbea53b141450ae4636f4acd02602fe058330cde"
+    },
+    {
+      "path": "arcz_server/profiles.py",
+      "bytes": 2764,
+      "sha256": "7857d4a481008f92fa579e3d108f50f9195747b68acd6d3c7439f43248264467"
+    },
+    {
+      "path": "arcz_server/project_migrations.py",
+      "bytes": 13512,
+      "sha256": "a29d87b4a476bff57847f9c841ea7f786d3900429b35bb3bfe88ea384669b41d"
+    },
+    {
+      "path": "arcz_server/prompt_library.py",
+      "bytes": 19349,
+      "sha256": "94090d4e39f334a80d1b9b7a3c2726c21e65293e3da1f0d3fb829f4bdd944001"
+    },
+    {
+      "path": "arcz_server/reference_media.py",
+      "bytes": 27560,
+      "sha256": "73d20587aa2778fbfedfbe0dd8619462130df680753edb3cf4595cdb63c4041f"
+    },
+    {
+      "path": "arcz_server/region_service.py",
+      "bytes": 7974,
+      "sha256": "42cccbb6c47b74504b3c17dc004cf3869e48fad6b78948f8d9b9633a49345282"
+    },
+    {
+      "path": "arcz_server/schema_validation.py",
+      "bytes": 5737,
+      "sha256": "b56898d702aa22d349e222d255f701ede6cbf5157cb4e6a3276116de61059fe9"
+    },
+    {
+      "path": "arcz_server/sheets.py",
+      "bytes": 3365,
+      "sha256": "66a39ddbe58b55ece02a17b12828b9c4ea057d467fd18682cb4b3fa886944eda"
+    },
+    {
+      "path": "arcz_server/source_registry.py",
+      "bytes": 9738,
+      "sha256": "c3018af11a44607fe013289a0f3891607779f376e98c96056946765f9faa5648"
+    },
+    {
+      "path": "arcz_server/tiles.py",
+      "bytes": 2035,
+      "sha256": "c3038344c48b19cf4a92bc87bfa7affff30398ebe5a13c54d5e8c91e3955def2"
+    },
+    {
+      "path": "arcz_server/tool_catalog.py",
+      "bytes": 14805,
+      "sha256": "530e116d00aae67f4c26363646e67090ceb3b1d59c1f656571be13cdbf3249a2"
+    },
+    {
+      "path": "arcz_server/v2_router.py",
+      "bytes": 35805,
+      "sha256": "c565e85cf7e59ff180263a0902496827df5f9a966b95918fc53f76edaab1bb9c"
+    },
+    {
+      "path": "biblioteca/manifesto.json",
+      "bytes": 40481,
+      "sha256": "bbd60170224c91df50b3e1cddf842918f08b753603b0daa14b1ad33ed0be147a"
+    },
+    {
+      "path": "cache/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "cache_dem/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "cache_entorno/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "cache_geo/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "cache_glb/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "cache_overpass/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "crates/V5_MODULES.md",
+      "bytes": 689,
+      "sha256": "7fb57c18b3023ad7446856f9e6447b34fad7f4aad0486c68036074389d1e242d"
+    },
+    {
+      "path": "crates/arcz-aedifex/Cargo.toml",
+      "bytes": 359,
+      "sha256": "7fc4f6ada2f1ee6ce576959962d588efa7617247144251def1a86b9fe6cb3133"
+    },
+    {
+      "path": "crates/arcz-aedifex/src/lib.rs",
+      "bytes": 10147,
+      "sha256": "6cfc8e6616a56cc766bdc30759e34d2faf60bf7390f50829f0c6ff8f27e73f8e"
+    },
+    {
+      "path": "crates/arcz-app/Cargo.toml",
+      "bytes": 809,
+      "sha256": "19f0aa8264e5820b974bc4ff0daaa92ba1568ccc8a37f438e16294f85285905d"
+    },
+    {
+      "path": "crates/arcz-app/src/agua.rs",
+      "bytes": 8385,
+      "sha256": "47b3bcfaab79b426001db61aada24a13d9d2277054ebb6a61b3d5a768a0b7253"
+    },
+    {
+      "path": "crates/arcz-app/src/archviz_worker.rs",
+      "bytes": 4537,
+      "sha256": "99ad4b7da61ede8be8ad30aa7258a7beedd5cfb1b5585c2ec65554fe52e0dfe4"
+    },
+    {
+      "path": "crates/arcz-app/src/cad_worker.rs",
+      "bytes": 4382,
+      "sha256": "631d972e7e1b859761b0948ccbcc276037f2e53d9e46590ad161f136f52c07f5"
+    },
+    {
+      "path": "crates/arcz-app/src/camera.rs",
+      "bytes": 14521,
+      "sha256": "1ebd78f9e7ebd299f12676adee741121e39ef17c9d5a006ead9833766a23fcf4"
+    },
+    {
+      "path": "crates/arcz-app/src/cena.rs",
+      "bytes": 88142,
+      "sha256": "94996e65249342dce21fd2be2a9a3513fbddc014baacd25b8a39eff521865443"
+    },
+    {
+      "path": "crates/arcz-app/src/cesium_worker.rs",
+      "bytes": 4725,
+      "sha256": "a62e339d99f6fa6ea5deff958faffc6184f9317b6135810cae210de204903c92"
+    },
+    {
+      "path": "crates/arcz-app/src/comandos.rs",
+      "bytes": 18789,
+      "sha256": "0264108f046bf307dff19dc1dec10ffb3215b962cd943b8bf2014a6abfebde7f"
+    },
+    {
+      "path": "crates/arcz-app/src/config.rs",
+      "bytes": 25711,
+      "sha256": "fcc27f52aae9d35814e28b091865f2abb667ac3e5564277b5afbb1210b50ad7e"
+    },
+    {
+      "path": "crates/arcz-app/src/db.rs",
+      "bytes": 16625,
+      "sha256": "89319dee0c8c4583ccecb2c172fb74e4bde70fafb3afe08caa679d926386fa8d"
+    },
+    {
+      "path": "crates/arcz-app/src/entorno.rs",
+      "bytes": 15705,
+      "sha256": "4dad609a4f01b38e256315dbf656af75df14216bad3053433b190e97095cb302"
+    },
+    {
+      "path": "crates/arcz-app/src/gis_worker.rs",
+      "bytes": 6674,
+      "sha256": "70fdb67fb6b9645a3bb3a8633596a0de372f3b14fd8e658f76bbd9134176e9eb"
+    },
+    {
+      "path": "crates/arcz-app/src/gizmo.rs",
+      "bytes": 18601,
+      "sha256": "07d10ddaaa19a8014d5889bdc309dbcbff2126661d1c649b758733497a3a04fe"
+    },
+    {
+      "path": "crates/arcz-app/src/gpu.rs",
+      "bytes": 45100,
+      "sha256": "ddabe8c412441adce44367efe24ae4e692525128f0b55a509dee21ff196804ae"
+    },
+    {
+      "path": "crates/arcz-app/src/iluminacao.rs",
+      "bytes": 4794,
+      "sha256": "593e34ac6339c95c3cd8d116ddc49ba7b64aec13ecb48f0bf98a3523e485a1d2"
+    },
+    {
+      "path": "crates/arcz-app/src/main.rs",
+      "bytes": 14987,
+      "sha256": "10c6da7eb0bab8f0c522238822993b0c0f58f6f950c326d28d3f9b207602ca3b"
+    },
+    {
+      "path": "crates/arcz-app/src/offline_sync_worker.rs",
+      "bytes": 5232,
+      "sha256": "66a133a6515733860013e1e27767bd232b47ce6485459ce7fc4dec81a29e9b8c"
+    },
+    {
+      "path": "crates/arcz-app/src/otimizar.rs",
+      "bytes": 19329,
+      "sha256": "b9dd58b7c54ed0f012806f148ae873a53b98c3ea0900f6f058ee000933db21b3"
+    },
+    {
+      "path": "crates/arcz-app/src/planta.rs",
+      "bytes": 30076,
+      "sha256": "69a7f681d5d3a302cff8b3758892b8a3a67f3c66c45d77e947c97d41bd2987d0"
+    },
+    {
+      "path": "crates/arcz-app/src/projeto.rs",
+      "bytes": 13962,
+      "sha256": "c9ce7b00fa6c49794594f1b5e3cdb24a7e8a16ca4e4d1ca963ccca170b9fbeb4"
+    },
+    {
+      "path": "crates/arcz-app/src/raw_gis_worker.rs",
+      "bytes": 5469,
+      "sha256": "540c8858dc3f552761f1dacdd8116ca860c3a77d018c98ecc5460db6b68477a5"
+    },
+    {
+      "path": "crates/arcz-app/src/reconstruct_worker.rs",
+      "bytes": 4746,
+      "sha256": "531b590d677ab8055e2ca9d0665424e096384b83e981100a2267bb595e9a0415"
+    },
+    {
+      "path": "crates/arcz-app/src/renderer.rs",
+      "bytes": 26478,
+      "sha256": "a29387ed0e4b36717f05eff66a22bb32fe638bff67abf3467dd51dc7cd1b67d9"
+    },
+    {
+      "path": "crates/arcz-app/src/scene.rs",
+      "bytes": 15502,
+      "sha256": "45961430524656ac3713ae1707cd73f7ae8fb586feba09fbba588752154e8b9f"
+    },
+    {
+      "path": "crates/arcz-app/src/server.rs",
+      "bytes": 105935,
+      "sha256": "095b96d3348c2ef4848628f4753cadfb8abdb0bd2f7d25e9d103a8c792ec9fed"
+    },
+    {
+      "path": "crates/arcz-app/src/streetview_worker.rs",
+      "bytes": 6962,
+      "sha256": "3ae1e2f0044e8bc1f1133dca650551e7d66adf794fcca4fdebbde93e7334aec8"
+    },
+    {
+      "path": "crates/arcz-app/src/viewport.rs",
+      "bytes": 32173,
+      "sha256": "a7ac36282b13ad68f36d57f66254b9bac4955c327e4af7d7f0f6a96e005b461f"
+    },
+    {
+      "path": "crates/arcz-app/src/workspace.rs",
+      "bytes": 31955,
+      "sha256": "31aececc536c93270dc98e257f68158e2dc26430fc9d841d56ddffacf50f27b1"
+    },
+    {
+      "path": "crates/arcz-biblioteca/Cargo.toml",
+      "bytes": 742,
+      "sha256": "9bd5e1e1988e41c1048b02bffaf44dcf71fa0ec2f90005e0f0a7d078059a6728"
+    },
+    {
+      "path": "crates/arcz-biblioteca/src/catalogo.rs",
+      "bytes": 20793,
+      "sha256": "714f7b0f4b3ffa35487aa5ada20c27c92cd10c06899cabec46e4dc024247f3d8"
+    },
+    {
+      "path": "crates/arcz-biblioteca/src/lib.rs",
+      "bytes": 6669,
+      "sha256": "a4f19bfec3c61698cf5fe47e87c84fb5caa83bb038c2dd8baa3be02e50645682"
+    },
+    {
+      "path": "crates/arcz-biblioteca/src/main.rs",
+      "bytes": 4945,
+      "sha256": "525d3a15fd7b283c72df40a0391facbeeb897e1b56b665b5e417bbc6a7023ae2"
+    },
+    {
+      "path": "crates/arcz-biblioteca/src/parametrico.rs",
+      "bytes": 31840,
+      "sha256": "499cb0328338e8ca13d2516028e9b9575f5ce5ddada9000086a01fc8853401ca"
+    },
+    {
+      "path": "crates/arcz-biblioteca/src/polyhaven.rs",
+      "bytes": 19341,
+      "sha256": "0571b38e799b4b09b91b66859fe771763655cad653422331aca815dd10706804"
+    },
+    {
+      "path": "crates/arcz-bim/Cargo.toml",
+      "bytes": 376,
+      "sha256": "74d849bebd54147658c32097117ade7f542a8420357cb0116ad104491be37612"
+    },
+    {
+      "path": "crates/arcz-bim/src/lib.rs",
+      "bytes": 10611,
+      "sha256": "28cccc0233d814b7270e16a0a835d107e328b498b9365a1b10b9a42e614c8d6b"
+    },
+    {
+      "path": "crates/arcz-budget/Cargo.toml",
+      "bytes": 291,
+      "sha256": "881c9b5d8577286c9b6b89ed22328d7afe5f393412153e269c0b20cf6fef73c0"
+    },
+    {
+      "path": "crates/arcz-budget/src/lib.rs",
+      "bytes": 5705,
+      "sha256": "006398b68a40064c76483beb098968bef96d7b5c933cb004b00934f118363ecf"
+    },
+    {
+      "path": "crates/arcz-cad/Cargo.toml",
+      "bytes": 341,
+      "sha256": "ab3e3c637ceea9aab19abbbae677185489784c3d6c28f8d180335f2475fbcb6c"
+    },
+    {
+      "path": "crates/arcz-cad/src/lib.rs",
+      "bytes": 22724,
+      "sha256": "e2a7f093c85bc2a886c0f87a7d3e55876da61a593d8661f6266ead982dcb6ff2"
+    },
+    {
+      "path": "crates/arcz-determinism/Cargo.toml",
+      "bytes": 287,
+      "sha256": "2a186db2eddc9afbe788dbc99ba3f17594f636f0ee8aa99091712061f4439029"
+    },
+    {
+      "path": "crates/arcz-determinism/src/lib.rs",
+      "bytes": 4251,
+      "sha256": "2e50752140e422c69017879798da5d731806cfb80a7c628e9d54d3ccbf72e73d"
+    },
+    {
+      "path": "crates/arcz-earth/Cargo.toml",
+      "bytes": 356,
+      "sha256": "0575ef238159ff22376cb108483efb8723134bba90809a75a6dba7d38e0516af"
+    },
+    {
+      "path": "crates/arcz-earth/src/lib.rs",
+      "bytes": 9132,
+      "sha256": "c17417717b7ea40310616b029ba3c7c3c39c363a08825232b3f7fc989e8e5959"
+    },
+    {
+      "path": "crates/arcz-facade/Cargo.toml",
+      "bytes": 276,
+      "sha256": "0fdf43e6a4bef013ec65db3c01f6c8680db71eaa5203f422f3616442a697ffd7"
+    },
+    {
+      "path": "crates/arcz-facade/src/lib.rs",
+      "bytes": 3260,
+      "sha256": "744f5aa77f1ee02d272357f4089d5f80e245e84be7d416259528e38122551e17"
+    },
+    {
+      "path": "crates/arcz-generation-cli/Cargo.toml",
+      "bytes": 540,
+      "sha256": "c24d6025d2c16d1143179817189ba48f57ad7dd15cb0a1aa5e03fa5e7ef04561"
+    },
+    {
+      "path": "crates/arcz-generation-cli/src/gltf.rs",
+      "bytes": 10758,
+      "sha256": "7b5fbc6e8d0ab7efa5c85bf258e30995ea10090be04d146723743459e776fb3b"
+    },
+    {
+      "path": "crates/arcz-generation-cli/src/main.rs",
+      "bytes": 12189,
+      "sha256": "ec41c6f50d6a72ae55afd2e9249329a4fe84b13dd89ba1dcc551ea2da871a8a2"
+    },
+    {
+      "path": "crates/arcz-geo/Cargo.toml",
+      "bytes": 395,
+      "sha256": "5b1a23177de0391a9849825dc40b458668e530aec15215f1eb54b914d45c444d"
+    },
+    {
+      "path": "crates/arcz-geo/src/bbox.rs",
+      "bytes": 6795,
+      "sha256": "2103e248a5eafc7f636e07e662b662f15d41c1170dca86dfd014c60f66250b18"
+    },
+    {
+      "path": "crates/arcz-geo/src/enu.rs",
+      "bytes": 8969,
+      "sha256": "496cdc199cb9292f6455d38eccd789d3017b7848f491c00abc2d1fc44eb2fef1"
+    },
+    {
+      "path": "crates/arcz-geo/src/lib.rs",
+      "bytes": 896,
+      "sha256": "d086af620a5050b1a59396e95d9c0897277ed13449ecb940a85fecad3311e53a"
+    },
+    {
+      "path": "crates/arcz-geo/src/sol.rs",
+      "bytes": 16041,
+      "sha256": "8f445bdb8ab6036dbaca274e0697299b39418a58c4a3b02c73664b7bd34eb714"
+    },
+    {
+      "path": "crates/arcz-geo/src/tiles.rs",
+      "bytes": 11860,
+      "sha256": "8945be398bab4999efb0b0f61e3301672314b0b59288b4556a2c975d382a4a30"
+    },
+    {
+      "path": "crates/arcz-geo/src/wgs84.rs",
+      "bytes": 6576,
+      "sha256": "7e86767a04a68d4031db17c996a1aa0d2a29287f3e4f5d75943b5a0dad6d37f2"
+    },
+    {
+      "path": "crates/arcz-jobs/Cargo.toml",
+      "bytes": 333,
+      "sha256": "8eae53725949d90726c52518f2a4896500ce331bc0bc3275bfbfeb05463b1c3e"
+    },
+    {
+      "path": "crates/arcz-jobs/src/lib.rs",
+      "bytes": 3024,
+      "sha256": "be8c80e4f7c0309df0a24c2dbb83bcc74682e6374461d48a659a01d3d417bbcf"
+    },
+    {
+      "path": "crates/arcz-model/Cargo.toml",
+      "bytes": 404,
+      "sha256": "4c285f4d56a715ff3794748055700b32c921188a74fb5a1fd09694b7b2d4452f"
+    },
+    {
+      "path": "crates/arcz-model/src/analise.rs",
+      "bytes": 19733,
+      "sha256": "b98675f7a0d093b72db4e94d5c4e65bb2518c9d39f39bec2800eae579eb8fea0"
+    },
+    {
+      "path": "crates/arcz-model/src/kmz.rs",
+      "bytes": 11155,
+      "sha256": "2cb86166dad814867ccdd5b4abcdebd8631f696f8ce6d51a61146cfcac48e531"
+    },
+    {
+      "path": "crates/arcz-model/src/lib.rs",
+      "bytes": 27235,
+      "sha256": "5d62fb71bc66bd94f8567b8364621a6b2fe58b174f2f80b16efc7753d0c20d62"
+    },
+    {
+      "path": "crates/arcz-model/src/material.rs",
+      "bytes": 8101,
+      "sha256": "a9ad4ad2c2dda73b4093e3552c293624a5a4bd3214767817ec12a00c578d7f28"
+    },
+    {
+      "path": "crates/arcz-model/src/place.rs",
+      "bytes": 27257,
+      "sha256": "681b62b602e87a3b15e7aaa241c1f6a8ea13b83ced0ab97292e6df2b10bd0831"
+    },
+    {
+      "path": "crates/arcz-osm/Cargo.toml",
+      "bytes": 589,
+      "sha256": "e637ccd30cee51cc1309ec9401279dcd6838e12d7e4a229eb593d33dd03e895e"
+    },
+    {
+      "path": "crates/arcz-osm/src/entidade.rs",
+      "bytes": 19211,
+      "sha256": "30d5b8c03ffde2c99848d509459a2f7aaf3cd74ecfc24f67e53e62bbc8531a2a"
+    },
+    {
+      "path": "crates/arcz-osm/src/especies.rs",
+      "bytes": 10984,
+      "sha256": "02d3f8b0229f84e7edc5a66c2a833855d1b4282707a59d840f013727fb4122bd"
+    },
+    {
+      "path": "crates/arcz-osm/src/gltf_saida.rs",
+      "bytes": 15622,
+      "sha256": "12ce288031c5285966e96c02c3d3c2cdfb193a249c8bf81fa154f0a5be6de457"
+    },
+    {
+      "path": "crates/arcz-osm/src/lib.rs",
+      "bytes": 3377,
+      "sha256": "478f1c65fb44309d07f1d3948b3b2871711ab2881c29186c883c0b75eb4793d4"
+    },
+    {
+      "path": "crates/arcz-osm/src/malha.rs",
+      "bytes": 43272,
+      "sha256": "1df91ed10e253807a3313e0cf8b0d2eb7474bb7852a2dca56b7726694c4ceff8"
+    },
+    {
+      "path": "crates/arcz-osm/src/overpass.rs",
+      "bytes": 19690,
+      "sha256": "fa03a8d26bb1028236c433e2769ea09d72e7cb38c6ca2daacb346a7d3db96919"
+    },
+    {
+      "path": "crates/arcz-osm/src/procedural.rs",
+      "bytes": 40981,
+      "sha256": "77a35a7002a36de22e618ff17ff9bcc2697bdf7dae2d0fc36fe62c3a3f87495a"
+    },
+    {
+      "path": "crates/arcz-osm/src/triangulacao.rs",
+      "bytes": 11876,
+      "sha256": "881df1243f845433ab935b71cb4b66a2944199f04ee218e50ca39db078127c8c"
+    },
+    {
+      "path": "crates/arcz-osm-cli/Cargo.toml",
+      "bytes": 571,
+      "sha256": "172a883f5195e573c6fba2f5b3fdc0e487fe82ee8af25ff75a3ad5ba8f14fa9e"
+    },
+    {
+      "path": "crates/arcz-osm-cli/src/main.rs",
+      "bytes": 9723,
+      "sha256": "847afd3452a27dedd6dc0873877d22c24ad335cddca62398b94e3f74a954a1a9"
+    },
+    {
+      "path": "crates/arcz-procedural/Cargo.toml",
+      "bytes": 652,
+      "sha256": "f3a80f013a39c05e36b21f4a47f338e301f633a9ed47e5d4e70e7ecb7f9c0449"
+    },
+    {
+      "path": "crates/arcz-procedural/src/buildings.rs",
+      "bytes": 9484,
+      "sha256": "b15cdaf51929ec19009dcf5eb719b5d517ed09f5eb4bb867cbf78f788724862d"
+    },
+    {
+      "path": "crates/arcz-procedural/src/geometry.rs",
+      "bytes": 4532,
+      "sha256": "0199ff62f847fb2bca643728fd67fff4bba68073e49c6ef3b4d59b50ba548b92"
+    },
+    {
+      "path": "crates/arcz-procedural/src/greenery.rs",
+      "bytes": 4104,
+      "sha256": "92569b2cd7acc56caa5f0d348a4587a84036ad802975a08683218bea8eb5b584"
+    },
+    {
+      "path": "crates/arcz-procedural/src/input.rs",
+      "bytes": 8382,
+      "sha256": "7f01be14bd26a4b69e78a954b12fc69de6bfeef90964f9014af4ac98fccf2fdb"
+    },
+    {
+      "path": "crates/arcz-procedural/src/lib.rs",
+      "bytes": 8644,
+      "sha256": "db2aaf8a9ad07af4b8dae0542c0501c5e28c9db93547cb001358b80f66e30ebb"
+    },
+    {
+      "path": "crates/arcz-procedural/src/materials.rs",
+      "bytes": 2291,
+      "sha256": "39401df796a68827302a85ebdce047ac01a28654c79feb4dbac8b2778b7a8602"
+    },
+    {
+      "path": "crates/arcz-procedural/src/mesh.rs",
+      "bytes": 9043,
+      "sha256": "be85b607d8e9eb29f8d1b97f1adc9680cda67e00cb2d00e0da37a94b6f8edd61"
+    },
+    {
+      "path": "crates/arcz-procedural/src/roads.rs",
+      "bytes": 4229,
+      "sha256": "44718308ab16d54066929b9e7b1d063df985ddcac70dc5637a94e756d15af691"
+    },
+    {
+      "path": "crates/arcz-procedural/src/surfaces.rs",
+      "bytes": 1210,
+      "sha256": "dff9f365453c5543004aed86757d4307fb649bd1b1f111a9a68ee1d6ca241881"
+    },
+    {
+      "path": "crates/arcz-procedural/src/terrain.rs",
+      "bytes": 4168,
+      "sha256": "f766321629ca296191a8a41b4c833dccdd77a7c8e33be98dc42cbd3f5e3c5c29"
+    },
+    {
+      "path": "crates/arcz-provenance/Cargo.toml",
+      "bytes": 371,
+      "sha256": "0c07c45e773f208b93b9710e623e7f74b01798fb3bf9b6d3dc7da27d6e6276ea"
+    },
+    {
+      "path": "crates/arcz-provenance/src/lib.rs",
+      "bytes": 1925,
+      "sha256": "7293d76303dce5e7559aa35524eb8b8398f3dda264b70b3b88e93534b2096bef"
+    },
+    {
+      "path": "crates/arcz-region/Cargo.toml",
+      "bytes": 375,
+      "sha256": "069a92b57a24bd0dc0c7f915cba9086cf097dda997bb44d93f43c52b4b02ecd9"
+    },
+    {
+      "path": "crates/arcz-region/src/lib.rs",
+      "bytes": 6907,
+      "sha256": "661b21de289d00a8bbcaace2fef0972c263138f6c33b011da7f669ceeec3f89d"
+    },
+    {
+      "path": "crates/arcz-roof/Cargo.toml",
+      "bytes": 327,
+      "sha256": "9931c97542e601239fb83fa1caa206ab4710bad0f56c7fa32ad5f7211cc5d10e"
+    },
+    {
+      "path": "crates/arcz-roof/src/lib.rs",
+      "bytes": 10088,
+      "sha256": "4237717741a157228aa5684ad72fc106a26dc6f3cac2bdf9ea870d055ed3becf"
+    },
+    {
+      "path": "crates/arcz-scene/Cargo.toml",
+      "bytes": 527,
+      "sha256": "a16aa6dc4b5e44892b1ce393e0a23b82f7334740e6f2e703d5bbefe5dd498d8f"
+    },
+    {
+      "path": "crates/arcz-scene/src/lib.rs",
+      "bytes": 6893,
+      "sha256": "633180111bbfea15b4e34dc7b52064c2d2136b8df12cf78ca5f43b187b5a2add"
+    },
+    {
+      "path": "crates/arcz-tauri/Cargo.toml",
+      "bytes": 693,
+      "sha256": "7b8394a92ea2fcd8f286408c0dbda84e6f34db3a6341978908c45a80552792c1"
+    },
+    {
+      "path": "crates/arcz-tauri/src/lib.rs",
+      "bytes": 97,
+      "sha256": "f185a327deae84be92f25e650e4857f196d00bab994dbbdcdbb4361d15934c2f"
+    },
+    {
+      "path": "crates/arcz-tauri/src/main.rs",
+      "bytes": 4863,
+      "sha256": "6c7bfde3f3b8cd1dbf0722caf08c9a432782e07ec842f85b2e4ed7536250508f"
+    },
+    {
+      "path": "crates/arcz-tauri/src/renderer_bridge.rs",
+      "bytes": 5633,
+      "sha256": "1f8f9bc417b217b6f788fff3c7b3c15b61e20ba0050601e8e4d50cc13daad9e0"
+    },
+    {
+      "path": "crates/arcz-tauri/src/superficie.rs",
+      "bytes": 8508,
+      "sha256": "4fdc4dd44ca997c260b710654f732e9f82348a699f76999e3d749bd67c692031"
+    },
+    {
+      "path": "crates/arcz-terrain/Cargo.toml",
+      "bytes": 506,
+      "sha256": "bf18a60f5534f8277acf7e736a1cc4a4c3ab08635e05bf6d9309cdb9df1295a6"
+    },
+    {
+      "path": "crates/arcz-terrain/src/cache.rs",
+      "bytes": 7506,
+      "sha256": "8ba77f27e7b73740f4750f67061dd7ae1760f79ab1478d66cac8163e0ff811b2"
+    },
+    {
+      "path": "crates/arcz-terrain/src/lib.rs",
+      "bytes": 1619,
+      "sha256": "ef8cffae31005b4027558fa39ab03485219b018db96d187e7294fda4d3e8ffb5"
+    },
+    {
+      "path": "crates/arcz-terrain/src/mesh.rs",
+      "bytes": 13566,
+      "sha256": "44920787fc7f1bef6783965b5659b7c34a6956fd59753a1ce32e898a8975950c"
+    },
+    {
+      "path": "crates/arcz-terrain/src/mosaic.rs",
+      "bytes": 36478,
+      "sha256": "a530f63aa760b9fbfbd2109d2e39ff7710e7c7916b478a4c628d0c4489227ffd"
+    },
+    {
+      "path": "crates/arcz-terrain/src/quantized.rs",
+      "bytes": 15620,
+      "sha256": "f62b809f20b6c96d9c024ef47631bdfa3183ee4662a55feb03e8ecf9c21b710a"
+    },
+    {
+      "path": "crates/arcz-terrain/src/source.rs",
+      "bytes": 7502,
+      "sha256": "13cc8044f9e2b38338b97a3f57dd0ef8291c1d6f12923b4dae2ef721c100c46f"
+    },
+    {
+      "path": "crates/arcz-tiles/Cargo.toml",
+      "bytes": 346,
+      "sha256": "53d08f08ced67e58f6c32aa482178ec461ede8c69b160018972f625a54e07c73"
+    },
+    {
+      "path": "crates/arcz-tiles/src/lib.rs",
+      "bytes": 5514,
+      "sha256": "f5351c0e9110c6083d56263080eaceb4e72e1fa6da68c2ec2834df183569b7f3"
+    },
+    {
+      "path": "crates/arcz-validation/Cargo.toml",
+      "bytes": 300,
+      "sha256": "671b3dcdaac3067777da9ef8951bb4653e4a4676189c1120945d458851132ec0"
+    },
+    {
+      "path": "crates/arcz-validation/src/lib.rs",
+      "bytes": 4751,
+      "sha256": "e7f80a488a7feea5534b576e918e55e4d24b838eed9c9933d6dabf36ea856228"
+    },
+    {
+      "path": "crates/arcz-vegetation/Cargo.toml",
+      "bytes": 398,
+      "sha256": "44a53bfb1453fd586932a81df460e00b0ed0316e600b6cb3cb093e530098796e"
+    },
+    {
+      "path": "crates/arcz-vegetation/src/lib.rs",
+      "bytes": 3869,
+      "sha256": "e85160e1da2fc8e45d5a6351a9723bb71b6e3d18866932cb93e5f9298fd7d9d8"
+    },
+    {
+      "path": "data/floorplanner/exports/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "data/indexes/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "data/media/content/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docker-compose.yml",
+      "bytes": 434,
+      "sha256": "42c44f006cea73419ddf0a23c1d7b9dd4ef3a42c14829498f4a3ab15c001376a"
+    },
+    {
+      "path": "docs/ARCZ_ARQUITETURA_E_PLANO.md",
+      "bytes": 17329,
+      "sha256": "f5df2cc08b9b7f66cf7c2c91d941b62709d35b220cb86f30b9128f1533e9e482"
+    },
+    {
+      "path": "docs/ARCZ_EARTH_PLANO_TECNICO_LOCAL_FIRST_V3.md",
+      "bytes": 44399,
+      "sha256": "faa922f348ea453abb939fcee058e85f6ba154817f9e887c9b013c48689a2893"
+    },
+    {
+      "path": "docs/api/V2.md",
+      "bytes": 1371,
+      "sha256": "71d937d16158b183cbf1d725bb13fb45f7271d190d5a45ed94af7ab989301032"
+    },
+    {
+      "path": "docs/audit/CURRENT_STATE.md",
+      "bytes": 2923,
+      "sha256": "fa8f90a1704e75c5faebdfd18772efbdaa97e3968e159984b7b46fede51c34e1"
+    },
+    {
+      "path": "docs/audit/REPOSITORY_BASELINE.md",
+      "bytes": 2563,
+      "sha256": "706415668a355bdc487e813530150e19cd29b00ff2f57f08efc938c0e7e2d200"
+    },
+    {
+      "path": "docs/audit/SOURCE_EXPORT_MANIFEST.json",
+      "bytes": 3659,
+      "sha256": "acce02901e5579f30e177357b5dc5140dde298fd4ca2145ac0670c2c9dbfce21"
+    },
+    {
+      "path": "docs/audit/TEST_BASELINE.md",
+      "bytes": 1696,
+      "sha256": "a923ca6492ccf205dd4f04e42b4c905c106fc5c1003aaacbdc403d51151677d0"
+    },
+    {
+      "path": "docs/audit/VALIDATION_REPORT.md",
+      "bytes": 22423,
+      "sha256": "9fcb5e8d6ddcf68b3e334a7f0d85113a66403335271428c6deadca9ec5ca6bc3"
+    },
+    {
+      "path": "docs/auditoria/ARCZ-2026-07-30.md",
+      "bytes": 14573,
+      "sha256": "936009d8f913c1aff83268b4546e7c9469d53951d3c581b13900c0e11e7dfeae"
+    },
+    {
+      "path": "docs/auditoria/ARCZ_AUDITORIA_UNIFICADA_2026-08-04.md",
+      "bytes": 38213,
+      "sha256": "3f5e8ab7cc88c05caf3cd3cf1b0159b4898600a0a1f6c8458abe07bb93df3632"
+    },
+    {
+      "path": "docs/auditoria/CURRENT_STATE.md",
+      "bytes": 2708,
+      "sha256": "6180554de664d05cf57e596ac2f6bb963c613a3599526db9d430c49768df0b20"
+    },
+    {
+      "path": "docs/auditoria/REALITY_SITE_COMPOSER_SPEC.md",
+      "bytes": 5495,
+      "sha256": "a69407ca44922e68e4eeadfc26af678d910ad63af244bc9656a71578c3d0a165"
+    },
+    {
+      "path": "docs/contracts/ERROR_CODES.md",
+      "bytes": 3067,
+      "sha256": "e720e073fe12c06f9f157947882620f0b6220969fa4ee1a14c82099a4ba95e49"
+    },
+    {
+      "path": "docs/contracts/GENERATOR_INPUT_PACKAGE.md",
+      "bytes": 1852,
+      "sha256": "001708c6a92f281c01ee9162bd555bdc39f2a8cc841223499d2c46e6fbebfd6e"
+    },
+    {
+      "path": "docs/contracts/PLUGIN_V2.md",
+      "bytes": 1057,
+      "sha256": "ba3d564b022f22cb63f3b8edec5cbf9240ca5fdef13d54219a4a19448ecfdc7f"
+    },
+    {
+      "path": "docs/contracts/PROJECT_MIGRATION.md",
+      "bytes": 2122,
+      "sha256": "bd74ac6680d64ac8cc6fc9ecab3a01383f5eded9b01c8665196073d196d84adb"
+    },
+    {
+      "path": "docs/decisions/ADR-0001-arcz-stack-engine-rust-ui-tauri-react.md",
+      "bytes": 4716,
+      "sha256": "93d0743ffa4933c71e014bceeb31bced40d87643ecb9185259939461bd695ef3"
+    },
+    {
+      "path": "docs/decisions/ADR-0002-viewport-wgpu-nativo-no-tauri.md",
+      "bytes": 5089,
+      "sha256": "bf921a788f8bd4ff98d618bc998edbc7b1af49803dbaf70a45d674349c6b9c2a"
+    },
+    {
+      "path": "docs/decisions/ADR-0004-reality-site-composer-architecture.md",
+      "bytes": 4869,
+      "sha256": "aa2a05341577c71c7141ece6a04be6dc578ccd55690046608f63fc2976a6f61a"
+    },
+    {
+      "path": "docs/implementation/AI_IMPLEMENTATION_PROTOCOL.md",
+      "bytes": 3974,
+      "sha256": "17af06c9d2a5971c72fe99deb001afb07147475773a4f14c6980845fbdb1f004"
+    },
+    {
+      "path": "docs/implementation/IMPLEMENTATION_WARNINGS.md",
+      "bytes": 3747,
+      "sha256": "eba0e98050b73528a7659ce3ac2b06b6d9a233f090c2afe3e88079a36bd5b8d9"
+    },
+    {
+      "path": "docs/implementation/LEGACY_CONNECTORS.md",
+      "bytes": 1528,
+      "sha256": "1096dddbd0e7f1528b80f13b57e43355a5b3689aecbbfa643bdf812e21651b83"
+    },
+    {
+      "path": "docs/implementation/MODULE_STATUS.md",
+      "bytes": 1160,
+      "sha256": "8f1ba56d42361ee374bcbeb0762a8494677921f7d75ecd7f6dc803701992bf4c"
+    },
+    {
+      "path": "docs/implementation/NEXT_AI_TASKS.md",
+      "bytes": 624,
+      "sha256": "80ffb50009d5957d5ab3be9ec6b436800cbe8130c71ca6a2e4209539a0506849"
+    },
+    {
+      "path": "docs/implementation/NO_MOCK_POLICY.md",
+      "bytes": 1740,
+      "sha256": "31b5671ac19284ece8644a196bb402ea71f8773271b77da60bd47828657c517a"
+    },
+    {
+      "path": "docs/implementation/PLAN_TO_CODE_MATRIX.md",
+      "bytes": 3677,
+      "sha256": "7dc5b8a4708caac759b532e8f699321d2b54e06f84efbff081025a466dba97d3"
+    },
+    {
+      "path": "docs/implementation/TOOLS.md",
+      "bytes": 1273,
+      "sha256": "bd2a68fd8ce7d85d07b0a5a522a28c201e8f085e4da4b0af9a140386f6ac1591"
+    },
+    {
+      "path": "docs/implementation/VENDOR_REQUIREMENTS.md",
+      "bytes": 2412,
+      "sha256": "cc58a11367a3c2e0affd8f66d7f86d182e83e3ba780bac96dd280feeeba7ee22"
+    },
+    {
+      "path": "docs/integration/AEDIFEX_AUDIT.md",
+      "bytes": 2223,
+      "sha256": "cd079f3a45726915c630c513f5d9a2a26ca4844e9a23738bb1c06a49f92e1fff"
+    },
+    {
+      "path": "docs/integration/AEDIFEX_CAPABILITY_LEDGER_V10.md",
+      "bytes": 14359,
+      "sha256": "d36f17431ce79d291ad9ae61743fc371a256963f7c1c144ac1c7d3fffc4d00bd"
+    },
+    {
+      "path": "docs/integration/AEDIFEX_DECISION_RECORD.md",
+      "bytes": 3586,
+      "sha256": "03ec7c34e1ee06aad4443569c248360f70b3399cba39a389c99c01cfd6accba1"
+    },
+    {
+      "path": "docs/integration/AEDIFEX_FUNCTION_COVERAGE.md",
+      "bytes": 4836,
+      "sha256": "5da3e6ec39f5e7d338da97290ae0761f1565f5883cd1f4884b90531d6f49b8ab"
+    },
+    {
+      "path": "docs/integration/CINEMATIC_EARTH_STARTUP.md",
+      "bytes": 1676,
+      "sha256": "37572c4765d4e07db87a0a1f025871c7a6fc3af181de325747aad4a1ede3c67b"
+    },
+    {
+      "path": "docs/integration/COMMUNITY_FORK_POLICY.md",
+      "bytes": 1074,
+      "sha256": "5524cda0e92a3c487b6358a3a3897abb199ebf289f0a9483fadc9d92475177b5"
+    },
+    {
+      "path": "docs/integration/CONVERSION_MATRIX_GUIDE.md",
+      "bytes": 1598,
+      "sha256": "838e854cd60e285435af5b772231bd72df9fdc2011d002818a2f5bcc29b62849"
+    },
+    {
+      "path": "docs/integration/FLOORPLANNER_GLOBE_ROUNDTRIP.md",
+      "bytes": 3215,
+      "sha256": "3bf15047fd71aea4d31e4d1f3c880874b9aa42c354beafbec88c5d9401b9b777"
+    },
+    {
+      "path": "docs/integration/MASS_CONVERSION_EXECUTION_PLAN.md",
+      "bytes": 11406,
+      "sha256": "f473ce701f518a4e0e0fe2f82fd31585370b6252f9776324764b823f1c70cfe6"
+    },
+    {
+      "path": "docs/integration/PHOTOREAL_CHAT_PROMPTS.md",
+      "bytes": 3088,
+      "sha256": "feaa1b1f46dfdc8966233bf05aebc5b36aa11d8e9ecc99312db96b73014caa72"
+    },
+    {
+      "path": "docs/integration/UI_PANEL_SYSTEM.md",
+      "bytes": 1301,
+      "sha256": "6686158ed61a5f0a035604d9520523b14ece4ccb9d2f9bc55ae39599c96da1f0"
+    },
+    {
+      "path": "docs/integration/USER_REQUIREMENT_TRACEABILITY_V10.md",
+      "bytes": 3685,
+      "sha256": "56d60d32a0222513ffea29e7a7a2619738a7532c8be8e40b631b97e0ab54999d"
+    },
+    {
+      "path": "docs/integrations/UI_ENGINE_CONTRACT.md",
+      "bytes": 4995,
+      "sha256": "4f7e0657c7f5dc5155936bbcd510f2f4a5a9883a3c053a5f14a93d250c6424aa"
+    },
+    {
+      "path": "docs/open-source/BIBLIOTECA_MOBILIARIO.md",
+      "bytes": 3352,
+      "sha256": "e6e2638b6fe1e83f2c48433d9f452e84640e75c3856e74e61939eb422f66d375"
+    },
+    {
+      "path": "docs/open-source/INTEGRATION_STATUS.md",
+      "bytes": 694,
+      "sha256": "e81a8bb3fdfe0dd4a2e3b4f4c58ad744d32b1e334e63bbdf4558fcfe58feb315"
+    },
+    {
+      "path": "docs/open-source/LICENSE_MATRIX.md",
+      "bytes": 878,
+      "sha256": "d42ec1f55c7b6ced1f1f989e99e36f2c64da51108479ffcc5f404e27f3317ca7"
+    },
+    {
+      "path": "docs/open-source/OPEN_SOURCE_CATALOG.md",
+      "bytes": 1585,
+      "sha256": "b7f3252f7ee07d57698eaa41750e2df69399f4828ea6ebcfc1309961c9d7b97b"
+    },
+    {
+      "path": "docs/runbooks/AIRGAPPED_BUILD.md",
+      "bytes": 1972,
+      "sha256": "ed8586f647c6c446d6ef01b4a797b21ff6d3daa8aec76ea46aae5ebd2a4c277a"
+    },
+    {
+      "path": "docs/runbooks/BUILD_AND_VERIFY.md",
+      "bytes": 1011,
+      "sha256": "ea4d0d4fab8cc4f16d8df749d0e8c58bc3fc49416000b173936cb44f2cd9a987"
+    },
+    {
+      "path": "docs/runbooks/OFFLINE_ACCEPTANCE.md",
+      "bytes": 1027,
+      "sha256": "d30bb93e826100ee822a01e144938484290d6198b02f7261425e7f628e11a806"
+    },
+    {
+      "path": "examples/source-package/README.md",
+      "bytes": 493,
+      "sha256": "9d255bb5028b33c786562480f9601e41f87c92247defe3d030ead79bbd4a9d8f"
+    },
+    {
+      "path": "examples/source-package/minimal-input.json",
+      "bytes": 3330,
+      "sha256": "887b26ad85ab97e58f2ec46cb01c79a9ef78d109616efd4fc33cf9aa1f03ded2"
+    },
+    {
+      "path": "examples/source-package/minimal-package/NOTICE.txt",
+      "bytes": 226,
+      "sha256": "89e221d8bf5f917b70aaa36b2f8e0e1e167fcf58830dc08261c8a3a59b3f76e6"
+    },
+    {
+      "path": "examples/source-package/minimal-package/arcz-generator-inputs.json",
+      "bytes": 4947,
+      "sha256": "03a56436c616b28ca66bb92c26646865a979c7d2bc8106128fb1549bde314d79"
+    },
+    {
+      "path": "examples/source-package/minimal-package/package.json",
+      "bytes": 969,
+      "sha256": "dec4d832b5f897e0694b3a702d2b1896fc8843ca516687989dd95b8f0037fb41"
+    },
+    {
+      "path": "examples/source-package/minimal-source/NOTICE.txt",
+      "bytes": 226,
+      "sha256": "89e221d8bf5f917b70aaa36b2f8e0e1e167fcf58830dc08261c8a3a59b3f76e6"
+    },
+    {
+      "path": "index.html",
+      "bytes": 1206,
+      "sha256": "fd278390791056d8b808871782b54b1dadb14b74f57269c0733114dfc22e9a01"
+    },
+    {
+      "path": "install.ps1",
+      "bytes": 71,
+      "sha256": "2902107926eb038ae48834a1c09a50e851caaa4508de686905793821549613de"
+    },
+    {
+      "path": "install.sh",
+      "bytes": 88,
+      "sha256": "39095ebab115f467a9336d3b7480d42fbe6bc0903ddbecb2a60ecc44a0c1e970"
+    },
+    {
+      "path": "installers/linux/README.md",
+      "bytes": 253,
+      "sha256": "374fcde040b38fabbbf4151aff068c2a2c9adff2cbe808a2599edd9113d6cc9b"
+    },
+    {
+      "path": "installers/windows/README.md",
+      "bytes": 410,
+      "sha256": "0068fe5b80e9db4a8c34485464ea8e748a6fe49b1fbf37752dfb6307dc6cc6e9"
+    },
+    {
+      "path": "integrations/aedifex/AUTHOR_REPOSITORY_AUDIT.json",
+      "bytes": 5396,
+      "sha256": "26ba4b83f2f0b8077cc4f9811a2eb40cf6a9fd09fb191db6dda660392929f16e"
+    },
+    {
+      "path": "integrations/aedifex/BRIDGE_PROTOCOL.md",
+      "bytes": 1617,
+      "sha256": "1864de1efa3f6cd18a77dd5a34133511d2248a554f25c455a1581b96ddce82d2"
+    },
+    {
+      "path": "integrations/aedifex/COMMUNITY_SOURCES.json",
+      "bytes": 2176,
+      "sha256": "972b042f8dbc7fdabc4c2d5cddb7a3fa3430d7b5df2888e96433e1dc7c86d4f0"
+    },
+    {
+      "path": "integrations/aedifex/COMPATIBILITY_MATRIX.json",
+      "bytes": 2604,
+      "sha256": "c6dbb89125350a15663662ab6cef5bf6505e209393b18e01ba5ece9ca3b341c0"
+    },
+    {
+      "path": "integrations/aedifex/CONVERSION_COVERAGE.json",
+      "bytes": 27914,
+      "sha256": "44526e81ce1b310d16f530e600885e99d7a4b312d46eb5b162a680401f0d7d85"
+    },
+    {
+      "path": "integrations/aedifex/CONVERSION_MATRIX.json",
+      "bytes": 80360,
+      "sha256": "2d08afb51a53e54e6a5626ba89bb0c597de441ca10cbbebb3cca38465c28400d"
+    },
+    {
+      "path": "integrations/aedifex/FEATURE_MATRIX_CONVERSION.json",
+      "bytes": 9389,
+      "sha256": "93f75c8c1eace9898e241e105270ce0f11c1f0814b32212ffc9f384db75f152a"
+    },
+    {
+      "path": "integrations/aedifex/LICENSE.upstream",
+      "bytes": 1144,
+      "sha256": "49b5237da88124145f12eea6e961eedb3326a9d5cf0a630577d09cf628032b01"
+    },
+    {
+      "path": "integrations/aedifex/PATCH_MANIFEST.json",
+      "bytes": 7737,
+      "sha256": "459fa3a4b6ff7f4f27edfd17119f71e1efb5b85d121d689aa249fe311ceba5bd"
+    },
+    {
+      "path": "integrations/aedifex/README.md",
+      "bytes": 1206,
+      "sha256": "7ca7ce0bd3fcfada74619e8d2428b8c4f090a4651eef36edeecf3b886dd9f3a3"
+    },
+    {
+      "path": "integrations/aedifex/UPSTREAM_LOCK.json",
+      "bytes": 3234,
+      "sha256": "c01fad4e3ab75f044009cbf753abeb8657bdd3ff1dc804b4a23cb50e76af8451"
+    },
+    {
+      "path": "integrations/aedifex/overlay/apps/arcz-floorplanner/app/api/ai/chat/route.ts",
+      "bytes": 8471,
+      "sha256": "4361619f0bcf1c25918bad2900ffac29fb1c2d9d183087e19e378c61f648d3a5"
+    },
+    {
+      "path": "integrations/aedifex/overlay/apps/arcz-floorplanner/app/api/arcz/tools/catalog/route.ts",
+      "bytes": 615,
+      "sha256": "dddd13614aeaf6ee9f8c9b85623e8fca4f5bf05f7d8df662fce63e1997773ebb"
+    },
+    {
+      "path": "integrations/aedifex/overlay/apps/arcz-floorplanner/app/api/arcz/tools/invoke/route.ts",
+      "bytes": 978,
+      "sha256": "32dd5d712746f3fb3edeb438263109baa8dcacd21f2da0d9d6628037a61009e0"
+    },
+    {
+      "path": "integrations/aedifex/overlay/apps/arcz-floorplanner/app/api/health/route.ts",
+      "bytes": 316,
+      "sha256": "7c717b5b8bced97a8dec52345e7cb1c731a6762a2ba3d6a1cbf54b2ca9867ae3"
+    },
+    {
+      "path": "integrations/aedifex/overlay/apps/arcz-floorplanner/app/globals.css",
+      "bytes": 10258,
+      "sha256": "34e6df6c5e914b6325f43b9093792cbe7d70f7f766002d16811d765d63d0ed96"
+    },
+    {
+      "path": "integrations/aedifex/overlay/apps/arcz-floorplanner/app/layout.tsx",
+      "bytes": 302,
+      "sha256": "c2d20a69a128eb09b6fb79d707a6cdee31c1c8394e16c5694d6874adae9d4257"
+    },
+    {
+      "path": "integrations/aedifex/overlay/apps/arcz-floorplanner/app/page.tsx",
+      "bytes": 14833,
+      "sha256": "c70829551f369c9e1672a93480fd5cde305e1d9ee7265a8be2a965f5dacbe060"
+    },
+    {
+      "path": "integrations/aedifex/overlay/apps/arcz-floorplanner/app/ui/arcz-build-panel.tsx",
+      "bytes": 4808,
+      "sha256": "49ffe74cd322dae88405ad40ea21f5144cec90e9b37506f3acbf722353be9608"
+    },
+    {
+      "path": "integrations/aedifex/overlay/apps/arcz-floorplanner/app/ui/arcz-chat-panel.tsx",
+      "bytes": 10591,
+      "sha256": "ed0683c12398eb56e3d4d6bd3cf0b6f39d01c9c2a5fdcbbc50dcf96668e1eaa2"
+    },
+    {
+      "path": "integrations/aedifex/overlay/apps/arcz-floorplanner/app/ui/arcz-context-layers.tsx",
+      "bytes": 11175,
+      "sha256": "a4bf32bfd9ec28b1e918007c6db1c1a8e85b44ad60215b3e0379c1241a3887a3"
+    },
+    {
+      "path": "integrations/aedifex/overlay/apps/arcz-floorplanner/app/ui/arcz-import-export-panel.tsx",
+      "bytes": 8843,
+      "sha256": "f483698c819902ec80c4b899a30f3b1b4dd4cb67fc6890fbe750ebaa4e44d692"
+    },
+    {
+      "path": "integrations/aedifex/overlay/apps/arcz-floorplanner/app/ui/arcz-panel-behavior.tsx",
+      "bytes": 2095,
+      "sha256": "863f0e22a143bbd488bbf3b67c8a6dc873984e746252e29e8640f32cee943bd3"
+    },
+    {
+      "path": "integrations/aedifex/overlay/apps/arcz-floorplanner/app/ui/arcz-region-panel.tsx",
+      "bytes": 1358,
+      "sha256": "48f024c0fe380eb7814167ae9e1e3e1e1dd57883fd13d47112641e55170560a9"
+    },
+    {
+      "path": "integrations/aedifex/overlay/apps/arcz-floorplanner/app/ui/arcz-scene-export-bridge.tsx",
+      "bytes": 6017,
+      "sha256": "e4db7b71f2617b44429ae338e95cf2baf63aa823c0c2ebd2d281524d1b5184aa"
+    },
+    {
+      "path": "integrations/aedifex/overlay/apps/arcz-floorplanner/app/ui/combined-ai-panel.tsx",
+      "bytes": 852,
+      "sha256": "27906930859f1bf87284f6ac9f11145557681370a08bf6747483aa2299be9b61"
+    },
+    {
+      "path": "integrations/aedifex/overlay/apps/arcz-floorplanner/app/ui/region-context.tsx",
+      "bytes": 2359,
+      "sha256": "07682d284eab3c3ddd33fc985d1edcd3fce569c119b1378111ced86fe8794147"
+    },
+    {
+      "path": "integrations/aedifex/overlay/apps/arcz-floorplanner/lib/bootstrap.ts",
+      "bytes": 1178,
+      "sha256": "275e1ffce32d57bcba4beed6de525b08b5796ccd695a68a2aef64ec38b15b1a0"
+    },
+    {
+      "path": "integrations/aedifex/overlay/apps/arcz-floorplanner/next.config.ts",
+      "bytes": 136,
+      "sha256": "1bcd7fb71e4a3407468f09c587a143f5decb196438ec13669a55d89b484a3c5c"
+    },
+    {
+      "path": "integrations/aedifex/overlay/apps/arcz-floorplanner/package.json",
+      "bytes": 1138,
+      "sha256": "b8d747f274ecfce7752dc43d2f579c35db6d256d47295ee4555ee165a6d034b9"
+    },
+    {
+      "path": "integrations/aedifex/overlay/packages/arcz-aedifex-tools/package.json",
+      "bytes": 376,
+      "sha256": "43e47527a57fd8eb32f9765667b880595a69df642b35a5b1ab2a2e16e8f33ef8"
+    },
+    {
+      "path": "integrations/aedifex/overlay/packages/arcz-aedifex-tools/src/index.ts",
+      "bytes": 9584,
+      "sha256": "3e3b92b412b265f646fc25b9143b193fcabee31a6a713dbd70512f44ede60b95"
+    },
+    {
+      "path": "integrations/aedifex/overlay/packages/arcz-bridge/package.json",
+      "bytes": 205,
+      "sha256": "a625aa139b204e339d6a99f370f3d0607e31299fe7df12addd6fb77f1eb053cb"
+    },
+    {
+      "path": "integrations/aedifex/overlay/packages/arcz-bridge/src/index.ts",
+      "bytes": 12059,
+      "sha256": "53f4e44f33e0929167fabcb9a235e695442df667a30377a273cac706025634e4"
+    },
+    {
+      "path": "integrations/aedifex/vendor/README.md",
+      "bytes": 400,
+      "sha256": "a873c161fc0134a1924a5ae237b85321ed7062c6763a6c356e9b294527dfc6bc"
+    },
+    {
+      "path": "jobs/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "logs/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "opensources/README.md",
+      "bytes": 407,
+      "sha256": "927a7e3bcb50c436f500e426161b6b8929a98e6b8b526ba704fc7da686833904"
+    },
+    {
+      "path": "opensources/forks/README.md",
+      "bytes": 106,
+      "sha256": "eb84d3d2d64c8d70e997166e0890ddc37d5c5ade1702925784712589f23bbb87"
+    },
+    {
+      "path": "opensources/integrations/README.md",
+      "bytes": 111,
+      "sha256": "8a33a047679246344e1b107263139af89b1e57f28a723ff2e778d2cbaaad3efc"
+    },
+    {
+      "path": "opensources/manifest.json",
+      "bytes": 887,
+      "sha256": "793d841da6328ad14e1f2a06171726993ad432286764f35bdc6a67357aa79467"
+    },
+    {
+      "path": "opensources/upstream/README.md",
+      "bytes": 68,
+      "sha256": "bb6c422b90505a6b40fd51c117e34f39d7b10b6b4f31ff8583dd8dfc6574bb35"
+    },
+    {
+      "path": "requirements-dev.txt",
+      "bytes": 35,
+      "sha256": "40640d7f22bdded667e36c33cf8b260e5b4168a1ea19fec7cbf92ff796de96a2"
+    },
+    {
+      "path": "requirements.txt",
+      "bytes": 201,
+      "sha256": "9239ef78d5024f51f0555b971d2ce15153355c8cee5c8f43e9b68bb7e8c9d1d8"
+    },
+    {
+      "path": "resources/aedifex/community-audit.json",
+      "bytes": 1591,
+      "sha256": "732bd2656b9662c8f53c5d85572ddbfd34bc9c5d39406aead69d11cf2c3ff474"
+    },
+    {
+      "path": "resources/biomes/atlantic_forest_coastal.json",
+      "bytes": 1369,
+      "sha256": "da2d69a8a8b81b3baabada51b6fb349b735c4ab1f181a0aff293f828fa120b68"
+    },
+    {
+      "path": "resources/biomes/generic_temperate_urban.json",
+      "bytes": 1377,
+      "sha256": "c0fbec1b04543f2bd91f18a39d38f7ed30467dee1c06c691f3a25e68ffdda710"
+    },
+    {
+      "path": "resources/materials/core-materials.v1.json",
+      "bytes": 1686,
+      "sha256": "12581d99699a9ba141beb7090b6b7947cd8b28f3bec42edd18266ddff496c260"
+    },
+    {
+      "path": "resources/models/README.manifest.json",
+      "bytes": 206,
+      "sha256": "3166054a1837c702b1a7efd94283202716199234a86080ee74b2b8cfd7abf7d3"
+    },
+    {
+      "path": "resources/network/default-policy.json",
+      "bytes": 262,
+      "sha256": "4a1f70f0fa57d6043bcce6781f4084da2358275948b5ff3c3d66c29b6c10e28a"
+    },
+    {
+      "path": "resources/panoramas/README.manifest.json",
+      "bytes": 238,
+      "sha256": "289328ab7c799132e8896655922522ebd840f5be1eb90ef2c9e8a821b45fc476"
+    },
+    {
+      "path": "resources/plugins/arcz.buildings.regional.plugin.json",
+      "bytes": 855,
+      "sha256": "83cfaa7777d537df8d1d846285aeb668cb95508eeb2525a977e3d13a66ca6029"
+    },
+    {
+      "path": "resources/plugins/arcz.houses.regional.plugin.json",
+      "bytes": 843,
+      "sha256": "0e9eee48dfa83ea929a0593abbf75bbdb785bb5ed51751bfa8ef2e65f1aa3fb1"
+    },
+    {
+      "path": "resources/plugins/arcz.materials.regional.plugin.json",
+      "bytes": 847,
+      "sha256": "442c95928b581281d1c97a4481de9e6df6d9f0c7280a4d2000d31cc00b199d70"
+    },
+    {
+      "path": "resources/plugins/arcz.parcels.regional.plugin.json",
+      "bytes": 846,
+      "sha256": "c2434d6a6a5eba9b303a8deac1ba29a6ee2e0c4ebb1176b5e1631b15541cf4cd"
+    },
+    {
+      "path": "resources/plugins/arcz.roads.regional.plugin.json",
+      "bytes": 838,
+      "sha256": "c89999eb524e09dbf1f2912b7df86e3ddd111d35c5c64a3954a7867bc31d74fa"
+    },
+    {
+      "path": "resources/plugins/arcz.terrain.local.plugin.json",
+      "bytes": 837,
+      "sha256": "ca02b2124fe1502ac71c183520b6f1c1a248b49867e9ef0ab02ff920b7c669b9"
+    },
+    {
+      "path": "resources/plugins/arcz.vegetation.regional.plugin.json",
+      "bytes": 860,
+      "sha256": "a7d0b3a0c4caafc804b057928dec2c835e75856316d97dc85a2426b9a22bedad"
+    },
+    {
+      "path": "resources/profiles/br.sc.coastal.midrise.v1.json",
+      "bytes": 2388,
+      "sha256": "6a7acf180b53d7cd5333ec3d4453f17aac42d67b1c80fa450d4952a26e93f069"
+    },
+    {
+      "path": "resources/profiles/global.base.v1.json",
+      "bytes": 2261,
+      "sha256": "e4be3931356015f7cc9e19ee08320492b923e8d4b4e619841e3b817d6f0400ca"
+    },
+    {
+      "path": "resources/prompts/ai-floorplanner-create-from-brief.json",
+      "bytes": 1545,
+      "sha256": "06b6525a27494e6e2002dfa97cd87a4203c996cf841836f297217c74850fd3f5"
+    },
+    {
+      "path": "resources/prompts/render-aerial-context-cinematic.json",
+      "bytes": 1523,
+      "sha256": "15f6da2591a0ee2ad645acc581107c57d00190cdaa8c36ed62f55ae87f80b572"
+    },
+    {
+      "path": "resources/prompts/render-archviz-exterior-photoreal.json",
+      "bytes": 1865,
+      "sha256": "fccd5b8c898c70f48b93cea14ca984b3f14495ed3a2ba6622dcd5ebae8df7bd0"
+    },
+    {
+      "path": "resources/prompts/render-archviz-interior-photoreal.json",
+      "bytes": 1679,
+      "sha256": "2619ef57a06884892fd16b0604a1cdcdccb0b21008a8f24e12249d766de64ffb"
+    },
+    {
+      "path": "resources/prompts/render-material-enhancement.json",
+      "bytes": 1500,
+      "sha256": "195afeb96d293af1a9346a5548cb02dfea7f04f3506325433b39d4b1d3ba1b1b"
+    },
+    {
+      "path": "resources/vendor/README.md",
+      "bytes": 244,
+      "sha256": "5f37c79190560c0709136d7961c299b2b8e701519aed669086bb283a43b45707"
+    },
+    {
+      "path": "resources/workers/README.md",
+      "bytes": 822,
+      "sha256": "dc10e16974997ae0d946dd188593c3992756284ad061f0beabbc44cd57b2e6f4"
+    },
+    {
+      "path": "resources/workers/render.photoreal.worker.json",
+      "bytes": 543,
+      "sha256": "290a7fd8241c16d47dc62f5eff82c06437473e0cee3d0334b9d716c08850c9df"
+    },
+    {
+      "path": "run.bat",
+      "bytes": 126,
+      "sha256": "a0596dbf3a647e462a6c47afb8c0c51bf9dd800b2052429b494b99fb4630af4f"
+    },
+    {
+      "path": "run.sh",
+      "bytes": 84,
+      "sha256": "a773895ec5f6240977ab1a68f32a9c47a9b46a8016ad935444c445ca943e959a"
+    },
+    {
+      "path": "scene/staging/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "schemas/aedifex-build-manifest.schema.json",
+      "bytes": 3281,
+      "sha256": "29e746704b0a3a714009184d98e174ef69d72a114d1e08a1c6e48eeab529b10c"
+    },
+    {
+      "path": "schemas/aedifex-conversion-coverage.schema.json",
+      "bytes": 1323,
+      "sha256": "b2b0e4a2164ea0782ab292bca196e8ece0937d478eca961d29162d6f922f3923"
+    },
+    {
+      "path": "schemas/aedifex-conversion-matrix.schema.json",
+      "bytes": 4135,
+      "sha256": "9cc31390301f948c749f454824b714ac7089e7f044337554344b4858c623cd10"
+    },
+    {
+      "path": "schemas/aedifex-conversion-policy.schema.json",
+      "bytes": 1350,
+      "sha256": "d71f6dceab366bdda9fdc2b9a2ca3710eb8631e538e1e65d987ce19de8c5d533"
+    },
+    {
+      "path": "schemas/aedifex-installation.schema.json",
+      "bytes": 1881,
+      "sha256": "806d066010ab3cecf2ed7b6c98b9d801958cf7664ec8d120431ab499abea8aca"
+    },
+    {
+      "path": "schemas/aedifex-patch-manifest.schema.json",
+      "bytes": 1475,
+      "sha256": "ead38bd9d5b38a306968348f585d54c97ae2ec831c9820fd3285915704a2b98b"
+    },
+    {
+      "path": "schemas/aedifex-scene.schema.json",
+      "bytes": 1026,
+      "sha256": "a1ec83f846b99df084237d4367e112974237a82165f07b9cc0154b070405171d"
+    },
+    {
+      "path": "schemas/aedifex-upstream-inventory.schema.json",
+      "bytes": 1562,
+      "sha256": "dbc4df8f5ed9cbce0b5ba9d38a0aa2e0fa7a7bbb029ac167392f4841383e3d26"
+    },
+    {
+      "path": "schemas/ai-model-manifest.schema.json",
+      "bytes": 3585,
+      "sha256": "fce076468eb905fafead4ea7ed27b7d051639072a17bb20acbce4aafc7d118b8"
+    },
+    {
+      "path": "schemas/budget.schema.json",
+      "bytes": 2414,
+      "sha256": "e5185c8b74ae45652a6c1c3e95dc155d542ef5533d4939684c254356584d0f96"
+    },
+    {
+      "path": "schemas/chat-session.schema.json",
+      "bytes": 1085,
+      "sha256": "7063014169e1d711bcba041acdf72865f0d93f653ed03eb5c0c88b1e7e600ae6"
+    },
+    {
+      "path": "schemas/context-layer.schema.json",
+      "bytes": 2161,
+      "sha256": "675a05db9b2215059ea369cebb99f26e38a1524225b623d682471b7397239fc3"
+    },
+    {
+      "path": "schemas/earth-presentation.schema.json",
+      "bytes": 2519,
+      "sha256": "88536b5dab34a55b07cbbeb19fea298f011e1afc2a80e57b616d59c8faf10473"
+    },
+    {
+      "path": "schemas/error.schema.json",
+      "bytes": 940,
+      "sha256": "dafe1c1eedc00675115e503a5077117a1b031941d25b6c2621a4dc1be32eb542"
+    },
+    {
+      "path": "schemas/floorplanner-derivative.schema.json",
+      "bytes": 1574,
+      "sha256": "5552257321fb5b0a04917adf8b6cd824de7670212d0a4679d0feaa9718f70c75"
+    },
+    {
+      "path": "schemas/floorplanner-project.schema.json",
+      "bytes": 1189,
+      "sha256": "06e01c7ba5c4a27c4b1b72020f443458f25923b9c0cc623ff7de1e81ab55c375"
+    },
+    {
+      "path": "schemas/floorplanner-scene-revision.schema.json",
+      "bytes": 865,
+      "sha256": "3084338c1c06c91b99f9dcb4716f3b2d6721ccff5acd48e475b72a103497eb3b"
+    },
+    {
+      "path": "schemas/generation-job.schema.json",
+      "bytes": 1748,
+      "sha256": "4a00a6daf31d7e9ec77cfbfa5743e9df52f357e55687a34c79dcb56f2f81868c"
+    },
+    {
+      "path": "schemas/generation-manifest.schema.json",
+      "bytes": 1896,
+      "sha256": "922af1eff111390291abe329630803f6d61f3a3fd4442d678e1f9441a2d81c47"
+    },
+    {
+      "path": "schemas/generator-input-package.schema.json",
+      "bytes": 861,
+      "sha256": "0c39a8e310fa28801c82ab5e23fdcedc490ec6786d7ade5e8b15ecb905a49791"
+    },
+    {
+      "path": "schemas/generator-parameters.schema.json",
+      "bytes": 12793,
+      "sha256": "c0538a74f8b855e097b2400f49aa6830ca258f5a82b67dea185d909440ce2dd2"
+    },
+    {
+      "path": "schemas/geo-anchor.schema.json",
+      "bytes": 995,
+      "sha256": "b52ca83c82e4b42bf7ee1b204ce8d6436cb1e296290df3dac0cc26f0af5438d1"
+    },
+    {
+      "path": "schemas/local-worker-manifest.schema.json",
+      "bytes": 797,
+      "sha256": "3e2ba0a6415edf4269dca50f7eadd28640bdb4ab9b65f59743a9c082b5076db3"
+    },
+    {
+      "path": "schemas/modeling-context-package.schema.json",
+      "bytes": 3808,
+      "sha256": "c57f2650bc888cab959b71889b0f2457cd426e10e73341472f17db0be79e54b2"
+    },
+    {
+      "path": "schemas/panel-layout.schema.json",
+      "bytes": 1120,
+      "sha256": "2a1acc32a5b49d24c978c189381d666e2c5b63a6332acad5aa27eb0a7b61391a"
+    },
+    {
+      "path": "schemas/panorama-sequence.schema.json",
+      "bytes": 1658,
+      "sha256": "b4944d5c3958b39bb4ae4a571354a307b2498c61424e966f6647ff86782e7cdc"
+    },
+    {
+      "path": "schemas/photoreal-render-request.schema.json",
+      "bytes": 7538,
+      "sha256": "048f5c3d38d08c3a42c0dcd0846541aa9f47b483341fc6649ab66fc3e54b3530"
+    },
+    {
+      "path": "schemas/plugin-manifest-v2.schema.json",
+      "bytes": 2567,
+      "sha256": "7d98990538e8963ece83a3ea4516f71c9fbb008768449dd4197cf9fcc09ea8db"
+    },
+    {
+      "path": "schemas/project-v2.schema.json",
+      "bytes": 5708,
+      "sha256": "6404b1c6d4b614671186040e56a334e5fee93d22799c9672ce02624abe104dbb"
+    },
+    {
+      "path": "schemas/prompt-template.schema.json",
+      "bytes": 1742,
+      "sha256": "b45c4df0bb10b57afccab078a8dc5ca387999c3eb78b8150e9f20eade59c95e5"
+    },
+    {
+      "path": "schemas/reference-media.schema.json",
+      "bytes": 1925,
+      "sha256": "09fd0f6585d965b9411015a15717614e46c5bf02a4100f777fa0760f4ffdd890"
+    },
+    {
+      "path": "schemas/region-context.schema.json",
+      "bytes": 4219,
+      "sha256": "097e9f3a0bc8982df477871e4f788b7b0863a9296511d4a790602091b877910c"
+    },
+    {
+      "path": "schemas/region-request.schema.json",
+      "bytes": 2878,
+      "sha256": "bacbda2cb44a4851f62684cba903b0fc4f1e4e0609436dee5903fab89637e475"
+    },
+    {
+      "path": "schemas/regional-profile.schema.json",
+      "bytes": 8036,
+      "sha256": "31706e23ff8fc024d9a37dd9d7156f1ab1a38ed621d09448afa2e0d834d0b6dd"
+    },
+    {
+      "path": "schemas/render-job.schema.json",
+      "bytes": 1362,
+      "sha256": "97c982737a3d52cd6092096c6623eed30e816650b80a9f37e8c019e391765a53"
+    },
+    {
+      "path": "schemas/source-package.schema.json",
+      "bytes": 2911,
+      "sha256": "71dcca02b7d0c05f279297bed18d27a364a0ef4777ca37bdfa7063d513df5228"
+    },
+    {
+      "path": "schemas/tile-plan.schema.json",
+      "bytes": 1829,
+      "sha256": "8c1f315db860a10fe57ad0544bc4c61514630158a5442b9ed81626145232e076"
+    },
+    {
+      "path": "schemas/timeline.schema.json",
+      "bytes": 2116,
+      "sha256": "7b548c2efd8b4951e6c646c89d742dcb2a78344189486a9da16d460ee7288d7d"
+    },
+    {
+      "path": "scripts/linux/common.sh",
+      "bytes": 481,
+      "sha256": "db8132272a0f92d60d6ee595d55a8eee62d6a061ae0807a6e6d0339f19dfb5ab"
+    },
+    {
+      "path": "scripts/linux/install.sh",
+      "bytes": 2278,
+      "sha256": "87d94b1d8de2c16e98e93a9a80a1a676f116bed67bf1032a1f71def8ae0fd112"
+    },
+    {
+      "path": "scripts/linux/run.sh",
+      "bytes": 565,
+      "sha256": "c43d8e8bd7a7d70bcdf0cf88fb664ac5391332021c07f9b969cccdd0c8051d1a"
+    },
+    {
+      "path": "scripts/linux/stop.sh",
+      "bytes": 402,
+      "sha256": "17044e199ca45600ccf775260be23ae9927bf225d1ec1a852796c4b8bf0ba8c9"
+    },
+    {
+      "path": "scripts/linux/uninstall.sh",
+      "bytes": 242,
+      "sha256": "8a943a9c8e35e730e0273573b7fba2c67ac84d4d14e4a8dd0e1a2987c4f075e2"
+    },
+    {
+      "path": "scripts/windows/common.ps1",
+      "bytes": 1069,
+      "sha256": "c26b37b506baa9b4e9d6e6f4040858f7cbf5c7e588f4f0e0679a97c1e1fadb70"
+    },
+    {
+      "path": "scripts/windows/install.ps1",
+      "bytes": 2659,
+      "sha256": "631f4d555349f9fb85f253e49e1185d8f48cc4ad3874c8e6143b8492197e5482"
+    },
+    {
+      "path": "scripts/windows/run.ps1",
+      "bytes": 1157,
+      "sha256": "d05b828df249f0a71e28ef3dfafa613f564d1a0f91626cb970e2c6c91951f119"
+    },
+    {
+      "path": "scripts/windows/stop.ps1",
+      "bytes": 513,
+      "sha256": "a73e910414053df0b03a14fd3a8ff6a45ac3361fcf5004936833ade94985b5bb"
+    },
+    {
+      "path": "scripts/windows/uninstall.ps1",
+      "bytes": 983,
+      "sha256": "11c50e208f744e40b713b9efc80ed72e82a229224f96ef3427517e56b3dcfba6"
+    },
+    {
+      "path": "servidor.py",
+      "bytes": 52505,
+      "sha256": "21a7402296a6c0c77ef066741b66cce930a9199d07f71624a28ba04d1e10d829"
+    },
+    {
+      "path": "stop.bat",
+      "bytes": 127,
+      "sha256": "16d40ae2fd50317d2908c646a3381ee636c09ccb29e4ccbf7d9659ef6d1a168e"
+    },
+    {
+      "path": "stop.sh",
+      "bytes": 85,
+      "sha256": "5f2c94c194955f99419155b4f33b24a3b871165c14fc6a68dbf68586c5de076f"
+    },
+    {
+      "path": "tests/persistence/scene_store_test.rs",
+      "bytes": 1621,
+      "sha256": "3cdb3c4c26eba1cdad7699ad5d4b183bea02005620aec0562517e30c53142841"
+    },
+    {
+      "path": "tests/scene_store_test.rs",
+      "bytes": 1621,
+      "sha256": "3cdb3c4c26eba1cdad7699ad5d4b183bea02005620aec0562517e30c53142841"
+    },
+    {
+      "path": "tests_js/aedifex-v10-contracts.test.mjs",
+      "bytes": 5957,
+      "sha256": "3433cf2717b968866427f72ab8e777c691be8993bbee863e6cffad54ef773863"
+    },
+    {
+      "path": "tests_js/core.test.mjs",
+      "bytes": 7547,
+      "sha256": "54c2df3fdff2f10b609bfb22131af31e4a3a8c2dbfc215b43e3e0820a8b58580"
+    },
+    {
+      "path": "tests_js/fusion-v6.test.mjs",
+      "bytes": 8315,
+      "sha256": "e0a6af6e5104883df02f4d1b0b7a2d00d248675d36e711e30b15383dac717c2e"
+    },
+    {
+      "path": "tests_js/v10-integration.test.mjs",
+      "bytes": 9167,
+      "sha256": "7c4f54520fb656c612128277a0dd6c9639d412481a02f085ad1dc6838c5aae37"
+    },
+    {
+      "path": "tests_python/test_aedifex_build_integrity_v9.py",
+      "bytes": 6304,
+      "sha256": "e9268c8ccb4593c058c421c6b12be333ac44c67471c0c1617c4c0511160c182c"
+    },
+    {
+      "path": "tests_python/test_aedifex_fusion_v6.py",
+      "bytes": 19052,
+      "sha256": "2d88d0191eeb3a069451d4e12f37dcb659dca07ad583c633c287740da987e010"
+    },
+    {
+      "path": "tests_python/test_aedifex_inventory_v10.py",
+      "bytes": 6808,
+      "sha256": "15eee5f1dfcc3b0920480af571b71e67e22ace7445f5645077416357b9da80ce"
+    },
+    {
+      "path": "tests_python/test_aedifex_runtime_security_v10.py",
+      "bytes": 2324,
+      "sha256": "a1230d13a777147e0be2056e3a909d400d6f5e1a5e486c88b4e11dc2789ef140"
+    },
+    {
+      "path": "tests_python/test_ai_model_task_contract_v10.py",
+      "bytes": 1311,
+      "sha256": "eac57c1a65e36207a7b65a40d696ccc9e27e81cc9174bd738a2ff8777355a29d"
+    },
+    {
+      "path": "tests_python/test_arcz_export.py",
+      "bytes": 11969,
+      "sha256": "2c5f3a9c6f735349880683407c80fc293b153cf2ae24f5c6f5922aea0e0ec6ff"
+    },
+    {
+      "path": "tests_python/test_arcz_glb.py",
+      "bytes": 8346,
+      "sha256": "d5e9ffaab4b9a6a9e1b5020cb81f64ce618c206b9a0b206b2cfc11af423e3ffd"
+    },
+    {
+      "path": "tests_python/test_chat_tool_orchestration_v10.py",
+      "bytes": 7466,
+      "sha256": "026e0df3bc69a74a485a7419c970c353b0e8975f7a28bc9854666b2310eff4b1"
+    },
+    {
+      "path": "tests_python/test_content_tools_v10.py",
+      "bytes": 7658,
+      "sha256": "dd1faa1467e7b915a7bdc0d644f3b0269cf03e9af611c60704a7d5e6e4eb6dee"
+    },
+    {
+      "path": "tests_python/test_context_layers_v10.py",
+      "bytes": 4615,
+      "sha256": "a4ab2527debd4330ee2c30e81634bf255ea7c6cc196241bbd4200fec44309a8a"
+    },
+    {
+      "path": "tests_python/test_floorplanner_roundtrip_v9.py",
+      "bytes": 5910,
+      "sha256": "c44e4a35aa156862bc0368ebadb14522db22f0faf3e664466856e93371a4acab"
+    },
+    {
+      "path": "tests_python/test_local_first_v5.py",
+      "bytes": 7453,
+      "sha256": "6b2a14c6b824451d5e37fb3db319daf7ffaed7a9e21cb7630a0a8178b9c1cbdd"
+    },
+    {
+      "path": "tests_python/test_runtime_preflight_v10.py",
+      "bytes": 657,
+      "sha256": "bdf7f0610488382601ae502bd4a3fe78f3511283b67ae42947b26279c9769cd1"
+    },
+    {
+      "path": "tests_python/test_servidor.py",
+      "bytes": 14303,
+      "sha256": "00799bfc773e2bda4d620795835c28d7348f58cbb20229177a2ecfca260ef81c"
+    },
+    {
+      "path": "tests_python/test_v2_core.py",
+      "bytes": 15222,
+      "sha256": "45d02086282ecae670ce5ae4c62d0d4247c3bfa4e5831b89f4714bf19356a7a1"
+    },
+    {
+      "path": "tests_python/test_v2_http_fusion.py",
+      "bytes": 17276,
+      "sha256": "d8f548e5077eb29fb0535dc30609589d7b0c025c379afa06d1254e85e5fa2d11"
+    },
+    {
+      "path": "tools/aedifex/audit_vendor.py",
+      "bytes": 1907,
+      "sha256": "3a50ac775334218d02f016e32490bb7d4c2796d30e66d99d2cee34e67c4b1099"
+    },
+    {
+      "path": "tools/aedifex/build_host.py",
+      "bytes": 3874,
+      "sha256": "578ffcc336737b6ed61e1ed754fda2f1fa9b8f0ccb55c0379d6e880576b2a1e9"
+    },
+    {
+      "path": "tools/aedifex/inventory_upstream.py",
+      "bytes": 1323,
+      "sha256": "c71383e240d360e29890a80b59fdce3a1f3a604925be657923ab3da1e4421c80"
+    },
+    {
+      "path": "tools/aedifex/validate_conversion_coverage.py",
+      "bytes": 1801,
+      "sha256": "872e4773a6f08c7896d9972307b4e7a69787577112d6b5cfb31e6e699d2e0817"
+    },
+    {
+      "path": "tools/aedifex/vendor_aedifex.py",
+      "bytes": 8254,
+      "sha256": "6eb1d605ec21dc2548953dfd5b38414f6de79cfb85eec1e5bc02e8eb681f564c"
+    },
+    {
+      "path": "tools/audit_aedifex_forks.py",
+      "bytes": 1604,
+      "sha256": "5299bd2b1288041438ae3af651c9ae79f7330f37eb8745ce819eb9ae8f2242a3"
+    },
+    {
+      "path": "tools/build_aedifex_conversion_matrix.py",
+      "bytes": 14111,
+      "sha256": "73992bbd0064bb0bed25ccf640da649161be3ad8ffc5bb8b98646126aae381c7"
+    },
+    {
+      "path": "tools/build_aedifex_sidecar.py",
+      "bytes": 8936,
+      "sha256": "050b47348e58aa3ed875dcec3ca5799fd910b0489f588fba93216bc2263a85e4"
+    },
+    {
+      "path": "tools/build_generation_worker.py",
+      "bytes": 1520,
+      "sha256": "c7b4718e189612b2c8e420b9086ec51a041354599ab6a06bc407771097128654"
+    },
+    {
+      "path": "tools/build_handoff_manifest.py",
+      "bytes": 4322,
+      "sha256": "ae2ea845b682042de660e06d7d757171ff11083efef7360529d3540eaed32c28"
+    },
+    {
+      "path": "tools/build_source_export_manifest.py",
+      "bytes": 4631,
+      "sha256": "5efb0610fa5d785005a88b62afa318a2e01a98c12c394b66c97faad8d7f1a5dc"
+    },
+    {
+      "path": "tools/check_typescript_syntax.mjs",
+      "bytes": 3300,
+      "sha256": "9cfa6c8456a031863452a574160e73604d6075913873a5877864962e15689f35"
+    },
+    {
+      "path": "tools/clean_release.py",
+      "bytes": 1208,
+      "sha256": "7b4ec118dff018819276f38d58d6bea8e68067ba59d1bde49bd431e611844913"
+    },
+    {
+      "path": "tools/create_source_package.py",
+      "bytes": 6768,
+      "sha256": "a556de177d01997157f13f3296855f141084509ac71f363456e447bebd57d3be"
+    },
+    {
+      "path": "tools/job_cancel_stress.py",
+      "bytes": 2973,
+      "sha256": "cf04031a335f66364d18ad072e58f9a51275c38899f21182a281e45d03dd983b"
+    },
+    {
+      "path": "tools/offline_acceptance.py",
+      "bytes": 6109,
+      "sha256": "e96666fb69a270df2360d66676026b96230c4a441417e73fc0f18a3d77aed400"
+    },
+    {
+      "path": "tools/runtime_preflight.py",
+      "bytes": 8970,
+      "sha256": "3ce15feecc388bfa9a9a7253a4c0ec8dc0afe9795db506bec004de5c3adfc8e9"
+    },
+    {
+      "path": "tools/smoke_generation.py",
+      "bytes": 9521,
+      "sha256": "b063f06677f23122c75b8b3baeb2ffafeaa3af082e4805a2505f539d348c5826"
+    },
+    {
+      "path": "tools/sync_governance_v10.py",
+      "bytes": 10324,
+      "sha256": "7c4d95357d5407977a5e7c381a3451a7145e115a0a1e7aaa8c993141af1e658d"
+    },
+    {
+      "path": "tools/vendor_aedifex.py",
+      "bytes": 8199,
+      "sha256": "a042e693a3148eb17ea1830d5648f18c71e2911388984ae33bbdd0cdf4bbe866"
+    },
+    {
+      "path": "tools/vendor_cesium.py",
+      "bytes": 6719,
+      "sha256": "28a969f73515a98f9d9c4a2d754bb9602b4becf1aa036039f1620fa6476725d9"
+    },
+    {
+      "path": "tools/verify_aedifex_integration.py",
+      "bytes": 1509,
+      "sha256": "7d32c086c06ae554d483cd3fbb8c0bf78f892d5975761f3aabf8a94ae5d7f344"
+    },
+    {
+      "path": "tools/verify_handoff.py",
+      "bytes": 42265,
+      "sha256": "b57e71e47226ac285e69b9a961744e392fab616e7b266c403d176244f3ed9139"
+    },
+    {
+      "path": "uninstall.ps1",
+      "bytes": 73,
+      "sha256": "3d7e9a5e7e9835b639236ade3379a75dc8643e061ec064ca50be74ff28323acb"
+    },
+    {
+      "path": "uninstall.sh",
+      "bytes": 90,
+      "sha256": "d055f6dd9ce44c1f1cb4ad723d40c81aa2a751f49278351d7d2c2b720e09d94c"
+    },
+    {
+      "path": "validation/aedifex-integration-status.json",
+      "bytes": 12481,
+      "sha256": "e28854ccf6f3e5e048a9721286a55e9e7daf16340f8300ccc0f2b803ad482cb5"
+    },
+    {
+      "path": "validation/offline-acceptance.json",
+      "bytes": 2680,
+      "sha256": "5226abfb3b049e81525a9f540e0db2e1064358f8e3945021ebce13915bda7860"
+    },
+    {
+      "path": "validation/verification-report.json",
+      "bytes": 25183,
+      "sha256": "42ab8bd20046ca0a473477d55aafcdf82c0b4fd7e94e7598a7373a0f85f6f0b7"
+    },
+    {
+      "path": "vendor/python/README.md",
+      "bytes": 300,
+      "sha256": "c5d3d24067e027480bee0d0e8cc7ffa6be67d2cd34eecdff73b022010aeee467"
+    },
+    {
+      "path": "vendor/rust/README.md",
+      "bytes": 553,
+      "sha256": "535e331eab183fbc9201fa4bee89955e7d8bbcf0f9261b17ba337e9eab18f1ae"
+    },
+    {
+      "path": "workers/blender/launch_blender.py",
+      "bytes": 6215,
+      "sha256": "87a84f45dc5638a3472587f444036147ba4e0195ea0b163864cd59148372666c"
+    },
+    {
+      "path": "workers/blender/render_floor_scene.py",
+      "bytes": 40839,
+      "sha256": "c6fabaecdf27ac5441579868a1ba02e9a49ae3c0af14027998eb086a1f24e40e"
+    }
+  ]
+}

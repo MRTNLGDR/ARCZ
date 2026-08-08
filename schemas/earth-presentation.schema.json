@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "arcz://schemas/earth-presentation.schema.json",
+  "title": "Cinematic Earth Startup",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "enabled",
+    "duration_ms",
+    "start_altitude_m",
+    "end_altitude_m",
+    "clouds",
+    "atmosphere",
+    "stars",
+    "skip_on_reduced_motion",
+    "orbit_altitude_m",
+    "sun",
+    "moon",
+    "fog",
+    "fog_density",
+    "hue_shift",
+    "saturation_shift",
+    "brightness_shift",
+    "orbit_heading_delta_deg"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "enabled": {
+      "type": "boolean"
+    },
+    "duration_ms": {
+      "type": "integer",
+      "minimum": 400,
+      "maximum": 30000
+    },
+    "start_altitude_m": {
+      "type": "number",
+      "minimum": 1000000,
+      "maximum": 100000000
+    },
+    "end_altitude_m": {
+      "type": "number",
+      "minimum": 20,
+      "maximum": 50000000
+    },
+    "orbit_altitude_m": {
+      "type": "number",
+      "minimum": 500,
+      "maximum": 50000000
+    },
+    "clouds": {
+      "type": "boolean"
+    },
+    "atmosphere": {
+      "type": "boolean"
+    },
+    "stars": {
+      "type": "boolean"
+    },
+    "sun": {
+      "type": "boolean"
+    },
+    "moon": {
+      "type": "boolean"
+    },
+    "fog": {
+      "type": "boolean"
+    },
+    "fog_density": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 0.01
+    },
+    "hue_shift": {
+      "type": "number",
+      "minimum": -1,
+      "maximum": 1
+    },
+    "saturation_shift": {
+      "type": "number",
+      "minimum": -1,
+      "maximum": 1
+    },
+    "brightness_shift": {
+      "type": "number",
+      "minimum": -1,
+      "maximum": 1
+    },
+    "skip_on_reduced_motion": {
+      "type": "boolean"
+    },
+    "orbit_heading_delta_deg": {
+      "type": "number",
+      "minimum": -90,
+      "maximum": 90
+    },
+    "cloud_count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 128
+    },
+    "cloud_radius_m": {
+      "type": "number",
+      "minimum": 1000,
+      "maximum": 500000
+    },
+    "cloud_altitude_m": {
+      "type": "number",
+      "minimum": 500,
+      "maximum": 20000
+    },
+    "cloud_brightness": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 2
+    },
+    "cancel_on_interaction": {
+      "type": "boolean"
+    },
+    "show_progress": {
+      "type": "boolean"
+    },
+    "persistent_procedural_clouds": {
+      "type": "boolean"
+    }
+  }
+}

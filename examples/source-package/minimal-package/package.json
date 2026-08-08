@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "package_id": "arcz.fixture.minimal",
+  "version": "1.0.0",
+  "kind": "other",
+  "license": {
+    "id": "CC0-1.0",
+    "name": "CC0 1.0 Universal",
+    "attribution_required": false,
+    "redistribution_allowed": true
+  },
+  "provenance": {
+    "source": "ARCZ deterministic test fixture",
+    "import_method": "generated_fixture"
+  },
+  "created_at": "2026-08-06T14:22:15.343464Z",
+  "bbox_wgs84": [
+    -48.501,
+    -27.151,
+    -48.499,
+    -27.149
+  ],
+  "files": [
+    {
+      "path": "NOTICE.txt",
+      "sha256": "89e221d8bf5f917b70aaa36b2f8e0e1e167fcf58830dc08261c8a3a59b3f76e6",
+      "bytes": 226,
+      "mime": "text/plain"
+    },
+    {
+      "path": "arcz-generator-inputs.json",
+      "sha256": "03a56436c616b28ca66bb92c26646865a979c7d2bc8106128fb1549bde314d79",
+      "bytes": 4947,
+      "mime": "application/json"
+    }
+  ],
+  "immutable": true,
+  "metadata": {
+    "arcz_generator_inputs": "arcz-generator-inputs.json"
+  }
+}

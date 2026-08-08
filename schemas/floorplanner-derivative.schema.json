@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "arcz://schemas/floorplanner-derivative.schema.json",
+  "title": "Readonly Floorplanner Globe Derivative",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "project_id",
+    "revision",
+    "export_id",
+    "path",
+    "url",
+    "sha256",
+    "scene_hash",
+    "geo_anchor",
+    "readonly",
+    "status"
+  ],
+  "properties": {
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "export_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "path": {
+      "type": "string",
+      "pattern": "^data/floorplanner/exports/"
+    },
+    "url": {
+      "type": "string",
+      "pattern": "^/data/floorplanner/exports/"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "scene_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "geo_anchor": {
+      "$ref": "geo-anchor.schema.json"
+    },
+    "semantic_manifest": {
+      "type": "object"
+    },
+    "readonly": {
+      "const": true
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "READY",
+        "LOADING",
+        "ACTIVE",
+        "ERROR"
+      ]
+    },
+    "lod": {
+      "type": "string",
+      "enum": [
+        "original",
+        "equilibrado",
+        "medio",
+        "distante"
+      ]
+    },
+    "updated_at": {
+      "type": "string"
+    },
+    "generation_epoch": {
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}

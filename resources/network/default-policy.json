@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "default_mode": "offline_strict",
+  "allow_loopback": true,
+  "local_lan_cidrs": [],
+  "import_assisted_allowlist": [],
+  "notes": [
+    "Domínios remotos só entram após autorização explícita e importação materializada."
+  ]
+}

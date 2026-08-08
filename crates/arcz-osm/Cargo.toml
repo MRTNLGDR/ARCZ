@@ -1,0 +1,22 @@
+[package]
+name = "arcz-osm"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+description = "Entorno procedural do ARCZ a partir do OpenStreetMap: predios, vias, vegetacao e agua"
+
+[dependencies]
+arcz-geo.workspace = true
+anyhow.workspace = true
+thiserror.workspace = true
+log.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+reqwest.workspace = true
+tokio.workspace = true
+
+[dev-dependencies]
+env_logger.workspace = true
+tokio = { workspace = true, features = ["rt-multi-thread", "macros"] }

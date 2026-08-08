@@ -1,0 +1,14 @@
+[package]
+name = "arcz-bim"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+description = "Semântica BIM, quantitativos e custos derivados do CAD autoritativo ARCZ"
+
+[dependencies]
+arcz-cad.workspace = true
+arcz-validation.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true

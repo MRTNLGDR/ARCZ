@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "id": "builtin:ai.floorplanner.create.from-brief",
+  "slug": "ai.floorplanner.create.from-brief",
+  "title": "Modelar a partir do briefing",
+  "category": "floorplanner",
+  "purpose": "Instrução estruturada para ferramentas Aedifex/ARCZ",
+  "language": "pt-BR",
+  "template": "No projeto Floorplanner {{floorplanner.project_id}}, revisão {{floorplanner.revision}}, trabalhe somente dentro do lote e das restrições do ModelingContextPackage. Objetivo: {{brief}}. Programa: {{program}}. Regras obrigatórias: {{constraints}}. Antes de aplicar, consulte níveis, paredes, zonas e objetos existentes; produza patch validável e transacional; preserve entidades bloqueadas; não altere georreferência; execute verify_scene após cada bloco e registre quantidades.",
+  "negative_template": "não inventar terreno, não apagar conteúdo bloqueado, não aplicar patch parcial sem rollback, não usar coordenadas de tela como coordenadas do modelo",
+  "tags": [
+    "floorplanner",
+    "mcp",
+    "modeling"
+  ],
+  "variables": {
+    "floorplanner.project_id": {
+      "required": true
+    },
+    "floorplanner.revision": {
+      "required": true
+    },
+    "brief": {
+      "required": true
+    },
+    "program": {
+      "required": true
+    },
+    "constraints": {
+      "required": true
+    }
+  },
+  "version": 1,
+  "builtin": true,
+  "active": true,
+  "content_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "created_at": "2026-08-06T00:00:00Z",
+  "updated_at": "2026-08-06T00:00:00Z"
+}

@@ -1,0 +1,19 @@
+[package]
+name = "arcz-procedural"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+description = "Geração procedural local de terreno, lotes, vias, edificações e vegetação do ARCZ"
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+arcz-budget = { path = "../arcz-budget" }
+arcz-determinism = { path = "../arcz-determinism" }
+arcz-facade = { path = "../arcz-facade" }
+arcz-roof = { path = "../arcz-roof" }
+arcz-tiles = { path = "../arcz-tiles" }
+arcz-validation = { path = "../arcz-validation" }
+arcz-vegetation = { path = "../arcz-vegetation" }

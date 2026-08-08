@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "license": "MIT OR Apache-2.0",
+  "materials": [
+    {
+      "id": "facade.render.offwhite",
+      "category": "facade",
+      "base_color_range": [
+        "#E4E0D7",
+        "#F0EEE8"
+      ],
+      "roughness_range": [
+        0.68,
+        0.9
+      ],
+      "normal_strength_range": [
+        0.08,
+        0.28
+      ],
+      "weathering": {
+        "max_strength": 0.14,
+        "rain_directional": true
+      },
+      "texel_density": 256,
+      "lod_policy": {
+        "hero": "pbr",
+        "near": "pbr",
+        "medium": "atlas",
+        "distant": "tint"
+      }
+    },
+    {
+      "id": "roof.ceramic.aged",
+      "category": "roof",
+      "base_color_range": [
+        "#8D4A37",
+        "#B5684E"
+      ],
+      "roughness_range": [
+        0.58,
+        0.82
+      ],
+      "normal_strength_range": [
+        0.22,
+        0.55
+      ],
+      "weathering": {
+        "max_strength": 0.18,
+        "rain_directional": true
+      },
+      "texel_density": 256,
+      "lod_policy": {
+        "hero": "pbr",
+        "near": "pbr",
+        "medium": "atlas",
+        "distant": "tint"
+      }
+    },
+    {
+      "id": "ground.grass.humid",
+      "category": "ground",
+      "base_color_range": [
+        "#4B623D",
+        "#71825B"
+      ],
+      "roughness_range": [
+        0.82,
+        0.98
+      ],
+      "normal_strength_range": [
+        0.18,
+        0.48
+      ],
+      "weathering": {
+        "max_strength": 0.08,
+        "rain_directional": false
+      },
+      "texel_density": 128,
+      "lod_policy": {
+        "hero": "instanced",
+        "near": "patch",
+        "medium": "atlas",
+        "distant": "tint"
+      }
+    }
+  ]
+}

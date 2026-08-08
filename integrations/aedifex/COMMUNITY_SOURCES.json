@@ -1,0 +1,68 @@
+{
+  "schema_version": 3,
+  "audited_at": "2026-08-06T23:30:00Z",
+  "source_materialized": false,
+  "selected_upstream": {
+    "repository": "TangSY/aedifex",
+    "commit": "5319368bae16500ca5267f6f8d68b36c9586d5bb",
+    "license": "MIT",
+    "decision": "PINNED_AUTHORITATIVE"
+  },
+  "lineage_reference": {
+    "repository": "pascalorg/editor",
+    "license": "MIT",
+    "decision": "REFERENCE_ONLY_NOT_MERGED"
+  },
+  "audited_forks": [
+    {
+      "repository": "pablogventura/aedifex",
+      "observed_commit": "8eeec5d0917b04c29bb468b5682c9ec342a38198",
+      "observed_change": "site-oriented sample scene import and Punilla winter sun theme",
+      "decision": "CANDIDATE_PATCH_AFTER_CODE_AND_ASSET_LICENSE_AUDIT",
+      "merged": false
+    },
+    {
+      "repository": "arash-dn/aedifex",
+      "observed_commit": "3a65be5a1c69e58b14a770af6032bca2438ac4a3",
+      "observed_change": "upstream integration history mirroring reviewed rebuild",
+      "decision": "LINEAGE_REFERENCE_ONLY",
+      "merged": false
+    },
+    {
+      "repository": "junhuac/aedifex",
+      "observed_change": "behind selected upstream with no current unique patch established",
+      "decision": "REJECTED_AS_OBSOLETE",
+      "merged": false
+    },
+    {
+      "repository": "mingchen666/aedifex",
+      "observed_change": "highly divergent AI/UI/provider rewrite",
+      "decision": "REFERENCE_ONLY_NO_BLIND_MERGE",
+      "merged": false
+    },
+    {
+      "repository": "nyhxiaoning/aedifex-3d",
+      "observed_change": "historical divergent fork with many assets and rewrites",
+      "decision": "REFERENCE_ONLY_NO_BLIND_MERGE",
+      "merged": false
+    }
+  ],
+  "in_repo_extensions": [
+    "@aedifex/plugin-trees",
+    "@aedifex/mcp",
+    "apps/ifc-converter"
+  ],
+  "admission_requirements": [
+    "compatible license",
+    "fixed commit",
+    "checksum",
+    "offline runtime",
+    "schema/plugin compatibility",
+    "tests",
+    "clean unload",
+    "asset provenance",
+    "network audit",
+    "rollback"
+  ],
+  "evidence_note": "Repository metadata and selected commits were inspected through the connected GitHub source; no community source or asset was copied into this package."
+}

@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "arcz://schemas/context-layer.schema.json",
+  "title": "ARCZ immutable modeling context layer",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id", "role", "format", "asset_path", "sha256", "readonly",
+    "visible", "opacity", "coordinate_space", "transform", "provenance"
+  ],
+  "properties": {
+    "id": { "type": "string", "minLength": 1, "maxLength": 256 },
+    "role": {
+      "type": "string",
+      "enum": ["terrain", "surroundings", "roads", "buildings", "vegetation", "imagery", "survey", "reference"]
+    },
+    "format": { "type": "string", "enum": ["glb", "geojson"] },
+    "asset_path": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 2048,
+      "pattern": "^/(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._~!$&'()*+,;=:@%/-]+$"
+    },
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "readonly": { "const": true },
+    "visible": { "type": "boolean" },
+    "opacity": { "type": "number", "minimum": 0, "maximum": 1 },
+    "coordinate_space": { "type": "string", "enum": ["AEDIFEX_LOCAL", "ENU_LOCAL"] },
+    "lod": { "type": "string", "enum": ["hero", "near", "medium", "distant", "reference"] },
+    "transform": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["position_m", "rotation_euler_rad", "scale"],
+      "properties": {
+        "position_m": {
+          "type": "array", "minItems": 3, "maxItems": 3,
+          "prefixItems": [{"type": "number"}, {"type": "number"}, {"type": "number"}]
+        },
+        "rotation_euler_rad": {
+          "type": "array", "minItems": 3, "maxItems": 3,
+          "prefixItems": [{"type": "number"}, {"type": "number"}, {"type": "number"}]
+        },
+        "scale": {
+          "type": "array", "minItems": 3, "maxItems": 3,
+          "prefixItems": [
+            {"type": "number", "exclusiveMinimum": 0},
+            {"type": "number", "exclusiveMinimum": 0},
+            {"type": "number", "exclusiveMinimum": 0}
+          ]
+        }
+      }
+    },
+    "provenance": { "type": "object" },
+    "metadata": { "type": "object" }
+  }
+}

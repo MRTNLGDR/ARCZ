@@ -1,0 +1,16 @@
+ARCZ EARTH SOURCE LICENSE
+
+Copyright (c) 2026 Lucas Martyn Legrand. All rights reserved.
+
+The ARCZ-specific source code and assets in this package may be used, modified,
+and executed by the copyright holder and by persons explicitly authorized by
+the copyright holder. Redistribution, sublicensing, sale, or publication of
+ARCZ-specific code or assets requires prior written permission.
+
+This notice does not replace, restrict, or relicense third-party components.
+Aedifex, CesiumJS, Blender, libraries, models, geographic data, media, fonts,
+and other third-party materials remain governed by their own licenses and
+attribution requirements, recorded in THIRD_PARTY_NOTICES.md and manifests.
+
+No license is granted for user data, client projects, trademarks, or assets not
+owned by the ARCZ copyright holder.

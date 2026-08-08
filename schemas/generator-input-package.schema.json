@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "arcz://schemas/generator-input-package.schema.json",
+  "title": "Materialized procedural inputs inside an ARCZ source package",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "coordinate_system", "data"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "coordinate_system": {"enum": ["ENU_LOCAL", "WGS84"]},
+    "origin_wgs84": {
+      "type": ["array", "null"],
+      "prefixItems": [{"type": "number"}, {"type": "number"}, {"type": "number"}],
+      "items": false,
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "data": {"type": "object"},
+    "metadata": {"type": "object"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"coordinate_system": {"const": "ENU_LOCAL"}}},
+      "then": {"required": ["origin_wgs84"]}
+    }
+  ]
+}

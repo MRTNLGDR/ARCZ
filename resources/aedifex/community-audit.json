@@ -1,0 +1,57 @@
+{
+  "schema_version": 2,
+  "audited_at": "2026-08-06T19:15:00Z",
+  "selected_upstream": {
+    "repository": "TangSY/aedifex",
+    "commit": "5319368bae16500ca5267f6f8d68b36c9586d5bb",
+    "license": "MIT",
+    "decision": "PINNED"
+  },
+  "lineage_reference": {
+    "repository": "pascalorg/editor",
+    "license": "MIT",
+    "decision": "REFERENCE_ONLY_NOT_MERGED"
+  },
+  "audited_forks": [
+    {
+      "repository": "pablogventura/aedifex",
+      "relation": "ahead 1 / behind 20 / diverged",
+      "observed": "sample scenes, importer component and scene theme changes",
+      "decision": "CANDIDATE_PATCH_AFTER_ASSET_LICENSE_AUDIT"
+    },
+    {
+      "repository": "junhuac/aedifex",
+      "relation": "behind 374 / ahead 0",
+      "observed": "no unique current changes",
+      "decision": "REJECTED_AS_OBSOLETE"
+    },
+    {
+      "repository": "mingchen666/aedifex",
+      "relation": "highly divergent",
+      "observed": "large AI/UI/test rewrite and provider routes",
+      "decision": "REFERENCE_ONLY_NO_BLIND_MERGE"
+    },
+    {
+      "repository": "nyhxiaoning/aedifex-3d",
+      "relation": "highly divergent",
+      "observed": "large historical fork with many assets and rewrites",
+      "decision": "REFERENCE_ONLY_NO_BLIND_MERGE"
+    }
+  ],
+  "in_repo_extensions": [
+    "@aedifex/plugin-trees",
+    "@aedifex/mcp",
+    "apps/ifc-converter"
+  ],
+  "admission_requirements": [
+    "compatible license",
+    "fixed commit",
+    "checksum",
+    "offline runtime",
+    "schema/plugin compatibility",
+    "tests",
+    "clean unload",
+    "asset provenance",
+    "rollback"
+  ]
+}

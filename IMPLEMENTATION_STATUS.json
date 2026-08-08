@@ -1,0 +1,888 @@
+{
+  "schema_version": 1,
+  "product": "ARCZ Earth + Aedifex Global",
+  "handoff_version": "10.1.0",
+  "generated_at": "2026-08-06T18:28:36.492240Z",
+  "status_definitions": {
+    "VERIFIED": "implementado e gate executado",
+    "VERIFIED_PYTHON": "implementado e validado no runtime Python",
+    "VERIFIED_JAVASCRIPT": "implementado e validado por testes/sintaxe JS",
+    "VERIFIED_CONTRACTS": "contratos e serviços validados; qualidade depende de dados",
+    "IMPLEMENTED_UNVERIFIED": "fonte implementada, mas ferramenta/hardware ausente impediu validação completa",
+    "PARTIAL": "parte operacional existe, gate final ainda aberto",
+    "CONTRACT_READY": "contrato real existe; adaptador/asset/modelo local ainda necessário",
+    "BLOCKED": "pré-condição objetiva ausente",
+    "NOT_IMPLEMENTED": "código operacional não existe",
+    "PARTIAL_VERIFIED": "núcleo implementado e testado; integração/ativos/hardware finais ainda pendentes"
+  },
+  "non_negotiables": [
+    "offline_strict padrão",
+    "sem mocks ou sucesso fictício",
+    "IA local e opcional",
+    "ARCZ autoridade geoespacial",
+    "Aedifex autoridade temporária da cena editável",
+    "GLB somente derivado readonly",
+    "dados por hash/licença/provenance",
+    "revisões otimistas e conflitos visíveis",
+    "stage/validate/commit/rollback",
+    "cancelamento cooperativo",
+    "edição humana preservada"
+  ],
+  "modules": [
+    {
+      "id": "foundation.persistence",
+      "name": "Autosave, escrita atômica e backup",
+      "status": "VERIFIED",
+      "paths": [
+        "app/estado.js",
+        "servidor.py",
+        "arcz_server/atomic_io.py"
+      ],
+      "evidence": [
+        "python_pytest"
+      ],
+      "limitations": []
+    },
+    {
+      "id": "project.migrations",
+      "name": "Migração pura e atômica projeto.json V1→V2",
+      "status": "VERIFIED_PYTHON",
+      "paths": [
+        "arcz_server/project_migrations.py",
+        "servidor.py",
+        "docs/contracts/PROJECT_MIGRATION.md"
+      ],
+      "evidence": [
+        "python_pytest",
+        "json_schema_self_check"
+      ],
+      "limitations": [
+        "corpus de projetos históricos reais ainda precisa ser validado no hardware/repositório do usuário"
+      ]
+    },
+    {
+      "id": "foundation.origins_callbacks",
+      "name": "Origens, safe callbacks e health",
+      "status": "VERIFIED_JAVASCRIPT",
+      "paths": [
+        "app/core/origens.js",
+        "app/core/safe-callback.js",
+        "app/core/health.js"
+      ],
+      "evidence": [
+        "javascript_tests",
+        "javascript_syntax"
+      ],
+      "limitations": [
+        "smoke test dentro do Cesium real ainda é gate separado"
+      ]
+    },
+    {
+      "id": "core.transactions",
+      "name": "Transações, recursos e staging da cena",
+      "status": "VERIFIED_JAVASCRIPT",
+      "paths": [
+        "app/core/transacao.js",
+        "app/core/resource-tracker.js",
+        "app/core/scene-staging.js"
+      ],
+      "evidence": [
+        "javascript_tests"
+      ],
+      "limitations": [
+        "integração visual final no navegador real pendente"
+      ]
+    },
+    {
+      "id": "api.v2",
+      "name": "API local V2 integrada",
+      "status": "VERIFIED_PYTHON",
+      "paths": [
+        "arcz_server/v2_router.py",
+        "servidor.py"
+      ],
+      "evidence": [
+        "python_pytest",
+        "python_compileall"
+      ],
+      "limitations": [
+        "testes HTTP end-to-end com navegador real pendentes"
+      ]
+    },
+    {
+      "id": "jobs.local",
+      "name": "Fila persistente, eventos, cancelamento e recuperação",
+      "status": "VERIFIED_PYTHON",
+      "paths": [
+        "arcz_server/jobs.py",
+        "app/core/job-client.js"
+      ],
+      "evidence": [
+        "python_pytest",
+        "javascript_syntax",
+        "job_cancel_race_stress"
+      ],
+      "limitations": [
+        "carga prolongada com worker Rust exige cargo/binário"
+      ]
+    },
+    {
+      "id": "network.offline",
+      "name": "Política local-first e guard de egress",
+      "status": "VERIFIED_CONTRACTS",
+      "paths": [
+        "app/ambiente.js",
+        "app/core/network-mode.js",
+        "app/estado.js",
+        "app/relevo.js",
+        "app/ui.js",
+        "arcz_server/network_policy.py",
+        "index.html",
+        "resources/network/default-policy.json"
+      ],
+      "evidence": [
+        "python_pytest",
+        "javascript_tests",
+        "browser_local_first_boot_contract"
+      ],
+      "limitations": [
+        "firewall/socket audit on target OS remains mandatory",
+        "remote legacy connectors remain optional and require import_assisted"
+      ]
+    },
+    {
+      "id": "sources.registry",
+      "name": "Pacotes locais imutáveis, licença, hash e provenance",
+      "status": "VERIFIED_PYTHON",
+      "paths": [
+        "arcz_server/source_registry.py",
+        "arcz_server/content_store.py",
+        "tools/create_source_package.py"
+      ],
+      "evidence": [
+        "python_pytest",
+        "json_schema_self_check"
+      ],
+      "limitations": [
+        "importadores específicos de formatos geográficos continuam tarefas separadas"
+      ]
+    },
+    {
+      "id": "geocoder.local",
+      "name": "Geocodificador SQLite local",
+      "status": "VERIFIED_PYTHON",
+      "paths": [
+        "arcz_server/geocoder.py"
+      ],
+      "evidence": [
+        "python_pytest"
+      ],
+      "limitations": [
+        "pipeline de ingestão de base nacional/estadual pendente"
+      ]
+    },
+    {
+      "id": "region.context",
+      "name": "Região Ativa, contexto e perfis regionais",
+      "status": "VERIFIED_CONTRACTS",
+      "paths": [
+        "arcz_server/region_service.py",
+        "arcz_server/profiles.py",
+        "app/region"
+      ],
+      "evidence": [
+        "python_pytest",
+        "javascript_tests",
+        "resource_schema_validation"
+      ],
+      "limitations": [
+        "qualidade final depende de pacotes locais e perfis calibrados"
+      ]
+    },
+    {
+      "id": "tiles.budget",
+      "name": "Tile planner e Budget Engine",
+      "status": "VERIFIED_PYTHON",
+      "paths": [
+        "arcz_server/tiles.py",
+        "arcz_server/budget.py",
+        "app/core/budget-client.js",
+        "crates/arcz-tiles",
+        "crates/arcz-budget"
+      ],
+      "evidence": [
+        "python_pytest",
+        "javascript_syntax"
+      ],
+      "limitations": [
+        "crates Rust ainda não compilados nesta sessão"
+      ]
+    },
+    {
+      "id": "plugins.v2",
+      "name": "Registro, loader, capabilities e orquestrador Plugin V2",
+      "status": "VERIFIED_JAVASCRIPT",
+      "paths": [
+        "app/plugins",
+        "app/core/contexto.js",
+        "schemas/plugin-manifest-v2.schema.json"
+      ],
+      "evidence": [
+        "javascript_tests",
+        "resource_schema_validation"
+      ],
+      "limitations": [
+        "teste de 100 ciclos no Cesium real pendente"
+      ]
+    },
+    {
+      "id": "inputs.assembler",
+      "name": "Montagem local de entradas reais e reprojeção",
+      "status": "VERIFIED_PYTHON",
+      "paths": [
+        "arcz_server/input_assembler.py",
+        "arcz_server/generator_contracts.py",
+        "app/core/input-client.js"
+      ],
+      "evidence": [
+        "python_pytest"
+      ],
+      "limitations": [
+        "regridding de DEM em origem ENU divergente é recusado até existir resampler explícito"
+      ]
+    },
+    {
+      "id": "rust.determinism_validation",
+      "name": "Determinismo e validação Rust",
+      "status": "IMPLEMENTED_UNVERIFIED",
+      "paths": [
+        "crates/arcz-determinism",
+        "crates/arcz-validation",
+        "crates/arcz-region"
+      ],
+      "evidence": [
+        "cargo_workspace_structure",
+        "rust_delimiter_sanity_not_compile"
+      ],
+      "limitations": [
+        "cargo/rustc ausentes; cargo check/test obrigatório"
+      ]
+    },
+    {
+      "id": "rust.procedural",
+      "name": "Terreno, lotes, vias, casas, prédios, telhados, fachadas e vegetação Rust",
+      "status": "IMPLEMENTED_UNVERIFIED",
+      "paths": [
+        "crates/arcz-procedural",
+        "crates/arcz-roof",
+        "crates/arcz-facade",
+        "crates/arcz-vegetation"
+      ],
+      "evidence": [
+        "cargo_workspace_structure",
+        "rust_delimiter_sanity_not_compile"
+      ],
+      "limitations": [
+        "telhados complexos usam fallback seguro; straight skeleton/wavefront completo pendente",
+        "cargo check/test obrigatório"
+      ]
+    },
+    {
+      "id": "rust.worker_glb",
+      "name": "Worker local e exportador GLB",
+      "status": "IMPLEMENTED_UNVERIFIED",
+      "paths": [
+        "crates/arcz-generation-cli",
+        "arcz_server/generation_workers.py"
+      ],
+      "evidence": [
+        "python_pytest",
+        "cargo_workspace_structure"
+      ],
+      "limitations": [
+        "binário não compilado nesta sessão; teste GLB ponta a ponta pendente"
+      ]
+    },
+    {
+      "id": "shell.modes",
+      "name": "Shell Globo/Floorplanner/Render/Walk",
+      "status": "PARTIAL_VERIFIED",
+      "paths": [
+        "app/shell",
+        "app/main.js",
+        "index.html"
+      ],
+      "evidence": [
+        "javascript_tests",
+        "javascript_syntax"
+      ],
+      "limitations": [
+        "shell global e lifecycle codificados; smoke visual depende do vendor Cesium/Aedifex"
+      ]
+    },
+    {
+      "id": "cinema.timeline",
+      "name": "Timeline, tracks, keyframes, curvas, quick starts e exportação",
+      "status": "PARTIAL_VERIFIED",
+      "paths": [
+        "app/cine",
+        "app/earth/cinematic-globe.js",
+        "app/camera.js"
+      ],
+      "evidence": [
+        "javascript_tests",
+        "javascript_syntax"
+      ],
+      "limitations": [
+        "captura frame-a-frame real, checkpoint e integração completa com camera.js pendentes"
+      ]
+    },
+    {
+      "id": "street.local",
+      "name": "Panorama local, sequência e transição Earth→Street",
+      "status": "CONTRACT_READY",
+      "paths": [
+        "app/walk",
+        "arcz_server/panoramas.py",
+        "schemas/panorama-sequence.schema.json"
+      ],
+      "evidence": [
+        "javascript_syntax",
+        "python_compileall"
+      ],
+      "limitations": [
+        "catálogo real, privacidade, captura, depth/SLAM e teste WebGL real pendentes"
+      ]
+    },
+    {
+      "id": "ai.local",
+      "name": "Registry e broker de IA local",
+      "status": "PARTIAL_VERIFIED",
+      "paths": [
+        "arcz_server/ai_broker.py",
+        "app/core/local-ai-client.js",
+        "schemas/ai-model-manifest.schema.json"
+      ],
+      "evidence": [
+        "python_pytest"
+      ],
+      "limitations": [
+        "broker, manifests, cache e rotas codificados; modelos locais não materializados"
+      ]
+    },
+    {
+      "id": "render.diffusion",
+      "name": "Planejamento de passes e cliente de difusão local",
+      "status": "CONTRACT_READY",
+      "paths": [
+        "app/render",
+        "arcz_server/photoreal.py",
+        "workers/blender",
+        "resources/workers/render.photoreal.worker.json"
+      ],
+      "evidence": [
+        "python_pytest",
+        "javascript_tests",
+        "photoreal_worker_contract"
+      ],
+      "limitations": [
+        "Blender e modelos locais ausentes; saída fotorreal real não executada"
+      ]
+    },
+    {
+      "id": "sheets",
+      "name": "Composição de pranchas SVG e job local",
+      "status": "PARTIAL",
+      "paths": [
+        "arcz_server/sheets.py",
+        "app/sheets/sheet-client.js"
+      ],
+      "evidence": [
+        "python_compileall",
+        "javascript_syntax"
+      ],
+      "limitations": [
+        "geração completa de vistas ortográficas/cortes/elevações e templates finais pendentes"
+      ]
+    },
+    {
+      "id": "diagnostics",
+      "name": "Diagnóstico e telemetria local",
+      "status": "PARTIAL_VERIFIED",
+      "paths": [
+        "arcz_server/diagnostics.py",
+        "app/core/diagnostics.js",
+        "app/procedural/diagnostics-ui.js"
+      ],
+      "evidence": [
+        "python_compileall",
+        "javascript_syntax"
+      ],
+      "limitations": [
+        "métricas GPU/scene reais dependem de instrumentação do runtime final"
+      ]
+    },
+    {
+      "id": "runtime.cesium_vendor",
+      "name": "CesiumJS 1.143 local com licença e checksums",
+      "status": "BLOCKED",
+      "paths": [
+        "index.html",
+        "tools/vendor_cesium.py",
+        "docs/implementation/VENDOR_REQUIREMENTS.md"
+      ],
+      "evidence": [
+        "cesium_local_vendor"
+      ],
+      "limitations": [
+        "bundle vendor/ foi explicitamente excluído do arquivo de origem; instalar a cópia local auditada antes do smoke browser"
+      ]
+    },
+    {
+      "id": "aedifex.upstream",
+      "name": "Aedifex pin, licença, auditoria e overlay controlado",
+      "status": "BLOCKED",
+      "paths": [
+        "integrations/aedifex",
+        "tools/vendor_aedifex.py",
+        "tools/build_aedifex_sidecar.py"
+      ],
+      "evidence": [
+        "aedifex_vendor_and_build",
+        "COMMUNITY_SOURCES.json",
+        "validation/aedifex-integration-status.json",
+        "AUTHOR_REPOSITORY_AUDIT.json"
+      ],
+      "limitations": [
+        "checkout upstream e build não materializados neste ambiente"
+      ]
+    },
+    {
+      "id": "floorplanner.context",
+      "name": "Região/lote → ModelingContextPackage/GeoAnchor",
+      "status": "VERIFIED_CONTRACTS",
+      "paths": [
+        "app/floorplanner/modeling-context.js",
+        "arcz_server/geo_model_bridge.py",
+        "schemas/modeling-context-package.schema.json",
+        "schemas/geo-anchor.schema.json"
+      ],
+      "evidence": [
+        "python_pytest",
+        "javascript_tests"
+      ],
+      "limitations": [
+        "validação visual de norte/elevação requer runtimes reais"
+      ]
+    },
+    {
+      "id": "floorplanner.revisions",
+      "name": "Projetos, revisões, SSE e conflito otimista",
+      "status": "VERIFIED_PYTHON",
+      "paths": [
+        "arcz_server/floorplanner_store.py",
+        "app/floorplanner/floorplanner-client.js"
+      ],
+      "evidence": [
+        "python_pytest"
+      ],
+      "limitations": [
+        "concorrência browser multiaba real pendente"
+      ]
+    },
+    {
+      "id": "floorplanner.roundtrip",
+      "name": "Aedifex real scene → GLB validado → derivado no globo",
+      "status": "PARTIAL_VERIFIED",
+      "paths": [
+        "integrations/aedifex/overlay/apps/arcz-floorplanner/app/ui/arcz-scene-export-bridge.tsx",
+        "app/floorplanner/floorplanner-host.js",
+        "app/cena.js",
+        "schemas/floorplanner-derivative.schema.json"
+      ],
+      "evidence": [
+        "python_pytest",
+        "javascript_tests",
+        "typescript_overlay_syntax"
+      ],
+      "limitations": [
+        "export R3F e carga Cesium reais dependem dos builds bloqueados"
+      ]
+    },
+    {
+      "id": "cad_bim.rust",
+      "name": "Domínio CAD/BIM e adaptador Aedifex em Rust",
+      "status": "IMPLEMENTED_UNVERIFIED",
+      "paths": [
+        "crates/arcz-cad",
+        "crates/arcz-bim",
+        "crates/arcz-aedifex"
+      ],
+      "evidence": [
+        "cargo_workspace_structure",
+        "rust_delimiter_sanity_not_compile"
+      ],
+      "limitations": [
+        "cargo/rustc ausentes; schema parity por kind ainda não fechada"
+      ]
+    },
+    {
+      "id": "content.reference_media",
+      "name": "Mídias de referência locais por hash e provenance",
+      "status": "VERIFIED",
+      "paths": [
+        "arcz_server/reference_media.py",
+        "app/media",
+        "schemas/reference-media.schema.json"
+      ],
+      "evidence": [
+        "python_pytest",
+        "javascript_tests",
+        "http_binary_roundtrip",
+        "binary_magic_validation",
+        "archive_path_traversal_rejection"
+      ],
+      "limitations": [
+        "preview visual completo de todos os MIME depende do navegador final"
+      ]
+    },
+    {
+      "id": "content.prompts",
+      "name": "Biblioteca, compilador, enhancer e tradutor de prompts",
+      "status": "PARTIAL_VERIFIED",
+      "paths": [
+        "arcz_server/prompt_library.py",
+        "app/prompts",
+        "schemas/prompt-template.schema.json"
+      ],
+      "evidence": [
+        "python_pytest",
+        "javascript_tests",
+        "prompt_bundle_roundtrip",
+        "prompt_bundle_checksum_rejection"
+      ],
+      "limitations": [
+        "enhance/translate reais bloqueados até modelos locais serem instalados"
+      ]
+    },
+    {
+      "id": "chat.global",
+      "name": "Chat global único com ferramentas ARCZ + MCP Aedifex",
+      "status": "PARTIAL_VERIFIED",
+      "paths": [
+        "arcz_server/chat_workspace.py",
+        "arcz_server/tool_catalog.py",
+        "app/chat",
+        "integrations/aedifex/overlay/apps/arcz-floorplanner/app/ui/arcz-chat-panel.tsx",
+        "integrations/aedifex/overlay/packages/arcz-aedifex-tools"
+      ],
+      "evidence": [
+        "python_pytest",
+        "javascript_tests",
+        "typescript_overlay_syntax",
+        "mcp_preview_approval_revision_contract",
+        "single_chat_mount_test"
+      ],
+      "limitations": [
+        "modelos locais ausentes",
+        "ghost preview visual nativo Aedifex depende do build upstream"
+      ]
+    },
+    {
+      "id": "ui.panels",
+      "name": "Painéis colapsados, hover e pin persistente",
+      "status": "VERIFIED_JAVASCRIPT",
+      "paths": [
+        "app/shell/paineis/collapsible-panel-dock.js",
+        "integrations/aedifex/overlay/apps/arcz-floorplanner/app/ui/arcz-panel-behavior.tsx"
+      ],
+      "evidence": [
+        "javascript_tests",
+        "typescript_overlay_syntax",
+        "keyboard_roving_tabindex_test",
+        "fine_pointer_touch_policy_test"
+      ],
+      "limitations": [
+        "comparação visual/responsiva em browser real pendente"
+      ]
+    },
+    {
+      "id": "earth.cinematic",
+      "name": "Globo cinematográfico real, atmosfera e voo cancelável",
+      "status": "PARTIAL_VERIFIED",
+      "paths": [
+        "app/earth/cinematic-globe.js",
+        "app/ambiente.js",
+        "schemas/earth-presentation.schema.json"
+      ],
+      "evidence": [
+        "javascript_tests",
+        "javascript_syntax",
+        "project_migration_tests",
+        "flyto_callback_test",
+        "no_custom_event_runtime_test"
+      ],
+      "limitations": [
+        "smoke visual Cesium/nuvens no hardware alvo pendente"
+      ]
+    },
+    {
+      "id": "photoreal.blender",
+      "name": "Worker Blender/Cycles e preflight fotorreal",
+      "status": "CONTRACT_READY",
+      "paths": [
+        "arcz_server/photoreal.py",
+        "workers/blender",
+        "resources/workers/render.photoreal.worker.json"
+      ],
+      "evidence": [
+        "python_pytest",
+        "photoreal_worker_contract"
+      ],
+      "limitations": [
+        "Blender não instalado; render real não executado"
+      ]
+    },
+    {
+      "id": "governance.live",
+      "name": "Snapshot de governança, tarefas, alertas e logs",
+      "status": "VERIFIED_PYTHON",
+      "paths": [
+        "arcz_server/governance.py",
+        "app/governance",
+        "IMPLEMENTATION_STATUS.json",
+        "TASKS.json"
+      ],
+      "evidence": [
+        "python_pytest"
+      ],
+      "limitations": [
+        "refetch visual/SSE no browser real pendente"
+      ]
+    },
+    {
+      "id": "floorplanner.globe_split",
+      "name": "Autoria Aedifex com globo Cesium simultâneo",
+      "status": "VERIFIED_JAVASCRIPT",
+      "paths": [
+        "app/floorplanner/floorplanner-host.js",
+        "app/floorplanner/site-authoring-layout.js",
+        "app/shell/fusion-shell.js",
+        "app/fusion-v6.css"
+      ],
+      "evidence": [
+        "javascript_tests",
+        "javascript_syntax"
+      ],
+      "limitations": [
+        "Aedifex/Cesium reais ainda precisam do E2E browser"
+      ]
+    },
+    {
+      "id": "aedifex.inventory_coverage",
+      "name": "Inventário integral e cobertura fail-closed do upstream",
+      "status": "PARTIAL_VERIFIED",
+      "paths": [
+        "arcz_server/aedifex_inventory.py",
+        "integrations/aedifex/CONVERSION_COVERAGE.json",
+        "schemas/aedifex-upstream-inventory.schema.json",
+        "schemas/aedifex-conversion-coverage.schema.json",
+        "tools/vendor_aedifex.py",
+        "integrations/aedifex/CONVERSION_MATRIX.json",
+        "schemas/aedifex-conversion-matrix.schema.json",
+        "tools/build_aedifex_conversion_matrix.py",
+        "integrations/aedifex/AUTHOR_REPOSITORY_AUDIT.json"
+      ],
+      "evidence": [
+        "python_pytest",
+        "json_schema_self_check",
+        "aedifex_conversion_matrix_generation",
+        "matrix_sha256:4718a2cb82d5cd83c6eeb72bb1bbd014fac9fad6a8fa27d9c3a9b3a7f9b5aaa4",
+        "exact_lock_coverage_test",
+        "author_repository_audit:15_repositories"
+      ],
+      "limitations": [
+        "matriz do lock gerada e verificada",
+        "checkout completo não materializado; inventário real de arquivos/rotas/env/network do commit ainda não executado"
+      ]
+    },
+    {
+      "id": "aedifex.capability_ledger",
+      "name": "Cobertura de pacotes, 46 kinds, ferramentas, UI, IFC e plugins",
+      "status": "VERIFIED_CONTRACTS",
+      "paths": [
+        "docs/integration/AEDIFEX_CAPABILITY_LEDGER_V10.md",
+        "integrations/aedifex/FEATURE_MATRIX_CONVERSION.json",
+        "integrations/aedifex/UPSTREAM_LOCK.json"
+      ],
+      "evidence": [
+        "json_parse",
+        "documentation_gate"
+      ],
+      "limitations": [
+        "matriz só pode virar paridade após inventário/build/browser reais"
+      ]
+    },
+    {
+      "id": "aedifex.ghost_preview",
+      "name": "Ghost preview visual Aedifex no chat global",
+      "status": "BLOCKED",
+      "paths": [
+        "integrations/aedifex/overlay/apps/arcz-floorplanner/app/ui/arcz-chat-panel.tsx",
+        "integrations/aedifex/overlay/packages/arcz-aedifex-tools"
+      ],
+      "evidence": [
+        "upstream_source_audit"
+      ],
+      "limitations": [
+        "adapter de ValidatedOperation e applyGhostPreview não pode ser compilado/validado sem upstream materializado"
+      ]
+    },
+    {
+      "id": "aedifex.ifc",
+      "name": "IFC local transacional integrado ao Floorplanner",
+      "status": "IMPLEMENTED_UNVERIFIED",
+      "paths": [
+        "integrations/aedifex/overlay/apps/arcz-floorplanner/app/ui/arcz-import-export-panel.tsx",
+        "integrations/aedifex/overlay/apps/arcz-floorplanner/package.json"
+      ],
+      "evidence": [
+        "javascript_tests",
+        "typescript_overlay_syntax"
+      ],
+      "limitations": [
+        "@aedifex/ifc-converter, web-ifc WASM e corpus IFC não materializados"
+      ]
+    },
+    {
+      "id": "photoreal.workspace",
+      "name": "Workspace 4K/8K, câmera, passes, referências e preflight",
+      "status": "PARTIAL_VERIFIED",
+      "paths": [
+        "app/render/photoreal-workspace.js",
+        "app/render/photoreal-client.js",
+        "arcz_server/photoreal.py",
+        "schemas/photoreal-render-request.schema.json"
+      ],
+      "evidence": [
+        "python_pytest",
+        "javascript_tests",
+        "real_aedifex_glb_high_ultra_gate",
+        "reference_resolution_test"
+      ],
+      "limitations": [
+        "Blender/Cycles e modelos locais ausentes; nenhum frame final foi produzido"
+      ]
+    },
+    {
+      "id": "aedifex.conversion_matrix",
+      "name": "Matriz canônica fail-closed Aedifex → ARCZ",
+      "status": "VERIFIED",
+      "paths": [
+        "integrations/aedifex/CONVERSION_MATRIX.json",
+        "schemas/aedifex-conversion-matrix.schema.json",
+        "tools/build_aedifex_conversion_matrix.py",
+        "docs/integration/CONVERSION_MATRIX_GUIDE.md"
+      ],
+      "evidence": [
+        "aedifex_conversion_matrix_generation",
+        "python_pytest",
+        "matrix_sha256:4718a2cb82d5cd83c6eeb72bb1bbd014fac9fad6a8fa27d9c3a9b3a7f9b5aaa4"
+      ],
+      "limitations": [
+        "cobre o lock; não substitui inventário/build/E2E do checkout materializado"
+      ]
+    },
+    {
+      "id": "release.portable_launchers",
+      "name": "Inicializadores portáteis, preflight e QUICKSTART",
+      "status": "PARTIAL_VERIFIED",
+      "paths": [
+        "QUICKSTART.md",
+        ".env.example",
+        "tools/runtime_preflight.py",
+        "run.bat",
+        "stop.bat",
+        "install.ps1",
+        "uninstall.ps1",
+        "scripts/windows",
+        "scripts/linux",
+        "Dockerfile",
+        "docker-compose.yml"
+      ],
+      "evidence": [
+        "python_pytest",
+        "release_entrypoint_contract",
+        "linux_launcher_syntax"
+      ],
+      "limitations": [
+        "PowerShell e Docker não disponíveis; instalação limpa não executada",
+        "Setup.exe/MSI/AppImage/DEB não produzidos"
+      ]
+    },
+    {
+      "id": "ai.model_task_contract",
+      "name": "Contrato instalável para enhancer, tradução, difusão e upscale locais",
+      "status": "VERIFIED_CONTRACTS",
+      "paths": [
+        "schemas/ai-model-manifest.schema.json",
+        "arcz_server/ai_broker.py",
+        "arcz_server/prompt_library.py",
+        "tools/runtime_preflight.py"
+      ],
+      "evidence": [
+        "python_pytest",
+        "json_schema_self_check"
+      ],
+      "limitations": [
+        "pesos/adapters locais não distribuídos; inferência real permanece bloqueada"
+      ]
+    }
+  ],
+  "release_blockers": [
+    "instalar Rust/rustfmt e executar cargo fmt/check/test",
+    "executar launchers Windows/PowerShell no sistema alvo",
+    "validar Docker Compose no runtime Docker real",
+    "materializar CesiumJS 1.143 local e licenciado",
+    "materializar TangSY/aedifex no commit pinado, aplicar overlay, buildar com Bun e executar testes upstream",
+    "executar E2E Região→Floorplanner→GLB→Cesium, lifecycle 100x e validação visual/acessibilidade",
+    "ligar e validar ghost preview/planner/templates/room analysis no chat global compilado",
+    "executar smoke dos 46 node kinds, 3 extensões e 21 famílias MCP",
+    "instalar Blender/Cycles e produzir render real com passes",
+    "materializar modelos locais de enhance/translate/diffusion/upscale",
+    "provar IFC real, paridade Rust por kind, corpus histórico, soak e aceite offline Windows"
+  ],
+  "authoritative_report": "docs/audit/VALIDATION_REPORT.md",
+  "verification_summary": {
+    "overall": "BLOCKED",
+    "passed": 22,
+    "failed": 0,
+    "blocked": 9,
+    "python": "119 passed, 3 skipped (fixtures/preconditions ausentes)",
+    "javascript": "41 passed",
+    "typescript_overlay_syntax": "19 arquivos aprovados",
+    "javascript_syntax": "101 arquivos aprovados",
+    "json_parse": "80 arquivos aprovados",
+    "json_schemas": "38 schemas válidos",
+    "resource_schemas": "9 recursos validados",
+    "cargo_workspace_structure": "25 membros; não compilado neste ambiente",
+    "rust_delimiter_sanity": "23 arquivos; verificação estrutural, não compilação",
+    "cancel_race_stress": "100/100 aprovado",
+    "conversion_matrix": {
+      "hash": "4718a2cb82d5cd83c6eeb72bb1bbd014fac9fad6a8fa27d9c3a9b3a7f9b5aaa4",
+      "counts": {
+        "packages": 7,
+        "apps": 2,
+        "plugins": 1,
+        "native_node_kinds": 46,
+        "extension_node_kinds": 3,
+        "tool_families": 21,
+        "global_modules": 7,
+        "community_sources": 5
+      },
+      "generated": true,
+      "checkout_inventory_executed": false
+    },
+    "authoritative_report": "docs/audit/VALIDATION_REPORT.md"
+  }
+}

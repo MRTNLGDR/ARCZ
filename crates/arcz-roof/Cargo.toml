@@ -1,0 +1,12 @@
+[package]
+name = "arcz-roof"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+description = "Gerador robusto e validado de coberturas procedurais do ARCZ"
+
+[dependencies]
+serde.workspace = true
+thiserror.workspace = true
+arcz-validation = { path = "../arcz-validation" }

@@ -1,0 +1,5 @@
+{
+  "schema_version": 1,
+  "description": "Coloque manifests validados de modelos locais nesta pasta. Nenhum modelo é baixado automaticamente.",
+  "schema": "../../schemas/ai-model-manifest.schema.json"
+}

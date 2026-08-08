@@ -1,0 +1,190 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "arcz://schemas/modeling-context-package.schema.json",
+  "title": "Modeling Context Package",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "region_id",
+    "generation_epoch",
+    "scale",
+    "geo_anchor",
+    "selection",
+    "terrain",
+    "urban",
+    "environment",
+    "regional_profiles",
+    "constraints",
+    "source_packages",
+    "reference_media",
+    "warnings",
+    "context_hash"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "region_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "generation_epoch": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "scale": {
+      "type": "string",
+      "enum": [
+        "mundo",
+        "continente",
+        "pais",
+        "estado",
+        "cidade",
+        "bairro",
+        "quarteirao",
+        "endereco",
+        "lote",
+        "poligono_manual"
+      ]
+    },
+    "geo_anchor": {
+      "$ref": "geo-anchor.schema.json"
+    },
+    "selection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "selection_id",
+        "kind",
+        "bbox_wgs84",
+        "parcel_polygon_wgs84",
+        "parcel_polygon_enu_m",
+        "parcel_polygon_aedifex_xyz_m",
+        "source"
+      ],
+      "properties": {
+        "selection_id": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "bbox_wgs84": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": {
+            "type": "number"
+          }
+        },
+        "parcel_polygon_wgs84": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 3,
+            "items": {
+              "type": "number"
+            }
+          }
+        },
+        "parcel_polygon_enu_m": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ]
+          }
+        },
+        "parcel_polygon_aedifex_xyz_m": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 3,
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ]
+          }
+        },
+        "source": {
+          "type": "object"
+        }
+      }
+    },
+    "terrain": {
+      "type": "object"
+    },
+    "urban": {
+      "type": "object"
+    },
+    "environment": {
+      "type": "object"
+    },
+    "regional_profiles": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "object"
+        ]
+      }
+    },
+    "constraints": {
+      "type": "object"
+    },
+    "source_packages": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "object"
+        ]
+      }
+    },
+    "reference_media": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-f0-9]{64}$"
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": [
+          "string",
+          "object"
+        ]
+      }
+    },
+    "context_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "context_layers": {
+      "type": "array",
+      "items": {
+        "$ref": "context-layer.schema.json"
+      },
+      "default": []
+    }
+  }
+}

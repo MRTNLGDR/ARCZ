@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "arcz://schemas/plugin-manifest-v2.schema.json",
+  "title": "Plugin Manifest V2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "tipo",
+    "id",
+    "nome",
+    "versao",
+    "apiVersion",
+    "escalas",
+    "modos",
+    "capacidades",
+    "deterministico",
+    "worker",
+    "custoBase",
+    "entrypoint"
+  ],
+  "properties": {
+    "tipo": {
+      "enum": [
+        "gerador",
+        "ferramenta"
+      ]
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^arcz\\.[a-z0-9._-]+$"
+    },
+    "nome": {
+      "type": "string",
+      "minLength": 1
+    },
+    "versao": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "apiVersion": {
+      "const": "2"
+    },
+    "escalas": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "mundo",
+          "continente",
+          "pais",
+          "estado",
+          "cidade",
+          "bairro",
+          "quarteirao",
+          "endereco",
+          "lote",
+          "poligono_manual"
+        ]
+      }
+    },
+    "modos": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "globo",
+          "floorplanner",
+          "render",
+          "walk"
+        ]
+      }
+    },
+    "capacidades": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_.-]+$"
+      }
+    },
+    "deterministico": {
+      "type": "boolean"
+    },
+    "worker": {
+      "enum": [
+        "javascript",
+        "python",
+        "rust",
+        "local_ai"
+      ]
+    },
+    "custoBase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "triangulos",
+        "memoriaMB",
+        "texturasMB",
+        "drawCalls"
+      ],
+      "properties": {
+        "triangulos": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "memoriaMB": {
+          "type": "number",
+          "minimum": 0
+        },
+        "texturasMB": {
+          "type": "number",
+          "minimum": 0
+        },
+        "drawCalls": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "entrypoint": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_./-]+\\.js$"
+    },
+    "backend_kind": {
+      "type": "string"
+    },
+    "parameters_schema": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "minimum_core_version": {
+      "type": "string"
+    }
+  }
+}

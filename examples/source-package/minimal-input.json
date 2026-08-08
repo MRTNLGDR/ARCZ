@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "coordinate_system": "ENU_LOCAL",
+  "origin_wgs84": [-48.500000, -27.150000, 0.0],
+  "data": {
+    "terrain": {
+      "origin_enu_m": [-30.0, -30.0],
+      "columns": 4,
+      "rows": 4,
+      "cell_size_m": [20.0, 20.0],
+      "heights_m": [0.0, 0.2, 0.4, 0.6, 0.1, 0.3, 0.5, 0.7, 0.2, 0.4, 0.6, 0.8, 0.3, 0.5, 0.7, 0.9],
+      "material_id": "terrain.grass"
+    },
+    "parcels": [
+      {
+        "id": "fixture-parcel-1",
+        "polygon_enu_m": [[-20.0, -15.0], [18.0, -15.0], [18.0, 14.0], [-20.0, 14.0]],
+        "elevation_m": 0.3,
+        "material_id": "parcel.ground",
+        "source": {"source": "fixture", "source_ref": "minimal", "confidence": 1.0, "estimated": false}
+      }
+    ],
+    "roads": [
+      {
+        "id": "fixture-road-1",
+        "centerline_enu_m": [[-30.0, -22.0], [30.0, -22.0]],
+        "width_m": 7.0,
+        "elevation_m": 0.0,
+        "sidewalk_width_m": 1.8,
+        "material_id": "road.asphalt",
+        "sidewalk_material_id": "sidewalk.concrete",
+        "source": {"source": "fixture", "source_ref": "minimal", "confidence": 1.0, "estimated": false}
+      }
+    ],
+    "buildings": [
+      {
+        "id": "fixture-house-1",
+        "footprint_enu_m": [[-14.0, -7.0], [2.0, -7.0], [2.0, 5.0], [-14.0, 5.0]],
+        "base_m": 0.4,
+        "height_m": 5.8,
+        "floors": 2,
+        "category": "house",
+        "roof": {"kind": "gable", "pitch_deg": 28.0, "eave_m": 0.45},
+        "wall_material_id": "facade.offwhite",
+        "roof_material_id": "roof.ceramic",
+        "glass_material_id": "glass.window",
+        "balcony_material_id": "balcony.concrete",
+        "commercial_ground_floor": false,
+        "facade_module_width_m": 2.8,
+        "balcony_probability": 0.15,
+        "source": {"source": "fixture", "source_ref": "minimal", "confidence": 1.0, "estimated": false}
+      },
+      {
+        "id": "fixture-building-1",
+        "footprint_enu_m": [[5.0, -8.0], [15.0, -8.0], [15.0, 8.0], [5.0, 8.0]],
+        "base_m": 0.5,
+        "height_m": 16.0,
+        "floors": 5,
+        "category": "building",
+        "roof": {"kind": "flat", "pitch_deg": 0.0, "eave_m": 0.0},
+        "wall_material_id": "facade.lightgray",
+        "roof_material_id": "roof.flat",
+        "glass_material_id": "glass.window",
+        "balcony_material_id": "balcony.concrete",
+        "commercial_ground_floor": true,
+        "facade_module_width_m": 2.5,
+        "balcony_probability": 0.45,
+        "source": {"source": "fixture", "source_ref": "minimal", "confidence": 1.0, "estimated": false}
+      }
+    ],
+    "vegetation_zones": [
+      {
+        "id": "fixture-green-1",
+        "polygon_enu_m": [[-20.0, 6.0], [3.0, 6.0], [3.0, 13.0], [-20.0, 13.0]],
+        "base_m": 0.5,
+        "target_count": 12,
+        "minimum_distance_m": 1.4,
+        "exclusions": [{"center": [-6.0, 9.0], "radius_m": 1.5}],
+        "variants": [
+          {"id": "tree.street.medium", "weight": 0.35, "scale_min": 0.85, "scale_max": 1.15},
+          {"id": "shrub.ornamental", "weight": 0.65, "scale_min": 0.7, "scale_max": 1.1}
+        ],
+        "source": {"source": "fixture", "source_ref": "minimal", "confidence": 1.0, "estimated": false}
+      }
+    ]
+  },
+  "metadata": {
+    "purpose": "deterministic end-to-end test fixture",
+    "not_real_world_data": true
+  }
+}

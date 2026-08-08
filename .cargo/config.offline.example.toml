@@ -1,0 +1,10 @@
+# Copie para .cargo/config.toml somente depois de executar `cargo vendor`
+# numa máquina autorizada e transferir o diretório validado para vendor/rust/vendor.
+[net]
+offline = true
+
+[source.crates-io]
+replace-with = "vendored-sources"
+
+[source.vendored-sources]
+directory = "vendor/rust/vendor"

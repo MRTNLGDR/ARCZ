@@ -1,0 +1,620 @@
+{
+  "schema_version": 1,
+  "upstream_commit": "5319368bae16500ca5267f6f8d68b36c9586d5bb",
+  "blocking_statuses": [
+    "UNMAPPED",
+    "REVIEW_REQUIRED",
+    "BLOCKED"
+  ],
+  "categories": {
+    "packages": [
+      {
+        "pattern": "@aedifex/core",
+        "status": "AUTHORITATIVE_KERNEL",
+        "owner": "aedifex-building-kernel",
+        "integration": "Vendored package; authoritative editable SceneSnapshot and Plugin API v2.",
+        "rationale": "Required by the integrated editor and revision bridge."
+      },
+      {
+        "pattern": "@aedifex/viewer",
+        "status": "AUTHORITATIVE_KERNEL",
+        "owner": "aedifex-building-kernel",
+        "integration": "Vendored viewer embedded in the local floorplanner host.",
+        "rationale": "Retains native rendering and selection semantics."
+      },
+      {
+        "pattern": "@aedifex/editor",
+        "status": "AUTHORITATIVE_KERNEL",
+        "owner": "aedifex-building-kernel",
+        "integration": "Vendored editor component mounted once by @arcz/aedifex-floorplanner.",
+        "rationale": "Preserves the complete upstream authoring experience without duplicating editor state."
+      },
+      {
+        "pattern": "@aedifex/nodes",
+        "status": "AUTHORITATIVE_KERNEL",
+        "owner": "aedifex-building-kernel",
+        "integration": "builtinPlugin is loaded through Plugin API v2.",
+        "rationale": "All admitted built-in node kinds remain native."
+      },
+      {
+        "pattern": "@aedifex/mcp",
+        "status": "LOCAL_TOOL_BRIDGE",
+        "owner": "arcz-global-chat",
+        "integration": "In-memory MCP server over a revision-isolated SceneBridge; mutations require revision match and approval.",
+        "rationale": "Reuses upstream tools without network dependency or direct scene writes."
+      },
+      {
+        "pattern": "@aedifex/plugin-trees",
+        "status": "LOCAL_PLUGIN",
+        "owner": "aedifex-building-kernel",
+        "integration": "treesPlugin and treesHostPanel loaded locally through Plugin API v2.",
+        "rationale": "Preserves the upstream community tree extension."
+      },
+      {
+        "pattern": "@aedifex/ifc-converter",
+        "status": "LOCAL_IMPORTER",
+        "owner": "floorplanner-exchange",
+        "integration": "IFC bytes convert locally to the native Aedifex scene graph with transactional persistence/rollback.",
+        "rationale": "No external IFC service or format simulation."
+      },
+      {
+        "pattern": "@repo/*",
+        "status": "BUILD_ONLY",
+        "owner": "toolchain",
+        "integration": "Preserved only in the vendored workspace build; not an ARCZ runtime domain.",
+        "rationale": "Monorepo configuration packages are required for reproducible compilation."
+      },
+      {
+        "pattern": "*",
+        "status": "REVIEW_REQUIRED",
+        "owner": "architecture-review",
+        "integration": "Classify package ownership and runtime exposure before updating the pin.",
+        "rationale": "Unknown packages can introduce duplicate state, network calls or incompatible licenses."
+      }
+    ],
+    "apps": [
+      {
+        "pattern": "*ifc*converter*",
+        "status": "FOLDED_INTO_ARCZ_PANEL",
+        "owner": "floorplanner-exchange",
+        "integration": "The pure converter package is used inside one ARCZ Import/Export panel; the standalone demo app is not shipped.",
+        "rationale": "Avoids duplicate IFC UIs while retaining converter capability."
+      },
+      {
+        "pattern": "*editor*",
+        "status": "REPLACED_BY_ARCZ_HOST",
+        "owner": "floorplanner-shell",
+        "integration": "Upstream demo/editor app is preserved as reference; @arcz/aedifex-floorplanner is the only shipped host.",
+        "rationale": "One shell, one scene store, no competing project persistence."
+      },
+      {
+        "pattern": "*",
+        "status": "REVIEW_REQUIRED",
+        "owner": "architecture-review",
+        "integration": "Decide whether to fold, preserve as reference, or reject each additional upstream app.",
+        "rationale": "Apps may contain providers, databases or duplicate UX."
+      }
+    ],
+    "plugins": [
+      {
+        "pattern": "@aedifex/plugin-trees",
+        "status": "LOCAL_PLUGIN",
+        "owner": "aedifex-building-kernel",
+        "integration": "Loaded with duplicate guard through loadPlugin().",
+        "rationale": "Pinned and included in the UI."
+      },
+      {
+        "pattern": "packages/plugin-trees/*",
+        "status": "LOCAL_PLUGIN",
+        "owner": "aedifex-building-kernel",
+        "integration": "Owned by the admitted tree plugin.",
+        "rationale": "Source-level declarations are covered by the package admission."
+      },
+      {
+        "pattern": "*",
+        "status": "REVIEW_REQUIRED",
+        "owner": "plugin-admission",
+        "integration": "Run compatibility, license, cleanup, deterministic serialization and offline tests.",
+        "rationale": "Community plugins never auto-install merely because they are found."
+      }
+    ],
+    "node_kinds": [
+      {
+        "pattern": "site",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "building",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "level",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "wall",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "fence",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "slab",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "ceiling",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "door",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "window",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "cabinet",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "cabinet-module",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "item",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "column",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "elevator",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "roof",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "roof-segment",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "stair",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "stair-segment",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "zone",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "guide",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "scan",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "measurement",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "construction-dimension",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "structural-grid",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "box-vent",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "ridge-vent",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "turbine-vent",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "cupola",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "eyebrow-vent",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "chimney",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "solar-panel",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "skylight",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "dormer",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "gutter",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "downspout",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "duct-segment",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "duct-fitting",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "duct-terminal",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "hvac-equipment",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "lineset",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "liquid-line",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "pipe-segment",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "pipe-fitting",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "pipe-trap",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "shelf",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "spawn",
+        "status": "INTEGRATED_NODE_KIND",
+        "owner": "aedifex-building-kernel",
+        "integration": "@aedifex/nodes builtinPlugin loaded through Plugin API v2",
+        "rationale": "The complete native node definition, renderer, tools and schema stay in the pinned authoring kernel."
+      },
+      {
+        "pattern": "*",
+        "status": "REVIEW_REQUIRED",
+        "owner": "architecture-review",
+        "integration": "Update the lock, UI/tool admission tests and this policy before accepting a new node kind.",
+        "rationale": "A new upstream kind must not silently enter the authoring surface."
+      }
+    ],
+    "mcp_tools": [
+      {
+        "pattern": "*",
+        "status": "DYNAMIC_TOOL_CATALOG_GATED",
+        "owner": "arcz-global-chat",
+        "integration": "Discovered from the real in-memory MCP catalog; read/export tools are isolated and every other tool defaults to approval-required mutation with expected_revision.",
+        "rationale": "New tools fail safe as mutations and cannot commit without an approval id and optimistic concurrency check."
+      }
+    ],
+    "api_routes": [
+      {
+        "pattern": "*",
+        "status": "UPSTREAM_APP_ROUTE_NOT_SHIPPED",
+        "owner": "floorplanner-shell",
+        "integration": "Only routes in the ARCZ overlay app are built; upstream application routes remain in the immutable reference tree.",
+        "rationale": "Prevents remote/provider routes from becoming implicit dependencies."
+      }
+    ],
+    "environment_variables": [
+      {
+        "pattern": "NODE_ENV",
+        "status": "STANDARD_RUNTIME_ENV",
+        "owner": "toolchain",
+        "integration": "Standard local Node/Next build mode.",
+        "rationale": "No credential or provider dependency."
+      },
+      {
+        "pattern": "NEXT_*",
+        "status": "STANDARD_OR_OVERLAY_CONTROLLED",
+        "owner": "floorplanner-shell",
+        "integration": "Only variables explicitly declared by the overlay runtime manifest may be injected.",
+        "rationale": "Unknown NEXT variables remain visible in the inventory."
+      },
+      {
+        "pattern": "AI_*",
+        "status": "REPLACED_BY_LOCAL_AI_BROKER",
+        "owner": "local-ai-broker",
+        "integration": "Upstream provider settings are not propagated; the overlay route calls ARCZ Local AI Broker.",
+        "rationale": "Core inference remains local and provider-optional."
+      },
+      {
+        "pattern": "OPENAI*",
+        "status": "REPLACED_BY_LOCAL_AI_BROKER",
+        "owner": "local-ai-broker",
+        "integration": "Not injected into the sidecar.",
+        "rationale": "No mandatory OpenAI dependency."
+      },
+      {
+        "pattern": "ANTHROPIC*",
+        "status": "REPLACED_BY_LOCAL_AI_BROKER",
+        "owner": "local-ai-broker",
+        "integration": "Not injected into the sidecar.",
+        "rationale": "No mandatory Anthropic dependency."
+      },
+      {
+        "pattern": "GOOGLE*",
+        "status": "REPLACED_OR_DISABLED",
+        "owner": "local-ai-broker",
+        "integration": "Provider credentials are not injected; Google map/AI data is never a core dependency.",
+        "rationale": "Protects local-first operation."
+      },
+      {
+        "pattern": "GEMINI*",
+        "status": "REPLACED_BY_LOCAL_AI_BROKER",
+        "owner": "local-ai-broker",
+        "integration": "Not injected into the sidecar.",
+        "rationale": "Local inference is authoritative."
+      },
+      {
+        "pattern": "ARCZ_*",
+        "status": "OVERLAY_RUNTIME_CONTRACT",
+        "owner": "floorplanner-runtime",
+        "integration": "Validated loopback URL/token/model/runtime fields owned by ARCZ.",
+        "rationale": "Explicit local bridge configuration."
+      },
+      {
+        "pattern": "*",
+        "status": "REVIEW_REQUIRED",
+        "owner": "security-review",
+        "integration": "Classify whether the variable is build-only, local runtime, credential, telemetry or remote provider.",
+        "rationale": "Environment variables are an egress and secret-injection surface."
+      }
+    ],
+    "external_urls": [
+      {
+        "pattern": "https://github.com/*",
+        "status": "REFERENCE_ONLY",
+        "owner": "open-source-governance",
+        "integration": "Recorded for provenance/documentation; runtime egress remains denied.",
+        "rationale": "Repository links are not fetched during offline operation."
+      },
+      {
+        "pattern": "https://www.npmjs.com/*",
+        "status": "REFERENCE_ONLY",
+        "owner": "open-source-governance",
+        "integration": "Package provenance only.",
+        "rationale": "Offline build uses local cache/vendor material."
+      },
+      {
+        "pattern": "https://registry.npmjs.org/*",
+        "status": "BUILD_IMPORT_ONLY",
+        "owner": "toolchain",
+        "integration": "Allowed only during explicit import_assisted dependency materialization; never runtime core.",
+        "rationale": "Build artifacts must be materialized before offline use."
+      },
+      {
+        "pattern": "http://www.w3.org/*",
+        "status": "SCHEMA_NAMESPACE",
+        "owner": "format-standards",
+        "integration": "XML/SVG namespace string, not a network request.",
+        "rationale": "Standards namespace."
+      },
+      {
+        "pattern": "https://www.w3.org/*",
+        "status": "SCHEMA_NAMESPACE",
+        "owner": "format-standards",
+        "integration": "Schema/namespace reference, not implicit runtime egress.",
+        "rationale": "Standards namespace."
+      },
+      {
+        "pattern": "*",
+        "status": "REVIEW_REQUIRED",
+        "owner": "network-security",
+        "integration": "Determine whether the URL is inert documentation, localizable asset, optional import connector or forbidden runtime endpoint.",
+        "rationale": "Unreviewed remote strings can become hidden provider dependencies."
+      }
+    ],
+    "network_call_sites": [
+      {
+        "pattern": "*",
+        "source_patterns": [
+          "*.test.ts",
+          "*.test.tsx",
+          "*.test.js",
+          "*.test.jsx",
+          "*.spec.ts",
+          "*.spec.tsx",
+          "*.spec.js",
+          "*.spec.jsx"
+        ],
+        "status": "TEST_ONLY_NETWORK_STUB",
+        "owner": "test-tooling",
+        "integration": "Not included in production runtime.",
+        "rationale": "Network behavior exists only in tests."
+      },
+      {
+        "pattern": "apps/*",
+        "status": "UPSTREAM_APP_NOT_SHIPPED",
+        "owner": "floorplanner-shell",
+        "integration": "Original app is not the built runtime; overlay routes are audited separately.",
+        "rationale": "No hidden app-level provider calls are inherited."
+      },
+      {
+        "pattern": "packages/editor/src/components/ai/*",
+        "status": "LOCAL_ROUTE_REBOUND",
+        "owner": "local-ai-broker",
+        "integration": "Native AI UI is retained, but its route is replaced by the ARCZ loopback Local AI Broker endpoint.",
+        "rationale": "Preserves the complete chat UX without remote-provider authority."
+      },
+      {
+        "pattern": "*",
+        "status": "REVIEW_REQUIRED",
+        "owner": "network-security",
+        "integration": "Inspect request target, capability, cancellation, timeout and offline fallback before accepting the upstream commit.",
+        "rationale": "Runtime package network calls are not admitted by default."
+      }
+    ]
+  }
+}

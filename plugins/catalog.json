@@ -1,0 +1,1118 @@
+{
+  "schema_version": 1,
+  "product": "ARCZ",
+  "plugins": [
+    {
+      "id": "core.aedifex",
+      "name": "Aedifex compatibility & Rust parity",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "implemented",
+      "runtime": "builtin_rust",
+      "entrypoint": "crate://arcz-aedifex",
+      "capabilities": [
+        "scene.import.aedifex",
+        "scene.export.aedifex",
+        "authoring.parity"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "geo.region",
+      "name": "Region / parcel selector",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "implemented",
+      "runtime": "builtin_rust",
+      "entrypoint": "crate://arcz-region",
+      "capabilities": [
+        "geo.select",
+        "geo.anchor",
+        "parcel.lock"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "geo.earth",
+      "name": "Earth / globe bridge",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "implemented",
+      "runtime": "builtin_rust",
+      "entrypoint": "crate://arcz-earth",
+      "capabilities": [
+        "earth.camera",
+        "earth.tiles",
+        "geo.ecef",
+        "geo.enu"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "cad.core",
+      "name": "Parametric CAD authority",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "implemented",
+      "runtime": "builtin_rust",
+      "entrypoint": "crate://arcz-cad",
+      "capabilities": [
+        "cad.read",
+        "cad.write",
+        "cad.undo",
+        "cad.constraints"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "bim.core",
+      "name": "BIM quantities & semantics",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "implemented",
+      "runtime": "builtin_rust",
+      "entrypoint": "crate://arcz-bim",
+      "capabilities": [
+        "bim.quantities",
+        "bim.cost",
+        "bim.classification"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "terrain",
+      "name": "Terrain generator",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "implemented",
+      "runtime": "builtin_rust",
+      "entrypoint": "crate://arcz-terrain",
+      "capabilities": [
+        "terrain.dem",
+        "terrain.mesh",
+        "terrain.material"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "roads",
+      "name": "Roads / avenues / lanes",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "implemented",
+      "runtime": "builtin_rust",
+      "entrypoint": "crate://arcz-procedural",
+      "capabilities": [
+        "road.generate",
+        "road.markings",
+        "road.sidewalk"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "buildings",
+      "name": "Building massing generator",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "implemented",
+      "runtime": "builtin_rust",
+      "entrypoint": "crate://arcz-procedural",
+      "capabilities": [
+        "building.generate",
+        "building.facade",
+        "building.roof"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "houses",
+      "name": "House generator",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "implemented",
+      "runtime": "builtin_rust",
+      "entrypoint": "crate://arcz-procedural",
+      "capabilities": [
+        "house.generate",
+        "house.roof",
+        "house.openings"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "vegetation",
+      "name": "Trees / grass / shrubs",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "implemented",
+      "runtime": "builtin_rust",
+      "entrypoint": "crate://arcz-vegetation",
+      "capabilities": [
+        "vegetation.scatter",
+        "vegetation.tree",
+        "vegetation.grass"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "materials.pbr",
+      "name": "PBR material authoring",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "partial",
+      "runtime": "builtin_rust",
+      "entrypoint": "crate://arcz-procedural",
+      "capabilities": [
+        "material.pbr",
+        "material.project",
+        "material.bake"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "bridges",
+      "name": "Bridges / viaducts",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "builtin_rust",
+      "entrypoint": "builtin://bridges",
+      "capabilities": [
+        "bridge.generate",
+        "bridge.deck",
+        "bridge.supports"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "water",
+      "name": "Water / coast / rivers / pools",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "builtin_rust",
+      "entrypoint": "builtin://water",
+      "capabilities": [
+        "water.surface",
+        "water.flow",
+        "water.ocean"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "atmosphere",
+      "name": "Sky / clouds / fog",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "partial",
+      "runtime": "builtin_rust",
+      "entrypoint": "builtin://atmosphere",
+      "capabilities": [
+        "sky.physical",
+        "cloud.volumetric",
+        "fog.volumetric"
+      ],
+      "network": "none",
+      "deterministic": false
+    },
+    {
+      "id": "solar",
+      "name": "Sun / moon / shadows / study",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "partial",
+      "runtime": "builtin_rust",
+      "entrypoint": "builtin://solar",
+      "capabilities": [
+        "sun.ephemeris",
+        "moon.ephemeris",
+        "solar.study",
+        "shadow.study"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "urban.furniture",
+      "name": "Signs / poles / traffic lights",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "builtin_rust",
+      "entrypoint": "builtin://urban-furniture",
+      "capabilities": [
+        "urban.sign",
+        "urban.lightpole",
+        "urban.trafficlight"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "vehicles",
+      "name": "Vehicles & traffic animation",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "builtin_rust",
+      "entrypoint": "builtin://vehicles",
+      "capabilities": [
+        "vehicle.import",
+        "vehicle.generate",
+        "traffic.simulate",
+        "vehicle.animate"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "characters",
+      "name": "Characters / skeleton / animation",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "local_process",
+      "entrypoint": "worker://characters",
+      "capabilities": [
+        "character.import",
+        "character.rig",
+        "character.retarget",
+        "character.animate",
+        "asset.glb"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "asset.import",
+      "name": "Universal 3D import + GLB",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "partial",
+      "runtime": "builtin_rust",
+      "entrypoint": "builtin://asset-import",
+      "capabilities": [
+        "asset.import",
+        "asset.normalize",
+        "asset.lod",
+        "asset.glb"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "furniture.table-chair",
+      "name": "Tables / chairs generator",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "builtin_rust",
+      "entrypoint": "builtin://table-chair",
+      "capabilities": [
+        "furniture.table",
+        "furniture.chair",
+        "furniture.parametric"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "furniture.kitchenware",
+      "name": "Plates / glasses / tableware",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "builtin_rust",
+      "entrypoint": "builtin://kitchenware",
+      "capabilities": [
+        "prop.plate",
+        "prop.glass",
+        "prop.tableware"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "textiles",
+      "name": "Rugs / curtains / fabrics",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "builtin_rust",
+      "entrypoint": "builtin://textiles",
+      "capabilities": [
+        "textile.rug",
+        "textile.curtain",
+        "textile.fabric",
+        "cloth.simulate"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "stairs",
+      "name": "Stairs / ramps / escalators",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "builtin_rust",
+      "entrypoint": "builtin://stairs",
+      "capabilities": [
+        "stair.generate",
+        "ramp.generate",
+        "escalator.generate"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "mep",
+      "name": "MEP systems",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "local_process",
+      "entrypoint": "worker://ifcopenshell",
+      "capabilities": [
+        "mep.hvac",
+        "mep.plumbing",
+        "mep.electrical",
+        "mep.ports"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "ifc",
+      "name": "IFC import/export/validation",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "local_process",
+      "entrypoint": "worker://ifcopenshell",
+      "capabilities": [
+        "ifc.read",
+        "ifc.write",
+        "ifc.validate",
+        "ifc.bcf",
+        "ifc.ids"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "render",
+      "name": "Photoreal renderer orchestration",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "partial",
+      "runtime": "local_process",
+      "entrypoint": "worker://blender",
+      "capabilities": [
+        "render.cycles",
+        "render.passes",
+        "render.8k",
+        "render.queue"
+      ],
+      "network": "none",
+      "deterministic": false
+    },
+    {
+      "id": "physics",
+      "name": "Rigid-body physics",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "builtin_rust",
+      "entrypoint": "builtin://rapier",
+      "capabilities": [
+        "physics.rigid",
+        "physics.collider",
+        "physics.vehicle"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "sheets",
+      "name": "Architectural sheets / drawings",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "partial",
+      "runtime": "builtin_rust",
+      "entrypoint": "builtin://sheets",
+      "capabilities": [
+        "sheet.layout",
+        "drawing.plan",
+        "drawing.section",
+        "drawing.elevation",
+        "schedule.table"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "photogrammetry",
+      "name": "Photo/video reconstruction",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "local_process",
+      "entrypoint": "worker://reconstruction",
+      "capabilities": [
+        "reconstruct.photos",
+        "reconstruct.video",
+        "reconstruct.mesh",
+        "reconstruct.texture"
+      ],
+      "network": "none",
+      "deterministic": false
+    },
+    {
+      "id": "geo.reconstruction",
+      "name": "Address-to-3D reconstruction",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "builtin_rust",
+      "entrypoint": "builtin://geo-reconstruction",
+      "capabilities": [
+        "geo.osm",
+        "geo.dem",
+        "geo.imagery",
+        "geo.semantic",
+        "geo.reconstruct"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "ai.agent",
+      "name": "Local multimodal design agent",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "partial",
+      "runtime": "builtin_rust",
+      "entrypoint": "crate://arcz-agent",
+      "capabilities": [
+        "agent.plan",
+        "agent.toolcall",
+        "agent.photo.reference",
+        "agent.cad.write",
+        "agent.approval"
+      ],
+      "network": "none",
+      "deterministic": false
+    },
+    {
+      "id": "analytics.kepler",
+      "name": "Kepler geospatial analytics",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "web_sidecar",
+      "entrypoint": "upstream://kepler-gl",
+      "capabilities": [
+        "analytics.layer",
+        "analytics.filter",
+        "analytics.aggregate"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "globe.cesium",
+      "name": "CesiumJS globe",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "web_sidecar",
+      "entrypoint": "upstream://cesiumjs",
+      "capabilities": [
+        "globe.render",
+        "tiles.3d",
+        "terrain.stream",
+        "camera.flyto"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "core.world",
+      "name": "World partition / layer authority",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "partial",
+      "runtime": "builtin_rust",
+      "entrypoint": "crate://arcz-world",
+      "capabilities": [
+        "world.scope",
+        "world.cells",
+        "world.layers",
+        "world.streaming-budget"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "core.plugin-host",
+      "name": "Plugin registry / capability permissions",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "partial",
+      "runtime": "builtin_rust",
+      "entrypoint": "crate://arcz-plugin-host",
+      "capabilities": [
+        "plugin.register",
+        "plugin.discover",
+        "plugin.authorize",
+        "plugin.capability.resolve"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "geo.cadastre",
+      "name": "Cadastre / parcel sources",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "local_process",
+      "entrypoint": "worker://cadastre",
+      "capabilities": [
+        "cadastre.import",
+        "cadastre.parcel",
+        "cadastre.boundary",
+        "cadastre.attributes"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "geo.imagery",
+      "name": "Imagery / orthophoto sources",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "local_process",
+      "entrypoint": "worker://imagery",
+      "capabilities": [
+        "imagery.import",
+        "imagery.orthophoto",
+        "imagery.reproject",
+        "imagery.tile"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "geo.pointcloud",
+      "name": "Point cloud ingestion",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "local_process",
+      "entrypoint": "worker://pointcloud",
+      "capabilities": [
+        "pointcloud.import",
+        "pointcloud.classify",
+        "pointcloud.lod",
+        "pointcloud.mesh"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "world.biomes",
+      "name": "Biome / landcover generator",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "builtin_rust",
+      "entrypoint": "builtin://biomes",
+      "capabilities": [
+        "biome.classify",
+        "biome.generate",
+        "landcover.generate",
+        "ecosystem.scatter"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "world.geology",
+      "name": "Geology / subsurface layers",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "builtin_rust",
+      "entrypoint": "builtin://geology",
+      "capabilities": [
+        "geology.layer",
+        "geology.strata",
+        "ground.soil",
+        "ground.excavation"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "world.agriculture",
+      "name": "Agriculture / fields",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "builtin_rust",
+      "entrypoint": "builtin://agriculture",
+      "capabilities": [
+        "agriculture.field",
+        "agriculture.crop",
+        "agriculture.orchard",
+        "agriculture.season"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "infrastructure.rail",
+      "name": "Rail / tram / metro",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "builtin_rust",
+      "entrypoint": "builtin://rail",
+      "capabilities": [
+        "rail.generate",
+        "rail.track",
+        "rail.station",
+        "rail.catenary"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "infrastructure.tunnel",
+      "name": "Tunnels / underground",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "builtin_rust",
+      "entrypoint": "builtin://tunnel",
+      "capabilities": [
+        "tunnel.generate",
+        "tunnel.portal",
+        "tunnel.section",
+        "underground.network"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "infrastructure.utilities",
+      "name": "Utility networks",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "local_process",
+      "entrypoint": "worker://utilities",
+      "capabilities": [
+        "utility.power",
+        "utility.water",
+        "utility.sewer",
+        "utility.telecom",
+        "utility.gas"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "transit.public",
+      "name": "Public transit systems",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "builtin_rust",
+      "entrypoint": "builtin://transit",
+      "capabilities": [
+        "transit.route",
+        "transit.stop",
+        "transit.schedule",
+        "transit.simulate"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "hydrology",
+      "name": "Hydrology / drainage / flood",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "builtin_rust",
+      "entrypoint": "builtin://hydrology",
+      "capabilities": [
+        "hydrology.watershed",
+        "hydrology.drainage",
+        "hydrology.flood",
+        "hydrology.river"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "weather",
+      "name": "Weather / climate layer",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "local_process",
+      "entrypoint": "worker://weather",
+      "capabilities": [
+        "weather.state",
+        "weather.wind",
+        "weather.rain",
+        "weather.snow",
+        "climate.profile"
+      ],
+      "network": "none",
+      "deterministic": false
+    },
+    {
+      "id": "crowds",
+      "name": "Pedestrians / crowds",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "builtin_rust",
+      "entrypoint": "builtin://crowds",
+      "capabilities": [
+        "crowd.spawn",
+        "crowd.path",
+        "crowd.simulate",
+        "pedestrian.animate"
+      ],
+      "network": "none",
+      "deterministic": false
+    },
+    {
+      "id": "animals",
+      "name": "Animals / wildlife",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "builtin_rust",
+      "entrypoint": "builtin://animals",
+      "capabilities": [
+        "animal.spawn",
+        "animal.rig",
+        "animal.animate",
+        "wildlife.simulate"
+      ],
+      "network": "none",
+      "deterministic": false
+    },
+    {
+      "id": "navigation",
+      "name": "Navigation / pathfinding",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "builtin_rust",
+      "entrypoint": "builtin://navigation",
+      "capabilities": [
+        "nav.mesh",
+        "nav.path",
+        "nav.agent",
+        "nav.accessibility"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "lighting",
+      "name": "Architectural / urban lighting",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "builtin_rust",
+      "entrypoint": "builtin://lighting",
+      "capabilities": [
+        "light.fixture",
+        "light.photometry",
+        "light.street",
+        "light.study"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "cinema",
+      "name": "Cameras / timeline / shots",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "builtin_rust",
+      "entrypoint": "builtin://cinema",
+      "capabilities": [
+        "camera.shot",
+        "camera.path",
+        "timeline.animate",
+        "cinema.render-plan"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "acoustics",
+      "name": "Acoustic analysis",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "local_process",
+      "entrypoint": "worker://acoustics",
+      "capabilities": [
+        "acoustic.room",
+        "acoustic.ray",
+        "acoustic.reverb",
+        "acoustic.noise-map"
+      ],
+      "network": "none",
+      "deterministic": false
+    },
+    {
+      "id": "energy",
+      "name": "Energy / daylight / performance",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "local_process",
+      "entrypoint": "worker://energy",
+      "capabilities": [
+        "energy.model",
+        "energy.thermal",
+        "energy.daylight",
+        "energy.report"
+      ],
+      "network": "none",
+      "deterministic": false
+    },
+    {
+      "id": "zoning",
+      "name": "Planning / zoning rules",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "local_process",
+      "entrypoint": "worker://zoning",
+      "capabilities": [
+        "zoning.import",
+        "zoning.rules",
+        "zoning.envelope",
+        "zoning.validate"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "collaboration",
+      "name": "Collaboration / presence",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "local_process",
+      "entrypoint": "worker://collaboration",
+      "capabilities": [
+        "collab.presence",
+        "collab.comment",
+        "collab.lock",
+        "collab.sync"
+      ],
+      "network": "none",
+      "deterministic": false
+    },
+    {
+      "id": "versioning.spatial",
+      "name": "Spatial branching / merge",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "builtin_rust",
+      "entrypoint": "builtin://versioning",
+      "capabilities": [
+        "version.branch",
+        "version.diff",
+        "version.merge",
+        "version.restore"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "assets.library",
+      "name": "Asset library / indexing",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "builtin_rust",
+      "entrypoint": "builtin://asset-library",
+      "capabilities": [
+        "asset.catalog",
+        "asset.search",
+        "asset.version",
+        "asset.license"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "materials.scan",
+      "name": "Material scan / PBR extraction",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "local_process",
+      "entrypoint": "worker://material-scan",
+      "capabilities": [
+        "material.scan",
+        "material.albedo",
+        "material.normal",
+        "material.roughness",
+        "material.displacement"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "reconstruction.neural",
+      "name": "Local neural 3D reconstruction",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "local_process",
+      "entrypoint": "worker://neural-3d",
+      "capabilities": [
+        "reconstruct.single-image",
+        "reconstruct.multiview",
+        "reconstruct.gaussian",
+        "reconstruct.neural-mesh"
+      ],
+      "network": "none",
+      "deterministic": false
+    },
+    {
+      "id": "simulation.events",
+      "name": "World events / scenario system",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "builtin_rust",
+      "entrypoint": "builtin://events",
+      "capabilities": [
+        "scenario.create",
+        "scenario.timeline",
+        "event.trigger",
+        "event.replay"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "measurements",
+      "name": "Survey / measurement tools",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "builtin_rust",
+      "entrypoint": "builtin://measurements",
+      "capabilities": [
+        "measure.distance",
+        "measure.area",
+        "measure.volume",
+        "measure.slope"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "exports.engines",
+      "name": "Game/engine export adapters",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "local_process",
+      "entrypoint": "worker://engine-export",
+      "capabilities": [
+        "export.godot",
+        "export.bevy",
+        "export.unreal",
+        "export.unity"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "exports.usd",
+      "name": "USD / interchange adapter",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "local_process",
+      "entrypoint": "worker://usd",
+      "capabilities": [
+        "usd.read",
+        "usd.write",
+        "usd.stage",
+        "usd.material"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "exports.gis",
+      "name": "GIS export adapters",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "builtin_rust",
+      "entrypoint": "builtin://gis-export",
+      "capabilities": [
+        "export.geojson",
+        "export.gpkg",
+        "export.tiles",
+        "export.raster"
+      ],
+      "network": "none",
+      "deterministic": true
+    },
+    {
+      "id": "reality.xr",
+      "name": "AR / VR / spatial presentation",
+      "version": "0.1.0",
+      "api_version": 1,
+      "status": "contract_ready",
+      "runtime": "web_sidecar",
+      "entrypoint": "sidecar://xr",
+      "capabilities": [
+        "xr.session",
+        "xr.anchor",
+        "xr.teleport",
+        "xr.review"
+      ],
+      "network": "none",
+      "deterministic": false
+    }
+  ]
+}

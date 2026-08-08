@@ -1,0 +1,19 @@
+[package]
+name = "arcz-terrain"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+description = "Fontes de DEM/imagery, cache de tiles e construcao de malha de terreno em ENU"
+
+[dependencies]
+arcz-geo.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+reqwest.workspace = true
+image.workspace = true
+sha2.workspace = true
+log.workspace = true
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["rt", "macros", "fs", "sync"] }

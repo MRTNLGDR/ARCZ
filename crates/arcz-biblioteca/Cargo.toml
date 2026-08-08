@@ -1,0 +1,26 @@
+[package]
+name = "arcz-biblioteca"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+description = "Catalogo de mobiliario e decoracao (CC0) + download das fontes + pecas parametricas em glTF"
+
+[dependencies]
+thiserror.workspace = true
+tokio.workspace = true
+reqwest = { workspace = true, features = ["json"] }
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+bytes = "1"
+log.workspace = true
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["rt", "macros", "fs"] }
+# So nos testes: prova que o .glb gerado abre no MESMO loader que o app usa.
+arcz-model.workspace = true
+
+[[bin]]
+name = "arcz-biblioteca"
+path = "src/main.rs"

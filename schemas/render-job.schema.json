@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "arcz://schemas/render-job.schema.json",
+  "title": "Offline Render Job",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "id",
+    "timeline",
+    "frame_start",
+    "frame_end",
+    "output_dir",
+    "format",
+    "resolution",
+    "subframes",
+    "overwrite"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "id": {
+      "type": "string"
+    },
+    "timeline": {
+      "type": "string"
+    },
+    "frame_start": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "frame_end": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "output_dir": {
+      "type": "string"
+    },
+    "format": {
+      "enum": [
+        "png",
+        "exr",
+        "jpg"
+      ]
+    },
+    "resolution": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16384
+        },
+        {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16384
+        }
+      ],
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "subframes": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 128
+    },
+    "overwrite": {
+      "type": "boolean"
+    },
+    "seed": {
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}

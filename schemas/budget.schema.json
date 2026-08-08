@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "arcz://schemas/budget.schema.json",
+  "title": "Generation Budget",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "profile",
+    "limits",
+    "requested",
+    "decision"
+  ],
+  "properties": {
+    "profile": {
+      "enum": [
+        "LEVE",
+        "EQUILIBRADO",
+        "ALTO",
+        "CINEMATICO",
+        "CUSTOM"
+      ]
+    },
+    "limits": {
+      "$ref": "#/$defs/resources"
+    },
+    "requested": {
+      "$ref": "#/$defs/resources"
+    },
+    "decision": {
+      "enum": [
+        "ACCEPT",
+        "DEGRADE",
+        "SPLIT",
+        "DEFER",
+        "CONFIRM",
+        "REJECT"
+      ]
+    },
+    "reasons": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "reservation_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "available": {
+      "$ref": "#/$defs/resources"
+    },
+    "hardware": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "resources": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "triangles",
+        "instances",
+        "draw_calls",
+        "geometry_mb",
+        "textures_mb",
+        "framebuffer_mb",
+        "materials",
+        "vegetation_overdraw",
+        "cpu_ms",
+        "gpu_upload_ms",
+        "cache_mb"
+      ],
+      "properties": {
+        "triangles": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "instances": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "draw_calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "geometry_mb": {
+          "type": "number",
+          "minimum": 0
+        },
+        "textures_mb": {
+          "type": "number",
+          "minimum": 0
+        },
+        "framebuffer_mb": {
+          "type": "number",
+          "minimum": 0
+        },
+        "materials": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "vegetation_overdraw": {
+          "type": "number",
+          "minimum": 0
+        },
+        "cpu_ms": {
+          "type": "number",
+          "minimum": 0
+        },
+        "gpu_upload_ms": {
+          "type": "number",
+          "minimum": 0
+        },
+        "cache_mb": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}

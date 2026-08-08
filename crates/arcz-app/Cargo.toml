@@ -1,0 +1,34 @@
+[package]
+name = "arcz-app"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+description = "Aplicacao ARCZ: carrega uma regiao real e a exibe no viewport"
+
+[[bin]]
+name = "arcz"
+path = "src/main.rs"
+
+[dependencies]
+arcz-geo.workspace = true
+arcz-terrain.workspace = true
+arcz-model.workspace = true
+arcz-osm.workspace = true
+arcz-biblioteca.workspace = true
+arcz-earth = { path = "../arcz-earth" }
+anyhow.workspace = true
+tokio.workspace = true
+log.workspace = true
+env_logger.workspace = true
+bytemuck.workspace = true
+image.workspace = true
+
+tiny_http.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+rusqlite.workspace = true
+wgpu = "27"
+winit = "0.30"
+pollster = "0.4"

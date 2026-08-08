@@ -1,0 +1,278 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "arcz://schemas/project-v2.schema.json",
+  "title": "ARCZ Project V2",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "schema_version",
+    "project_seed",
+    "posicao",
+    "ambiente",
+    "camera",
+    "takes",
+    "pecas",
+    "lugares",
+    "active_region",
+    "region_profiles",
+    "plugins",
+    "procedural_layers",
+    "generation_manifests",
+    "overrides",
+    "tombstones",
+    "timeline",
+    "render_jobs",
+    "source_registry",
+    "floorplanner_context_layers",
+    "floorplanner_derivatives",
+    "primary_model"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 2
+    },
+    "project_seed": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "posicao": {
+      "type": "object"
+    },
+    "ambiente": {
+      "type": "object"
+    },
+    "camera": {
+      "type": "object"
+    },
+    "takes": {
+      "type": "array"
+    },
+    "pecas": {
+      "type": "array"
+    },
+    "lugares": {
+      "type": "array"
+    },
+    "active_region": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "region_profiles": {
+      "type": "object"
+    },
+    "plugins": {
+      "type": "object"
+    },
+    "procedural_layers": {
+      "type": "array"
+    },
+    "generation_manifests": {
+      "type": "array"
+    },
+    "overrides": {
+      "type": "object"
+    },
+    "tombstones": {
+      "type": "array"
+    },
+    "timeline": {
+      "type": "object"
+    },
+    "render_jobs": {
+      "type": "array"
+    },
+    "source_registry": {
+      "type": "array"
+    },
+    "save_revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "content_hash": {
+      "type": "string"
+    },
+    "network_mode": {
+      "type": "string",
+      "enum": [
+        "offline_strict",
+        "local_lan",
+        "import_assisted"
+      ],
+      "default": "offline_strict"
+    },
+    "floorplanner_projects": {
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "object",
+            "required": [
+              "id"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "region_id": {
+                "type": "string"
+              },
+              "context_hash": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "current_revision": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "updated_at": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "active_floorplanner_project_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "panel_layout": {
+      "$ref": "panel-layout.schema.json"
+    },
+    "chat_sessions": {
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "object"
+          }
+        ]
+      }
+    },
+    "earth_presentation": {
+      "$ref": "earth-presentation.schema.json"
+    },
+    "workspace_mode": {
+      "type": "string",
+      "enum": [
+        "globo",
+        "floorplanner",
+        "render",
+        "walk"
+      ]
+    },
+    "floorplanner_north_rotation_deg": {
+      "type": "number"
+    },
+    "floorplanner_vertical_offset_m": {
+      "type": "number"
+    },
+    "floorplanner_constraints": {
+      "type": "object"
+    },
+    "reference_media": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-f0-9]{64}$"
+      }
+    },
+    "floorplanner_derivatives": {
+      "type": "array",
+      "items": {
+        "$ref": "floorplanner-derivative.schema.json"
+      }
+    },
+    "primary_model": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "enabled"
+          ],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "lod": {
+              "type": "string",
+              "enum": [
+                "original",
+                "equilibrado",
+                "medio",
+                "distante"
+              ]
+            },
+            "name": {
+              "type": "string"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        }
+      ]
+    },
+    "floorplanner_layout": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "show_globe",
+        "split_ratio",
+        "auto_publish",
+        "auto_publish_delay_ms"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "show_globe": {
+          "type": "boolean"
+        },
+        "split_ratio": {
+          "type": "number",
+          "minimum": 0.2,
+          "maximum": 0.68
+        },
+        "auto_publish": {
+          "type": "boolean"
+        },
+        "auto_publish_delay_ms": {
+          "type": "integer",
+          "minimum": 400,
+          "maximum": 10000
+        }
+      }
+    },
+    "floorplanner_context_layers": {
+      "type": "array",
+      "items": {
+        "$ref": "context-layer.schema.json"
+      },
+      "description": "Camadas locais imutáveis exibidas como contexto, nunca incorporadas ao SceneSnapshot editável."
+    }
+  }
+}

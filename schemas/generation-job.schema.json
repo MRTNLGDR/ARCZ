@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "arcz://schemas/generation-job.schema.json",
+  "title": "Generation Job",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "kind",
+    "status",
+    "stage",
+    "progress",
+    "generation_epoch",
+    "created_at",
+    "updated_at",
+    "request",
+    "error"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 8
+    },
+    "kind": {
+      "type": "string",
+      "pattern": "^[a-z0-9._-]+$"
+    },
+    "status": {
+      "enum": [
+        "QUEUED",
+        "RUNNING",
+        "CANCEL_REQUESTED",
+        "CANCELLED",
+        "COMPLETED",
+        "FAILED_RETRYABLE",
+        "FAILED_PERMANENT"
+      ]
+    },
+    "stage": {
+      "enum": [
+        "VALIDATE_REQUEST",
+        "RESOLVE_REGION",
+        "ACQUIRE_INPUTS",
+        "BUILD_CONTEXT",
+        "RESOLVE_STYLE",
+        "PLAN_TILES",
+        "ESTIMATE_BUDGET",
+        "GENERATE",
+        "VALIDATE_OUTPUT",
+        "STAGE_RESULT",
+        "APPLY_TRANSACTION",
+        "INDEX",
+        "PERSIST",
+        "DONE"
+      ]
+    },
+    "progress": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "generation_epoch": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "request": {
+      "type": "object"
+    },
+    "error": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "result_manifest": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "cancel_reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

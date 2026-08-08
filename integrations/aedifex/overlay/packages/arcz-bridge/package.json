@@ -1,0 +1,8 @@
+{
+  "name": "@arcz/aedifex-bridge",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": { ".": "./src/index.ts" },
+  "dependencies": { "@aedifex/core": "workspace:*", "zod": "^4" }
+}

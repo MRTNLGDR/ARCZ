@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "id": "builtin:render.archviz.interior.photoreal",
+  "slug": "render.archviz.interior.photoreal",
+  "title": "Interior arquitetônico fotorreal",
+  "category": "render",
+  "purpose": "Render de interior com materiais e escala preservados",
+  "language": "pt-BR",
+  "template": "Interior fotorreal de {{space.name}} no projeto {{project.name}}. Preservar integralmente paredes, vãos, mobiliário bloqueado e proporções. Estilo: {{style.description}}. Materiais: {{materials.summary}}. Luz natural coerente com orientação solar {{environment.sun}}, luzes artificiais fisicamente plausíveis, exposição cinematográfica equilibrada, texturas em escala real, imperfeições discretas, lente {{camera.focal_length_mm}} mm, câmera a {{camera.height_m}} m.",
+  "negative_template": "sem alterar layout, sem duplicar móveis, sem janelas extras, sem objetos flutuantes, sem distorção grande-angular excessiva, sem plástico artificial, sem texto ou marca",
+  "tags": [
+    "archviz",
+    "interior",
+    "photoreal"
+  ],
+  "variables": {
+    "space.name": {
+      "required": true
+    },
+    "project.name": {
+      "required": true
+    },
+    "style.description": {
+      "required": true
+    },
+    "materials.summary": {
+      "required": true
+    },
+    "environment.sun": {
+      "required": true
+    },
+    "camera.focal_length_mm": {
+      "required": true
+    },
+    "camera.height_m": {
+      "required": true
+    }
+  },
+  "version": 1,
+  "builtin": true,
+  "active": true,
+  "content_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "created_at": "2026-08-06T00:00:00Z",
+  "updated_at": "2026-08-06T00:00:00Z"
+}

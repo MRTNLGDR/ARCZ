@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARCZ Earth · Visualizador 3D Georreferenciado</title>
+
+<!--
+  LOCAL-FIRST: nenhuma fonte é buscada na internet. O CSS usa as famílias
+  instaladas no sistema. Fontes adicionais só podem entrar como assets locais
+  licenciados e registrados no manifesto da distribuição; nunca via CDN.
+-->
+
+<!-- CesiumJS 1.143 local (vendor/cesium) -->
+<script>window.CESIUM_BASE_URL = "/vendor/cesium/Cesium/";</script>
+<link rel="stylesheet" href="/vendor/cesium/Cesium/Widgets/widgets.css">
+<script src="/vendor/cesium/Cesium/Cesium.js"></script>
+
+<link rel="stylesheet" href="./app/estilo.css">
+<link rel="stylesheet" href="./app/fusion-v6.css">
+</head>
+<body>
+
+<div id="app_shell">
+  <header id="topbar"></header>
+
+  <div id="corpo">
+    <aside id="menu"></aside>
+
+    <main id="viewport">
+      <div id="cesiumContainer"></div>
+      <div id="hud_viewport"></div>
+      <div id="hud_coords">—</div>
+    </main>
+
+    <aside id="trilha"></aside>
+  </div>
+
+  <footer id="statusbar"></footer>
+</div>
+
+<script type="module" src="./app/main.js"></script>
+</body>
+</html>

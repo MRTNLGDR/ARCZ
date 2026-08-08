@@ -1,0 +1,33 @@
+[package]
+name = "arcz-tauri"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+description = "Casca Tauri do ARCZ: superficie wgpu nativa + comandos do contrato UI/engine"
+
+[lib]
+name = "arcz_tauri_bridge"
+path = "src/lib.rs"
+
+[[bin]]
+name = "arcz-tauri"
+path = "src/main.rs"
+
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+arcz-geo.workspace = true
+arcz-model.workspace = true
+anyhow.workspace = true
+log.workspace = true
+env_logger.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+
+tauri = { version = "2", features = [] }
+wgpu = "27"
+raw-window-handle = "0.6"
+pollster = "0.4"

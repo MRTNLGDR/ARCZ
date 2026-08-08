@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "updated_at": "2026-08-08T22:18:00Z",
+  "policy": "Original checkouts are immutable; integrations use controlled copies and recorded patches.",
+  "entries": [
+    {
+      "id": "aedifex",
+      "repository": "TangSY/aedifex",
+      "commit": "5319368bae16500ca5267f6f8d68b36c9586d5bb",
+      "license": "MIT",
+      "status": "PINNED_NOT_MATERIALIZED",
+      "upstream_path": "upstreams/sources/aedifex",
+      "integration": "integrations/aedifex"
+    },
+    {
+      "id": "cesiumjs",
+      "repository": "CesiumGS/cesium",
+      "commit": "6d5d8b1f0725b6f831b336463f4b11c98023427b",
+      "license": "Apache-2.0",
+      "status": "PINNED_NOT_MATERIALIZED",
+      "upstream_path": "upstreams/sources/cesium"
+    },
+    {
+      "id": "blender",
+      "license": "GPL-3.0-or-later",
+      "status": "EXTERNAL_EXECUTABLE_NOT_INSTALLED",
+      "integration": "workers/blender",
+      "boundary": "separate local process"
+    },
+    {
+      "id": "kepler-gl",
+      "repository": "keplergl/kepler.gl",
+      "commit": "621bb236fb33f0f6de9dbd730c2e18edac40b764",
+      "license": "MIT",
+      "status": "PINNED_NOT_MATERIALIZED",
+      "upstream_path": "upstreams/sources/kepler-gl"
+    },
+    {
+      "id": "ifcopenshell-bonsai",
+      "repository": "IfcOpenShell/IfcOpenShell",
+      "commit": "7ed8584edc6609654cea608d699348c9cca7ce5d",
+      "license": "LGPL-3.0-or-later / Bonsai GPL-3.0-or-later",
+      "status": "PINNED_NOT_MATERIALIZED",
+      "upstream_path": "upstreams/sources/ifcopenshell",
+      "boundary": "IFC engine process/dynamic boundary; Bonsai optional external Blender worker"
+    }
+  ]
+}

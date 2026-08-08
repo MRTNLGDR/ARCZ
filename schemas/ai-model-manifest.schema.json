@@ -1,0 +1,194 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "arcz://schemas/ai-model-manifest.schema.json",
+  "title": "Local AI Model Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "id",
+    "version",
+    "task",
+    "backend",
+    "license",
+    "files",
+    "requirements",
+    "input_contract",
+    "output_contract",
+    "fallback"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]+$"
+    },
+    "version": {
+      "type": "string"
+    },
+    "task": {
+      "enum": [
+        "style-classifier",
+        "roof-classifier",
+        "facade-palette",
+        "landcover-segmentation",
+        "height-estimator",
+        "depth-estimator",
+        "material-synth",
+        "render-diffusion",
+        "llm-tools",
+        "prompt.enhance",
+        "prompt.translate",
+        "upscale",
+        "chat.global"
+      ]
+    },
+    "backend": {
+      "enum": [
+        "command",
+        "onnxruntime",
+        "llama_cpp",
+        "ollama_local",
+        "comfyui_local",
+        "python_adapter"
+      ]
+    },
+    "license": {
+      "type": "string"
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "sha256",
+          "bytes"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "requirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ram_mb",
+        "vram_mb",
+        "devices"
+      ],
+      "properties": {
+        "ram_mb": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "vram_mb": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "devices": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "cpu",
+              "cuda",
+              "directml",
+              "metal"
+            ]
+          }
+        }
+      }
+    },
+    "input_contract": {
+      "type": "object"
+    },
+    "output_contract": {
+      "type": "object"
+    },
+    "command": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "endpoint": {
+      "type": "string"
+    },
+    "adapter": {
+      "type": "string"
+    },
+    "fallback": {
+      "enum": [
+        "procedural",
+        "disabled",
+        "lower_quality_model"
+      ]
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 86400
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "backend": {
+            "const": "command"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "command"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "backend": {
+            "enum": [
+              "ollama_local",
+              "comfyui_local"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "endpoint"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "backend": {
+            "const": "python_adapter"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "adapter"
+        ]
+      }
+    }
+  ]
+}

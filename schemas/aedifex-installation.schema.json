@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "arcz://schemas/aedifex-installation.schema.json",
+  "title": "Aedifex Upstream Lock",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "repository", "commit", "branch", "license", "captured_at",
+    "integration_strategy", "plugin_api_version", "packages", "required_workspace_paths",
+    "required_node_kinds", "required_tool_families", "notes"
+  ],
+  "properties": {
+    "schema_version": { "const": 3 },
+    "repository": { "const": "TangSY/aedifex" },
+    "commit": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
+    "branch": { "type": "string", "minLength": 1 },
+    "license": { "const": "MIT" },
+    "captured_at": { "type": "string", "format": "date-time" },
+    "integration_strategy": { "const": "UNIFIED_AUTHORING_HOST_WITH_ARCZ_EARTH_DOMAIN" },
+    "plugin_api_version": { "const": 2 },
+    "packages": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["version", "path", "required"],
+        "properties": {
+          "version": { "type": "string", "minLength": 1 },
+          "path": { "type": "string", "pattern": "^[^/].*package\\.json$" },
+          "required": { "const": true }
+        }
+      }
+    },
+    "required_workspace_paths": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "required_node_kinds": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "required_tool_families": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "notes": { "type": "array", "items": { "type": "string" } }
+  }
+}

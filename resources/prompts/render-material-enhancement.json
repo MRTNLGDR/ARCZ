@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "id": "builtin:render.material.enhancement",
+  "slug": "render.material.enhancement",
+  "title": "Aprimorar materiais sem alterar geometria",
+  "category": "render",
+  "purpose": "Refino de material condicionado por passes",
+  "language": "pt-BR",
+  "template": "Aprimorar somente a aparência dos materiais identificados pelas máscaras fornecidas. Material alvo: {{material.name}}; acabamento: {{material.finish}}; escala real: {{material.scale}}; estado: {{material.weathering}}. Respeitar depth, normals, object IDs, limites UV e silhuetas. Manter iluminação {{environment.lighting}} e balanço de branco {{environment.white_balance}}.",
+  "negative_template": "não alterar bordas, não deslocar juntas, não criar relevo fora da normal, sem padrões repetitivos, sem sujeira exagerada, sem mudança de câmera",
+  "tags": [
+    "material",
+    "pbr",
+    "geometry-locked"
+  ],
+  "variables": {
+    "material.name": {
+      "required": true
+    },
+    "material.finish": {
+      "required": true
+    },
+    "material.scale": {
+      "required": true
+    },
+    "material.weathering": {
+      "required": true
+    },
+    "environment.lighting": {
+      "required": true
+    },
+    "environment.white_balance": {
+      "required": true
+    }
+  },
+  "version": 1,
+  "builtin": true,
+  "active": true,
+  "content_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "created_at": "2026-08-06T00:00:00Z",
+  "updated_at": "2026-08-06T00:00:00Z"
+}

@@ -1,0 +1,1048 @@
+[
+  {
+    "chave": "almofadas",
+    "nome": "Almofadas",
+    "origem": "arcz://biblioteca/almofadas",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\almofadas\\throw_pillows_01_2k.gltf",
+    "sha256": "3869830ba5fb524efc0d2dbc6fb3d01162fa06fc70c367b50594ccf8b15a61f1",
+    "bytes": 4548
+  },
+  {
+    "chave": "arara-roupas",
+    "nome": "Arara Roupas",
+    "origem": "arcz://biblioteca/arara-roupas",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\arara-roupas\\arara-roupas.glb",
+    "sha256": "a48f479607947a843527965bca60217e2fecda24ca001cddcd3b59684348184e",
+    "bytes": 9884
+  },
+  {
+    "chave": "armario-madeira",
+    "nome": "Armario Madeira",
+    "origem": "arcz://biblioteca/armario-madeira",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\armario-madeira\\modern_wooden_cabinet_2k.gltf",
+    "sha256": "7ecfeb5162c669c937f9b3e85534fc5237bce6ba5e8e3ed4e1666fa721e2e91b",
+    "bytes": 10960
+  },
+  {
+    "chave": "balcao-cafe",
+    "nome": "Balcao Cafe",
+    "origem": "arcz://biblioteca/balcao-cafe",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\balcao-cafe\\balcao-cafe.glb",
+    "sha256": "d6789eeaeb99c5010a8e714f1980e59f2e56c50e0c747f3c2bbd98efd42d7924",
+    "bytes": 6064
+  },
+  {
+    "chave": "balcao-cafe",
+    "nome": "Balcao Cafe",
+    "origem": "arcz://biblioteca/balcao-cafe",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\balcao-cafe\\CoffeeCart_01_2k.gltf",
+    "sha256": "40297334141f062db2b3b1921572c4b147ebd306eb708e87f0621e2bc450ea0c",
+    "bytes": 6637
+  },
+  {
+    "chave": "balcao-recepcao",
+    "nome": "Balcao Recepcao",
+    "origem": "arcz://biblioteca/balcao-recepcao",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\balcao-recepcao\\balcao-recepcao.glb",
+    "sha256": "f584880953b5a6da0b1e2fb8911de9cffa86e6585abe044973289c33aef20d56",
+    "bytes": 1768
+  },
+  {
+    "chave": "bancada-cozinha",
+    "nome": "Bancada Cozinha",
+    "origem": "arcz://biblioteca/bancada-cozinha",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\bancada-cozinha\\bancada-cozinha.glb",
+    "sha256": "c02f34cd7e160d076ed9b5a743b3fec441dcb3ec677ecf6d869f6b0c49f4064d",
+    "bytes": 6072
+  },
+  {
+    "chave": "banco-madeira",
+    "nome": "Banco Madeira",
+    "origem": "arcz://biblioteca/banco-madeira",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\banco-madeira\\painted_wooden_bench_2k.gltf",
+    "sha256": "0321bf315d23f82d925353728632e32dad4d7fee8b75f58c3cc3a249635e96a3",
+    "bytes": 2835
+  },
+  {
+    "chave": "banco-modular",
+    "nome": "Banco Modular",
+    "origem": "arcz://biblioteca/banco-modular",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\banco-modular\\modular_street_seating_2k.gltf",
+    "sha256": "c6caa0fc062bed799c3a84fdd9ce6b7a8209b1bfcb3ed777a03e9c12c0b29082",
+    "bytes": 29629
+  },
+  {
+    "chave": "banqueta-alta",
+    "nome": "Banqueta Alta",
+    "origem": "arcz://biblioteca/banqueta-alta",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\banqueta-alta\\bar_chair_round_01_2k.gltf",
+    "sha256": "0c7d5dbea18d83a766b4b5ae1ccd303898e117af1f829282bc6aad37b8be55cc",
+    "bytes": 2833
+  },
+  {
+    "chave": "banqueta-metal",
+    "nome": "Banqueta Metal",
+    "origem": "arcz://biblioteca/banqueta-metal",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\banqueta-metal\\metal_stool_01_2k.gltf",
+    "sha256": "c5886418d98b7ec4e932f54a2ba44896dd9e61276bf62d21697b9136f2b0803e",
+    "bytes": 2790
+  },
+  {
+    "chave": "box-chuveiro",
+    "nome": "Box Chuveiro",
+    "origem": "arcz://biblioteca/box-chuveiro",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\box-chuveiro\\box-chuveiro.glb",
+    "sha256": "693b77211ef6e7e5affcff3860b8d209e2faec6007c2d53533a23cb1379adb71",
+    "bytes": 5332
+  },
+  {
+    "chave": "cadeira-jantar",
+    "nome": "Cadeira Jantar",
+    "origem": "arcz://biblioteca/cadeira-jantar",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\cadeira-jantar\\dining_chair_02_2k.gltf",
+    "sha256": "c73342e0930615ea147237e1a640dd64eafa8d43662d1befad8ac896af87b129",
+    "bytes": 2723
+  },
+  {
+    "chave": "caixa-registradora",
+    "nome": "Caixa Registradora",
+    "origem": "arcz://biblioteca/caixa-registradora",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\caixa-registradora\\caixa-registradora.glb",
+    "sha256": "91f3d4837b192bc8770e6103412112b6d0abe9c8825c6b02f4c41f3989ddfcee",
+    "bytes": 1776
+  },
+  {
+    "chave": "caixa-registradora",
+    "nome": "Caixa Registradora",
+    "origem": "arcz://biblioteca/caixa-registradora",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\caixa-registradora\\CashRegister_01_2k.gltf",
+    "sha256": "9e7cd6c659466b56f3e8dd3375d3e9a47751556dcddca5b305badda95ea65bf9",
+    "bytes": 6300
+  },
+  {
+    "chave": "cama-casal",
+    "nome": "Cama Casal",
+    "origem": "arcz://biblioteca/cama-casal",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\cama-casal\\cama-casal.glb",
+    "sha256": "42eb17be80fdfa611c72d5ceecd017cf5ec2706ab0fc6e3becb730201ab10fc6",
+    "bytes": 12976
+  },
+  {
+    "chave": "cama-solteiro",
+    "nome": "Cama Solteiro",
+    "origem": "arcz://biblioteca/cama-solteiro",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\cama-solteiro\\cama-solteiro.glb",
+    "sha256": "50cebac66409248d54bccc150fa27ca9ca1a7788250c6153be15a37b969f83b3",
+    "bytes": 7004
+  },
+  {
+    "chave": "carro-bmw",
+    "nome": "Carro Bmw",
+    "origem": "arcz://biblioteca/carro-bmw",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\carro-bmw\\carro-bmw.glb",
+    "sha256": "8503ef3e3deeafb3196839b23718162d48701c9a3107ae9f7d3697e26797446e",
+    "bytes": 10212
+  },
+  {
+    "chave": "carro-suv",
+    "nome": "Carro Suv",
+    "origem": "arcz://biblioteca/carro-suv",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\carro-suv\\carro-suv.glb",
+    "sha256": "528ed8b9a20fafd9be9658343b95ef3a5258d402a260d98810d08a0318645caa",
+    "bytes": 8556
+  },
+  {
+    "chave": "carro-tesla",
+    "nome": "Carro Tesla",
+    "origem": "arcz://biblioteca/carro-tesla",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\carro-tesla\\carro-tesla.glb",
+    "sha256": "17e68306d22fb1b44c2312e0269ab112ec4c9f099c98a8d479519aa3ab54bfec",
+    "bytes": 8572
+  },
+  {
+    "chave": "churrasqueira",
+    "nome": "Churrasqueira",
+    "origem": "arcz://biblioteca/churrasqueira",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\churrasqueira\\churrasqueira.glb",
+    "sha256": "2ec9b5f739b72520d7e8d3d7a49efc537904a406c38f92ee9a716dd6a0718d95",
+    "bytes": 2400
+  },
+  {
+    "chave": "cooktop",
+    "nome": "Cooktop",
+    "origem": "arcz://biblioteca/cooktop",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\cooktop\\electric_stove_2k.gltf",
+    "sha256": "ce90e97647bda28d76e5417585ff9f16f8b20b475cf5efc1e1e1e1683b2bc667",
+    "bytes": 31234
+  },
+  {
+    "chave": "coqueiro-pequeno",
+    "nome": "Coqueiro Pequeno",
+    "origem": "arcz://biblioteca/coqueiro-pequeno",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\coqueiro-pequeno\\coqueiro-pequeno.glb",
+    "sha256": "a3354ab3ea4691deb3f30cf4b996304d119e182b90df033f6a10bae9b85b5915",
+    "bytes": 8168
+  },
+  {
+    "chave": "criado-mudo",
+    "nome": "Criado Mudo",
+    "origem": "arcz://biblioteca/criado-mudo",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\criado-mudo\\ClassicNightstand_01_2k.gltf",
+    "sha256": "3f6a42ee06170729fe2b6b2c634086e99c79840809c2efcfd638db458aaa2392",
+    "bytes": 2754
+  },
+  {
+    "chave": "criado-mudo-2",
+    "nome": "Criado Mudo 2",
+    "origem": "arcz://biblioteca/criado-mudo-2",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\criado-mudo-2\\painted_wooden_nightstand_2k.gltf",
+    "sha256": "3e233db12511d58d688467ee90ff1b61f011a754cd1fa1c38ffc57e3627cccea",
+    "bytes": 4427
+  },
+  {
+    "chave": "cuba-banheiro",
+    "nome": "Cuba Banheiro",
+    "origem": "arcz://biblioteca/cuba-banheiro",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\cuba-banheiro\\cuba-banheiro.glb",
+    "sha256": "bb9a71ffc0774b82515e4eeb595d32b2866c5c10bbcffbc06f1b3f6913a4a6c6",
+    "bytes": 5300
+  },
+  {
+    "chave": "espelho",
+    "nome": "Espelho",
+    "origem": "arcz://biblioteca/espelho",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\espelho\\ornate_mirror_01_2k.gltf",
+    "sha256": "3f8ba6b8b02fd2df140c5f191ab4fe287fe27560bceeeee9c49bad6170ac1f9d",
+    "bytes": 2697
+  },
+  {
+    "chave": "espreguicadeira",
+    "nome": "Espreguicadeira",
+    "origem": "arcz://biblioteca/espreguicadeira",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\espreguicadeira\\espreguicadeira.glb",
+    "sha256": "0e9e289ea6c7d76bfc7b97f54d7daf7c45099abd3720a4441945c7126e15a232",
+    "bytes": 2276
+  },
+  {
+    "chave": "estante",
+    "nome": "Estante",
+    "origem": "arcz://biblioteca/estante",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\estante\\Shelf_01_2k.gltf",
+    "sha256": "3a47b370bcd0291a27218a5b554de70ff0e1928d67d804576349dc2de17204e1",
+    "bytes": 2617
+  },
+  {
+    "chave": "estante-curva-cafe",
+    "nome": "Estante Curva Cafe",
+    "origem": "arcz://biblioteca/estante-curva-cafe",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\estante-curva-cafe\\estante-curva-cafe.glb",
+    "sha256": "c0199f5073d21cc25638f2e09be95c492d96bd1a79612df6de7f019159ce0923",
+    "bytes": 11604
+  },
+  {
+    "chave": "floreira-1",
+    "nome": "Floreira 1",
+    "origem": "arcz://biblioteca/floreira-1",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\floreira-1\\floreira-1.glb",
+    "sha256": "d923e58e6a2abf7b87e5ec3fb8df786fce8c057766883569a2a679f1367f2b68",
+    "bytes": 1784
+  },
+  {
+    "chave": "floreira-1",
+    "nome": "Floreira 1",
+    "origem": "arcz://biblioteca/floreira-1",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\floreira-1\\planter_box_01_2k.gltf",
+    "sha256": "949c6988e3a69f002f714c2055ecdd80c4103daff745cda3242ca0e43db06e76",
+    "bytes": 2787
+  },
+  {
+    "chave": "floreira-2",
+    "nome": "Floreira 2",
+    "origem": "arcz://biblioteca/floreira-2",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\floreira-2\\floreira-2.glb",
+    "sha256": "9b183b0e67b722c4d7dc06f7b737e425248be33d6c16a194f8b7f30482d16780",
+    "bytes": 1784
+  },
+  {
+    "chave": "floreira-2",
+    "nome": "Floreira 2",
+    "origem": "arcz://biblioteca/floreira-2",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\floreira-2\\planter_box_02_2k.gltf",
+    "sha256": "40f9e68b8dc14a2498a3a67034403facd512c161fc43099ba2384d23781f07a5",
+    "bytes": 2787
+  },
+  {
+    "chave": "floreira-3",
+    "nome": "Floreira 3",
+    "origem": "arcz://biblioteca/floreira-3",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\floreira-3\\floreira-3.glb",
+    "sha256": "2d706e7e3a2f7be3c962d5bc5c4ff0dcd88921434c994c380c6615d1dce71356",
+    "bytes": 1732
+  },
+  {
+    "chave": "floreira-3",
+    "nome": "Floreira 3",
+    "origem": "arcz://biblioteca/floreira-3",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\floreira-3\\planter_box_03_2k.gltf",
+    "sha256": "36272f359e3099253290372a78b81be054d42125780c1f61060e48193a0e6865",
+    "bytes": 2790
+  },
+  {
+    "chave": "floreira-circulo",
+    "nome": "Floreira Circulo",
+    "origem": "arcz://biblioteca/floreira-circulo",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\floreira-circulo\\floreira-circulo.glb",
+    "sha256": "d674334ba781e956d335da1cc9b4bbf110be8b35855f0b0f13b26be6bbb12ee3",
+    "bytes": 9732
+  },
+  {
+    "chave": "gaveteiro",
+    "nome": "Gaveteiro",
+    "origem": "arcz://biblioteca/gaveteiro",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\gaveteiro\\drawer_cabinet_2k.gltf",
+    "sha256": "5daedfc7f16b6bef0da212b4904aca449f07a8dbad2ddca18bbfb979caeda31f",
+    "bytes": 8031
+  },
+  {
+    "chave": "geladeira",
+    "nome": "Geladeira",
+    "origem": "arcz://biblioteca/geladeira",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\geladeira\\geladeira.glb",
+    "sha256": "8af71eb9019a1601a1cda26fb570c0b8273004fab795594ea0f078cdf88e7d51",
+    "bytes": 2932
+  },
+  {
+    "chave": "geladeira-expositora",
+    "nome": "Geladeira Expositora",
+    "origem": "arcz://biblioteca/geladeira-expositora",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\geladeira-expositora\\geladeira-expositora.glb",
+    "sha256": "776a17c35a136fdbb5c7aa4b97efe65ef7e58ba40d36b143d7c59421db2ae297",
+    "bytes": 45720
+  },
+  {
+    "chave": "gondola-farmacia",
+    "nome": "Gondola Farmacia",
+    "origem": "arcz://biblioteca/gondola-farmacia",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\gondola-farmacia\\gondola-farmacia.glb",
+    "sha256": "fd4d451ee314ab646a495bd0c14829659500c0fc63d64888932ba7b5a5d34116",
+    "bytes": 17904
+  },
+  {
+    "chave": "gondola-mercado",
+    "nome": "Gondola Mercado",
+    "origem": "arcz://biblioteca/gondola-mercado",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\gondola-mercado\\gondola-mercado.glb",
+    "sha256": "0f47b129e1999c5fb48a9c6402e78b74976a8413bb0041378b3a11f4dec3b9ff",
+    "bytes": 39512
+  },
+  {
+    "chave": "guarda-roupa",
+    "nome": "Guarda Roupa",
+    "origem": "arcz://biblioteca/guarda-roupa",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\guarda-roupa\\guarda-roupa.glb",
+    "sha256": "d773a3506df6d609458b1cec889d25900a955817ff292220ae2e62a50c295a4c",
+    "bytes": 2836
+  },
+  {
+    "chave": "guarda-sol",
+    "nome": "Guarda Sol",
+    "origem": "arcz://biblioteca/guarda-sol",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\guarda-sol\\guarda-sol.glb",
+    "sha256": "30e7f0aa54588b514e20f70628f941810c5616b168a0291790072d5180b99ca0",
+    "bytes": 5888
+  },
+  {
+    "chave": "jogo-cha",
+    "nome": "Jogo Cha",
+    "origem": "arcz://biblioteca/jogo-cha",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\jogo-cha\\tea_set_01_2k.gltf",
+    "sha256": "c75b639cc1327c9bf44fee11b1e50ac7fd1c4ea8b56eb0ff98c5bc93d9d76c26",
+    "bytes": 15836
+  },
+  {
+    "chave": "lareira-ecologica",
+    "nome": "Lareira Ecologica",
+    "origem": "arcz://biblioteca/lareira-ecologica",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\lareira-ecologica\\lareira-ecologica.glb",
+    "sha256": "6c3c874b42a6ac77b25686786750c952308bb47dacc246812963669b7378b53b",
+    "bytes": 5988
+  },
+  {
+    "chave": "livros",
+    "nome": "Livros",
+    "origem": "arcz://biblioteca/livros",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\livros\\book_encyclopedia_set_01_2k.gltf",
+    "sha256": "6c8c76560ca8e3c28516c0831545db903111bea069ce569579c2848a2e781bed",
+    "bytes": 55011
+  },
+  {
+    "chave": "luminaria-mesa",
+    "nome": "Luminaria Mesa",
+    "origem": "arcz://biblioteca/luminaria-mesa",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\luminaria-mesa\\desk_lamp_arm_01_2k.gltf",
+    "sha256": "b3f03ff2c7c186ec73682f7447b3594db2362cbfc0d72a89d2d8967111d2a2b6",
+    "bytes": 4453
+  },
+  {
+    "chave": "luminaria-teto",
+    "nome": "Luminaria Teto",
+    "origem": "arcz://biblioteca/luminaria-teto",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\luminaria-teto\\modern_ceiling_lamp_01_2k.gltf",
+    "sha256": "d7417dd85e54626a51632d6eaf93712986ac2620ca3041dadc51a08b8ffa9bc9",
+    "bytes": 6177
+  },
+  {
+    "chave": "manequim",
+    "nome": "Manequim",
+    "origem": "arcz://biblioteca/manequim",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\manequim\\manequim.glb",
+    "sha256": "981738a5b38631b9954eec5e73ff2ed574ea841741aeb289cdfefe6999042acc",
+    "bytes": 5428
+  },
+  {
+    "chave": "mesa-cadeiras-externa",
+    "nome": "Mesa Cadeiras Externa",
+    "origem": "arcz://biblioteca/mesa-cadeiras-externa",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\mesa-cadeiras-externa\\outdoor_table_chair_set_01_2k.gltf",
+    "sha256": "2e2376efc210d849a22bd352b40442d38985c74953fc8020bb01ca94c66c68ca",
+    "bytes": 6826
+  },
+  {
+    "chave": "mesa-centro-1",
+    "nome": "Mesa Centro 1",
+    "origem": "arcz://biblioteca/mesa-centro-1",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\mesa-centro-1\\modern_coffee_table_01_2k.gltf",
+    "sha256": "0934d355e65fc5d1b2056fa913813384246572839af464d741f443462cc8e955",
+    "bytes": 2771
+  },
+  {
+    "chave": "mesa-centro-2",
+    "nome": "Mesa Centro 2",
+    "origem": "arcz://biblioteca/mesa-centro-2",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\mesa-centro-2\\modern_coffee_table_02_2k.gltf",
+    "sha256": "1a6d8d325baa7a285756f4a2fc9467ab1ae0ef6d4f5a86f7c91351bf5d61e28a",
+    "bytes": 4979
+  },
+  {
+    "chave": "mesa-centro-redonda",
+    "nome": "Mesa Centro Redonda",
+    "origem": "arcz://biblioteca/mesa-centro-redonda",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\mesa-centro-redonda\\coffee_table_round_01_2k.gltf",
+    "sha256": "6b9dbd17317c9289ab8e008b05abd146dbe0831c975871732def694de4ad407d",
+    "bytes": 2776
+  },
+  {
+    "chave": "mesa-escritorio",
+    "nome": "Mesa Escritorio",
+    "origem": "arcz://biblioteca/mesa-escritorio",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\mesa-escritorio\\mesa-escritorio.glb",
+    "sha256": "1ed7ba94caf65cf75a868bd9b3096b83232f7f3c0ac268afd49073f9a4f599e7",
+    "bytes": 4424
+  },
+  {
+    "chave": "mesa-escritorio",
+    "nome": "Mesa Escritorio",
+    "origem": "arcz://biblioteca/mesa-escritorio",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\mesa-escritorio\\metal_office_desk_2k.gltf",
+    "sha256": "4323f2e6cae9abb82146449b45445ee9446068c5a9b2ca23e018503b3b0af035",
+    "bytes": 13510
+  },
+  {
+    "chave": "mesa-jantar",
+    "nome": "Mesa Jantar",
+    "origem": "arcz://biblioteca/mesa-jantar",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\mesa-jantar\\dining_table_2k.gltf",
+    "sha256": "694264f7637b0bb68e1f54483a43d95d1ac41c26993b5b8f63ed8a5fc4e9e366",
+    "bytes": 4165
+  },
+  {
+    "chave": "mesa-lateral",
+    "nome": "Mesa Lateral",
+    "origem": "arcz://biblioteca/mesa-lateral",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\mesa-lateral\\side_table_01_2k.gltf",
+    "sha256": "9ba10e46bb29f1739fc8cd22063a72bb321b30f0551a81db0eeda1da14b8c580",
+    "bytes": 2700
+  },
+  {
+    "chave": "mesa-lateral-alta",
+    "nome": "Mesa Lateral Alta",
+    "origem": "arcz://biblioteca/mesa-lateral-alta",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\mesa-lateral-alta\\side_table_tall_01_2k.gltf",
+    "sha256": "8a2e8682934d558848724759bf43c1fc59edbc0c81f8c54e2dcaf8547f8f7a85",
+    "bytes": 2755
+  },
+  {
+    "chave": "mesa-madeira-clara",
+    "nome": "Mesa Madeira Clara",
+    "origem": "arcz://biblioteca/mesa-madeira-clara",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\mesa-madeira-clara\\mesa-madeira-clara.glb",
+    "sha256": "8e06caa8593676f475308af6c9743008b0dcdac7c2f75c13a8cb0337bc30779c",
+    "bytes": 7960
+  },
+  {
+    "chave": "mesa-redonda",
+    "nome": "Mesa Redonda",
+    "origem": "arcz://biblioteca/mesa-redonda",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\mesa-redonda\\round_wooden_table_01_2k.gltf",
+    "sha256": "94960f2003dc9a971b8c8301fba5f44889d8c50e3a6139854f1db67997936555",
+    "bytes": 4089
+  },
+  {
+    "chave": "mesa-redonda-2",
+    "nome": "Mesa Redonda 2",
+    "origem": "arcz://biblioteca/mesa-redonda-2",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\mesa-redonda-2\\round_wooden_table_02_2k.gltf",
+    "sha256": "0f26625f9ab72d644184ad6cbb7c87d352cb0779e8bbc2f6ffa92f2154c8b66e",
+    "bytes": 2851
+  },
+  {
+    "chave": "micro-ondas",
+    "nome": "Micro Ondas",
+    "origem": "arcz://biblioteca/micro-ondas",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\micro-ondas\\vintage_microwave_2k.gltf",
+    "sha256": "756360f6e123e22fca23f43b5eed0253a38dab4d7e15c7478b1e1173279ef551",
+    "bytes": 4727
+  },
+  {
+    "chave": "ombrelone",
+    "nome": "Ombrelone",
+    "origem": "arcz://biblioteca/ombrelone",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\ombrelone\\ombrelone.glb",
+    "sha256": "42a8764e3faf0f6b525f472b2d4534c7c1587336b18c284e18fad93503433254",
+    "bytes": 5984
+  },
+  {
+    "chave": "paineis-solares",
+    "nome": "Paineis Solares",
+    "origem": "arcz://biblioteca/paineis-solares",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\paineis-solares\\paineis-solares.glb",
+    "sha256": "ba2a73c40533e074b00404c3282c05159136394333f303a685196c2915002e48",
+    "bytes": 3676
+  },
+  {
+    "chave": "pendente-cafe",
+    "nome": "Pendente Cafe",
+    "origem": "arcz://biblioteca/pendente-cafe",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\pendente-cafe\\hanging_industrial_lamp_2k.gltf",
+    "sha256": "318ec454902dd49a11c219acf47b59f7a2bd3f20a23c5b26fa7b59e9183f9f98",
+    "bytes": 5436
+  },
+  {
+    "chave": "planta-pendente-jardineira",
+    "nome": "Planta Pendente Jardineira",
+    "origem": "arcz://biblioteca/planta-pendente-jardineira",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\planta-pendente-jardineira\\planta-pendente-jardineira.glb",
+    "sha256": "14b46afd866c1b575b706184f9bab06316f1e137779c564bdca0f1cb0c5c3604",
+    "bytes": 3976
+  },
+  {
+    "chave": "planta-vaso-1",
+    "nome": "Planta Vaso 1",
+    "origem": "arcz://biblioteca/planta-vaso-1",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\planta-vaso-1\\planta-vaso-1.glb",
+    "sha256": "bf78a397eeae6fe0ff9da431c50045394f02a90931dedba04df3aab607ee019b",
+    "bytes": 9720
+  },
+  {
+    "chave": "planta-vaso-1",
+    "nome": "Planta Vaso 1",
+    "origem": "arcz://biblioteca/planta-vaso-1",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\planta-vaso-1\\potted_plant_01_2k.gltf",
+    "sha256": "41357028b8a7861c596cadc51c8793448c18c42e8d84d834ebe7993b5b30c924",
+    "bytes": 7969
+  },
+  {
+    "chave": "planta-vaso-2",
+    "nome": "Planta Vaso 2",
+    "origem": "arcz://biblioteca/planta-vaso-2",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\planta-vaso-2\\planta-vaso-2.glb",
+    "sha256": "64bc8391c0435ca2abd36b14c9aaedd1aac095fb637b2798c7f8feecbfea784a",
+    "bytes": 11116
+  },
+  {
+    "chave": "planta-vaso-2",
+    "nome": "Planta Vaso 2",
+    "origem": "arcz://biblioteca/planta-vaso-2",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\planta-vaso-2\\potted_plant_02_2k.gltf",
+    "sha256": "80ab49cb61737244f50b805ddde3dd64e461b2a244817f8882e95a97c916d158",
+    "bytes": 6653
+  },
+  {
+    "chave": "poltrona-braco",
+    "nome": "Poltrona Braco",
+    "origem": "arcz://biblioteca/poltrona-braco",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\poltrona-braco\\ArmChair_01_2k.gltf",
+    "sha256": "fef57c24069f77767605f865332cb6b4bfa4b78352b230ce75ee66ed5566a9eb",
+    "bytes": 2643
+  },
+  {
+    "chave": "poltrona-lounge-externa",
+    "nome": "Poltrona Lounge Externa",
+    "origem": "arcz://biblioteca/poltrona-lounge-externa",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\poltrona-lounge-externa\\GreenChair_01_2k.gltf",
+    "sha256": "ee4a04d41aa2ac7faf33b1a77c908983e6c7899a6ad6a36d4732fb3871f80f7a",
+    "bytes": 2695
+  },
+  {
+    "chave": "poltrona-mid-century",
+    "nome": "Poltrona Mid Century",
+    "origem": "arcz://biblioteca/poltrona-mid-century",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\poltrona-mid-century\\mid_century_lounge_chair_2k.gltf",
+    "sha256": "c626222ebe4bc2b98bc1f5ca0cb6ae6f649d995a8f2cee6a6c1d78f060859baa",
+    "bytes": 2884
+  },
+  {
+    "chave": "poltrona-moderna",
+    "nome": "Poltrona Moderna",
+    "origem": "arcz://biblioteca/poltrona-moderna",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\poltrona-moderna\\modern_arm_chair_01_2k.gltf",
+    "sha256": "eb971ed98af1ce3d4cc93a058ceee5c31dbd185f99aa3d86938d366820943414",
+    "bytes": 5121
+  },
+  {
+    "chave": "prateleira-loja",
+    "nome": "Prateleira Loja",
+    "origem": "arcz://biblioteca/prateleira-loja",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\prateleira-loja\\steel_frame_shelves_03_2k.gltf",
+    "sha256": "840ec12798f4091e582eb1a16adc090e46ad1e70c3b0906bd345952bd4bd5a03",
+    "bytes": 9767
+  },
+  {
+    "chave": "puff",
+    "nome": "Puff",
+    "origem": "arcz://biblioteca/puff",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\puff\\Ottoman_01_2k.gltf",
+    "sha256": "dd173fbbcb0d3e58a8f3a83d6d47755efa2d88ca32023382833ed6094c4af227",
+    "bytes": 2656
+  },
+  {
+    "chave": "quadro-1",
+    "nome": "Quadro 1",
+    "origem": "arcz://biblioteca/quadro-1",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\quadro-1\\hanging_picture_frame_01_2k.gltf",
+    "sha256": "6661770628e5527ceaa7d9457ea07c7b6eeae1a15ee63177e74765e181e38203",
+    "bytes": 6495
+  },
+  {
+    "chave": "quadro-2",
+    "nome": "Quadro 2",
+    "origem": "arcz://biblioteca/quadro-2",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\quadro-2\\hanging_picture_frame_02_2k.gltf",
+    "sha256": "db73af9bc09a74c4ba873d8248422ed23bd1d0e054185fde3ff0a9559a5eb7f9",
+    "bytes": 6433
+  },
+  {
+    "chave": "rack-tv",
+    "nome": "Rack Tv",
+    "origem": "arcz://biblioteca/rack-tv",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\rack-tv\\rack-tv.glb",
+    "sha256": "3c9b7dd9802a2473048ea73e2cb50f4068818d4d55bf751e618e83c2a384efcf",
+    "bytes": 2236
+  },
+  {
+    "chave": "relogio-mesa",
+    "nome": "Relogio Mesa",
+    "origem": "arcz://biblioteca/relogio-mesa",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\relogio-mesa\\alarm_clock_01_2k.gltf",
+    "sha256": "d721cd6a93da98ffe1097fe6089b58ff8a83373b6f8c4f16e3dfdd9080d350e6",
+    "bytes": 10056
+  },
+  {
+    "chave": "relogio-parede",
+    "nome": "Relogio Parede",
+    "origem": "arcz://biblioteca/relogio-parede",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\relogio-parede\\wall_clock_2k.gltf",
+    "sha256": "6c961d2d74dd3d5c175dca01a0b064e4c83bece262c459e730df9120b6ba85ee",
+    "bytes": 9008
+  },
+  {
+    "chave": "samambaia-vaso-sacada",
+    "nome": "Samambaia Vaso Sacada",
+    "origem": "arcz://biblioteca/samambaia-vaso-sacada",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\samambaia-vaso-sacada\\samambaia-vaso-sacada.glb",
+    "sha256": "859a180aee23bfa144917337300e741e8389c420cc425c3c6808a4e338107585",
+    "bytes": 1784
+  },
+  {
+    "chave": "sofa-2-lugares",
+    "nome": "Sofa 2 Lugares",
+    "origem": "arcz://biblioteca/sofa-2-lugares",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\sofa-2-lugares\\sofa_03_2k.gltf",
+    "sha256": "885fd91183328e44af4e2766044c6636fde31ad10af27bb8eb0d57a775ca92c7",
+    "bytes": 4465
+  },
+  {
+    "chave": "sofa-3-lugares",
+    "nome": "Sofa 3 Lugares",
+    "origem": "arcz://biblioteca/sofa-3-lugares",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\sofa-3-lugares\\sofa_02_2k.gltf",
+    "sha256": "bd117710418921ece26af1ecb0b64d66b56ab7f96ff500f96044c11029c962ac",
+    "bytes": 4183
+  },
+  {
+    "chave": "sofa-modular",
+    "nome": "Sofa Modular",
+    "origem": "arcz://biblioteca/sofa-modular",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\sofa-modular\\Sofa_01_2k.gltf",
+    "sha256": "39e6636301434142bc29b9ca78fdc810e5b38435e9afd3fedb73fe95654dbb7f",
+    "bytes": 2636
+  },
+  {
+    "chave": "suculenta",
+    "nome": "Suculenta",
+    "origem": "arcz://biblioteca/suculenta",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\suculenta\\potted_plant_04_2k.gltf",
+    "sha256": "3f9502718be285a6614622774a6b19fd9014e2d5e05e6a08f822321dd157e6d5",
+    "bytes": 7081
+  },
+  {
+    "chave": "tapete",
+    "nome": "Tapete",
+    "origem": "arcz://biblioteca/tapete",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\tapete\\tapete.glb",
+    "sha256": "d1df5ec6896105fd3d9a47c1e4d5c51b087814b2f7b3879da83015ead533a806",
+    "bytes": 1132
+  },
+  {
+    "chave": "vaso-ceramica-1",
+    "nome": "Vaso Ceramica 1",
+    "origem": "arcz://biblioteca/vaso-ceramica-1",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\vaso-ceramica-1\\ceramic_vase_01_2k.gltf",
+    "sha256": "294f6c19f128ed5fa99225f02e00bdd5867cbc1f717fe98e8e09f3ae3191fb52",
+    "bytes": 2706
+  },
+  {
+    "chave": "vaso-ceramica-2",
+    "nome": "Vaso Ceramica 2",
+    "origem": "arcz://biblioteca/vaso-ceramica-2",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\vaso-ceramica-2\\ceramic_vase_03_2k.gltf",
+    "sha256": "f01b35d72b3edf565961dcd1b2d81da90e8c6b51ccddbc62d7c54d9b8ca988b9",
+    "bytes": 2690
+  },
+  {
+    "chave": "vaso-sanitario",
+    "nome": "Vaso Sanitario",
+    "origem": "arcz://biblioteca/vaso-sanitario",
+    "licenca": "PolyHaven CC0 / ARCZ High-End 3D",
+    "modelo": "biblioteca\\vaso-sanitario\\vaso-sanitario.glb",
+    "sha256": "ef9ecc8d46e221e1ea538571043a9f07dd8699af9016ac2348c63001f3ae2ef1",
+    "bytes": 4720
+  },
+  {
+    "chave": "planta-samambaia-sacada",
+    "nome": "Samambaias Pendentes da Sacada",
+    "origem": "arcz://highend/planta-samambaia-sacada",
+    "licenca": "Gerado pelo ARCZ (fotorreal)",
+    "modelo": "biblioteca\\planta-samambaia-sacada\\planta-samambaia-sacada.glb",
+    "sha256": "517d15310011400d8338c164e7aad8e3e9147b6a3fb2ca17cc28e11a246ef419",
+    "bytes": 3852
+  },
+  {
+    "chave": "coqueiro-pequeno-vaso",
+    "nome": "Coqueiro Anão em Vaso Cerâmico",
+    "origem": "arcz://highend/coqueiro-pequeno-vaso",
+    "licenca": "Gerado pelo ARCZ (fotorreal)",
+    "modelo": "biblioteca\\coqueiro-pequeno-vaso\\coqueiro-pequeno-vaso.glb",
+    "sha256": "ac8e1a2d472213ad194ee204cd6ed50791e6d9b9c4b55fa2ee6052d365fb1e6d",
+    "bytes": 11116
+  },
+  {
+    "chave": "ombrelone-branco",
+    "nome": "Ombrelone / Guarda-Sol Branco Premium",
+    "origem": "arcz://highend/ombrelone-branco",
+    "licenca": "Gerado pelo ARCZ (fotorreal)",
+    "modelo": "biblioteca\\ombrelone-branco\\ombrelone-branco.glb",
+    "sha256": "588199f2c88dd279fe985480671570d3b3a904ae3eb25e93f5ad4348cc0d389a",
+    "bytes": 6512
+  },
+  {
+    "chave": "mesa-cadeiras-branca",
+    "nome": "Mesa Redonda e Poltronas Brancas Luxury",
+    "origem": "arcz://highend/mesa-cadeiras-branca",
+    "licenca": "Gerado pelo ARCZ (fotorreal)",
+    "modelo": "biblioteca\\mesa-cadeiras-branca\\mesa-cadeiras-branca.glb",
+    "sha256": "0ba61641bd9a851ee4ea353b857a06528218202096713d134b47aa2dde4306f2",
+    "bytes": 5452
+  },
+  {
+    "chave": "poltrona-canto",
+    "nome": "Poltrona Modular de Canto Lounge",
+    "origem": "arcz://highend/poltrona-canto",
+    "licenca": "Gerado pelo ARCZ (fotorreal)",
+    "modelo": "biblioteca\\poltrona-canto\\poltrona-canto.glb",
+    "sha256": "e674059ab5bce96b0b0178e8932ab4cd74e72a12dc1cf09afd2c5b6be2d1a877",
+    "bytes": 2816
+  },
+  {
+    "chave": "cama-casal-hq",
+    "nome": "Cama Casal (Sketchfab)",
+    "origem": "sketchfab://bed",
+    "licenca": "Sketchfab - verificar por modelo",
+    "modelo": "biblioteca\\cama-casal-hq\\cama-casal-hq.glb",
+    "sha256": "4af43d2f02c5422257179846413d97bb2b8e28161b6886ad8e88cc2fbee349b2",
+    "bytes": 17691116
+  },
+  {
+    "chave": "carro-bmw-m4",
+    "nome": "BMW M4 CSL",
+    "origem": "sketchfab://bmw_m4csl",
+    "licenca": "Sketchfab - verificar por modelo",
+    "modelo": "biblioteca\\carro-bmw-m4\\carro-bmw-m4.glb",
+    "sha256": "28569a8965422577f78bda4938b7f31f4ccb47fa5fa225c3c1de8a22f8ffd234",
+    "bytes": 70253276
+  },
+  {
+    "chave": "tapete-palha",
+    "nome": "Tapete de Palha",
+    "origem": "sketchfab://petate_carpet_straw_carpet_straw_rug",
+    "licenca": "Sketchfab - verificar por modelo",
+    "modelo": "biblioteca\\tapete-palha\\tapete-palha.glb",
+    "sha256": "759d22fbcf8fcdf25464789d09b42553861036b9f2993235159032059b2a32ad",
+    "bytes": 12044036
+  },
+  {
+    "chave": "poltrona-ametista",
+    "nome": "Poltrona Ametista",
+    "origem": "sketchfab://poltrona_ametista_adm_moveis_agave_casa",
+    "licenca": "Sketchfab - verificar por modelo",
+    "modelo": "biblioteca\\poltrona-ametista\\poltrona-ametista.glb",
+    "sha256": "e5aa05d89931edb465de236930224a5503f8a6659d6d1da175bce2e1026c8229",
+    "bytes": 3404896
+  },
+  {
+    "chave": "sofa-hq",
+    "nome": "Sofa (Sketchfab)",
+    "origem": "sketchfab://sofa",
+    "licenca": "Sketchfab - verificar por modelo",
+    "modelo": "biblioteca\\sofa-hq\\sofa-hq.glb",
+    "sha256": "2d93ecd959a887380859529f47cfe977f7de4b74d11c3d1f2264c62d8ec45ebb",
+    "bytes": 6440052,
+    "escala": 0.01
+  },
+  {
+    "chave": "prateleira-parede",
+    "nome": "Prateleira de Parede",
+    "origem": "sketchfab://store_wall_shelving",
+    "licenca": "Sketchfab - verificar por modelo",
+    "modelo": "biblioteca\\prateleira-parede\\prateleira-parede.glb",
+    "sha256": "df0961627e0ccc5412e1e944acd7acdff84b8acd6c3629005efe6ed724dfe798",
+    "bytes": 5551360,
+    "escala": 0.01
+  },
+  {
+    "chave": "cama-queen",
+    "nome": "Amazon Brand – Stone & Beam Katama Slipcover Queen Headboard, 66\"W, Cream Herringbone",
+    "origem": "abo://abo-B07B4SC7VT",
+    "licenca": "CC BY 4.0",
+    "modelo": "biblioteca\\cama-queen\\cama-queen.glb",
+    "sha256": "bb3aab3da77a89f3fda7ca24fd1852eceaa3d97ba070b5f29c7d446d661ad617",
+    "bytes": "1003460"
+  },
+  {
+    "chave": "sofa-3l",
+    "nome": "Amazon Brand – Rivet Edgewest Low Back Modern Loveseat, 65\"W, Blue",
+    "origem": "abo://abo-B07B4MDDDJ",
+    "licenca": "CC BY 4.0",
+    "modelo": "biblioteca\\sofa-3l\\sofa-3l.glb",
+    "sha256": "274d3639d42076c238c79eb97de21f2f10c9c4d4442e9def610add01fdf7f2fc",
+    "bytes": "1685224"
+  },
+  {
+    "chave": "poltrona-couro",
+    "nome": "Amazon Brand – Rivet Berkshire Modern Living Room Accent Chair, 37\"W, Dark Grey",
+    "origem": "abo://abo-B07B4MRLRJ",
+    "licenca": "CC BY 4.0",
+    "modelo": "biblioteca\\poltrona-couro\\poltrona-couro.glb",
+    "sha256": "0783b343595492e0329a4eddb98f2569a371bc4b467532685f9bbb2337b1c9b3",
+    "bytes": "1541452"
+  },
+  {
+    "chave": "cadeira-jantar-hq",
+    "nome": "Amazon Brand – Rivet Dunford Modern Kitchen Dining Chair, 33 Inch Height, Ivory",
+    "origem": "abo://abo-B07HSBJ5D6",
+    "licenca": "CC BY 4.0",
+    "modelo": "biblioteca\\cadeira-jantar-hq\\cadeira-jantar-hq.glb",
+    "sha256": "6ebda1037a4244235bed844fae1227a39bde781671e8c1066adb8cb1b088913f",
+    "bytes": "3483720"
+  },
+  {
+    "chave": "banqueta",
+    "nome": "Amazon Brand – Ravenna Home Luna Rustic Wood Counter Stool, 40.5\"H, Distressed Grey (Set of 2)",
+    "origem": "abo://abo-B07DBDWX9T",
+    "licenca": "CC BY 4.0",
+    "modelo": "biblioteca\\banqueta\\banqueta.glb",
+    "sha256": "d8f1a3dd4a1d93c230f957d9a42b95c3393ef2511db718674f266fb3f8dddae4",
+    "bytes": "2264320"
+  },
+  {
+    "chave": "comoda",
+    "nome": "Amazon Brand – Stone & Beam Parson Chest of Drawers, 38\"W, Natural",
+    "origem": "abo://abo-B0728KSP2T",
+    "licenca": "CC BY 4.0",
+    "modelo": "biblioteca\\comoda\\comoda.glb",
+    "sha256": "8b5d5976a1d968fdc0f16d474109aa5e6e9c62453059f645fa9386b1bc6a6074",
+    "bytes": "3609524"
+  },
+  {
+    "chave": "rack-tv-hq",
+    "nome": "Amazon Brand – Rivet Stevens Modern Wood TV Media Center Cabinet, 51.18\"W, Brushed Tundra Gray",
+    "origem": "abo://abo-B07HSKW3D6",
+    "licenca": "CC BY 4.0",
+    "modelo": "biblioteca\\rack-tv-hq\\rack-tv-hq.glb",
+    "sha256": "1334acdc4ad05a15801183181c9003a57d303acde9739fe70893791486f90065",
+    "bytes": "2378404"
+  },
+  {
+    "chave": "mesa-lateral-hq",
+    "nome": "Amazon Brand – Rivet Hairpin Wood and Metal Side End Table, Walnut and Black",
+    "origem": "abo://abo-B072ZNMKG6",
+    "licenca": "CC BY 4.0",
+    "modelo": "biblioteca\\mesa-lateral-hq\\mesa-lateral-hq.glb",
+    "sha256": "eacdc9d238bf331721de990b2eec689964dbbc405e0b4968b050506237955c2d",
+    "bytes": "1624016"
+  },
+  {
+    "chave": "mesa-centro-hq",
+    "nome": "Amazon Brand - Movian Adour Oval Coffee Table, 55 x 110 x 39cm, White/Light Brown",
+    "origem": "abo://abo-B01M4OYBOI",
+    "licenca": "CC BY 4.0",
+    "modelo": "biblioteca\\mesa-centro-hq\\mesa-centro-hq.glb",
+    "sha256": "2fe0318411617707d450645744ae727afc399768975c395686c56487b65bc040",
+    "bytes": "1014032"
+  },
+  {
+    "chave": "luminaria-piso",
+    "nome": "Rivet Adjustable Tree-Style 3-Light Floor Lamp, 69\"H, with Bulbs, Bronze and Brass",
+    "origem": "abo://abo-B073P3HHFT",
+    "licenca": "CC BY 4.0",
+    "modelo": "biblioteca\\luminaria-piso\\luminaria-piso.glb",
+    "sha256": "e43ec60ab5f6882bc273a63c06547edb399ce20226860265af1f4abd7cecee5e",
+    "bytes": "2492676"
+  },
+  {
+    "chave": "espelho-parede",
+    "nome": "Amazon Brand – Stone & Beam Curved Vintage-Look Wood Frame Wall Mirror - 28-Inch Height, White",
+    "origem": "abo://abo-B073WGP8YJ",
+    "licenca": "CC BY 4.0",
+    "modelo": "biblioteca\\espelho-parede\\espelho-parede.glb",
+    "sha256": "6ce04952df6c0dcb90aadf2f4a8ac7a04d795df2d11b965de0f8e132e8e6456a",
+    "bytes": "813864"
+  },
+  {
+    "chave": "almofada-dec",
+    "nome": "Amazon Brand – Stone & Beam Casual Global Throw Pillow - 12 x 24 Inch, Charcoal",
+    "origem": "abo://abo-B07JLGCLNT",
+    "licenca": "CC BY 4.0",
+    "modelo": "biblioteca\\almofada-dec\\almofada-dec.glb",
+    "sha256": "7efc1b641971d1935198e4c58136ff2721b15ab86749b43efc20b58f687be9e2",
+    "bytes": "1408536"
+  },
+  {
+    "chave": "tapete-hq",
+    "nome": "Amazon Brand – Stone & Beam Casual Geometric Wool Rug, 9' 6\" x 6' 6\", Taupe",
+    "origem": "abo://abo-B07B51269T",
+    "licenca": "CC BY 4.0",
+    "modelo": "biblioteca\\tapete-hq\\tapete-hq.glb",
+    "sha256": "021a82890e216674504392dde6966ae99499a383dfe0a9bc25a2393ba2adcb7b",
+    "bytes": "1491748"
+  },
+  {
+    "chave": "agua-piscina",
+    "nome": "Lamina d'agua (piscina)",
+    "origem": "arcz://gerado/agua-piscina",
+    "licenca": "Gerado pelo ARCZ (examples/gerar_agua.rs)",
+    "modelo": "biblioteca\\agua-piscina\\agua-piscina.glb",
+    "sha256": "1edb5e1dd23580d6fbcdc50a770460f49909aa6d6cef614f50fa0c2d3a1be641",
+    "bytes": 1028
+  }
+]

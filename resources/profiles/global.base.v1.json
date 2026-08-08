@@ -1,0 +1,134 @@
+{
+  "id": "global.base.v1",
+  "version": "1.0.0",
+  "scope": {
+    "country": "*",
+    "region_type": "global_baseline"
+  },
+  "architecture": {
+    "building_mix": {
+      "detached_house": 0.55,
+      "townhouse": 0.1,
+      "lowrise_multifamily": 0.2,
+      "midrise_multifamily": 0.1,
+      "commercial_lowrise": 0.05
+    },
+    "floor_ranges": {
+      "detached_house": [
+        1,
+        2
+      ],
+      "townhouse": [
+        1,
+        3
+      ],
+      "lowrise_multifamily": [
+        2,
+        4
+      ],
+      "midrise_multifamily": [
+        4,
+        8
+      ],
+      "commercial_lowrise": [
+        1,
+        3
+      ]
+    },
+    "setbacks_m": {
+      "front": [
+        2.0,
+        6.0
+      ],
+      "side": [
+        0.0,
+        2.5
+      ],
+      "rear": [
+        1.5,
+        5.0
+      ]
+    },
+    "lot_coverage_range": [
+      0.25,
+      0.65
+    ],
+    "wall_probability": 0.55
+  },
+  "roofs": {
+    "types": {
+      "gable": 0.35,
+      "hip": 0.2,
+      "flat": 0.35,
+      "shed": 0.1
+    },
+    "pitch_deg": [
+      12,
+      38
+    ],
+    "eave_m": [
+      0.2,
+      0.9
+    ],
+    "materials": {
+      "ceramic": 0.35,
+      "metal": 0.25,
+      "fiber_cement": 0.2,
+      "membrane": 0.2
+    }
+  },
+  "facades": {
+    "palette": [
+      "#E6E2D9",
+      "#D8D1C5",
+      "#B7B8B4",
+      "#8C857B",
+      "#665F57"
+    ],
+    "materials": {
+      "render": 0.55,
+      "painted_masonry": 0.25,
+      "concrete": 0.1,
+      "wood_accent": 0.05,
+      "stone_accent": 0.05
+    },
+    "window_ratios": {
+      "residential": 0.24,
+      "commercial": 0.48
+    },
+    "balcony_probability": 0.3
+  },
+  "vegetation": {
+    "biome_profile": "generic_temperate_urban",
+    "street_tree_density": [
+      0.03,
+      0.15
+    ],
+    "lot_green_ratio": [
+      0.1,
+      0.4
+    ]
+  },
+  "roads": {
+    "local_width_m": [
+      5.5,
+      8.0
+    ],
+    "sidewalk_width_m": [
+      1.2,
+      2.5
+    ],
+    "curb_height_m": [
+      0.1,
+      0.18
+    ]
+  },
+  "metadata": {
+    "source": "ARCZ procedural baseline; replace or layer with imported evidence",
+    "confidence": 0.35,
+    "license": "MIT OR Apache-2.0",
+    "notes": [
+      "Baseline conservador; não representa um bairro real sem evidência local."
+    ]
+  }
+}

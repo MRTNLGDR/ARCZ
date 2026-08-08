@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "arcz://schemas/aedifex-build-manifest.schema.json",
+  "title": "ARCZ Aedifex Sidecar Build Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "upstream_commit", "inventory_hash", "coverage_report_hash",
+    "built_at", "builder", "runtime", "quality_commands", "wasm_integrity", "integrity"
+  ],
+  "properties": {
+    "schema_version": {"const": 3},
+    "upstream_commit": {"type": "string", "pattern": "^[a-f0-9]{40}$"},
+    "inventory_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "coverage_report_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "built_at": {"type": "string", "format": "date-time"},
+    "builder": {"const": "tools/build_aedifex_sidecar.py"},
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "command", "cwd", "port", "health_path", "tool_catalog_path",
+        "tool_invoke_path", "requires_bridge_token", "loopback_only"
+      ],
+      "properties": {
+        "command": {"type": "array", "minItems": 2, "items": {"type": "string", "minLength": 1}},
+        "cwd": {"type": "string", "minLength": 1},
+        "port": {"type": "integer", "minimum": 1024, "maximum": 65535},
+        "health_path": {"type": "string", "pattern": "^/"},
+        "tool_catalog_path": {"type": "string", "pattern": "^/"},
+        "tool_invoke_path": {"type": "string", "pattern": "^/"},
+        "requires_bridge_token": {"const": true},
+        "loopback_only": {"const": true}
+      }
+    },
+    "quality_commands": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["command", "cwd", "returncode", "stdout_tail", "stderr_tail"],
+        "properties": {
+          "command": {"type": "array", "items": {"type": "string"}},
+          "cwd": {"type": "string"},
+          "returncode": {"const": 0},
+          "stdout_tail": {"type": "string"},
+          "stderr_tail": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "wasm_integrity": {
+      "type": "object",
+      "required": ["web-ifc.wasm", "web-ifc-mt.wasm"],
+      "additionalProperties": false,
+      "properties": {
+        "web-ifc.wasm": {"$ref": "#/$defs/fileIntegrity"},
+        "web-ifc-mt.wasm": {"$ref": "#/$defs/fileIntegrity"}
+      }
+    },
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "file_count", "total_bytes", "tree_sha256", "entry_path", "entry_sha256"],
+      "properties": {
+        "algorithm": {"const": "sha256"},
+        "file_count": {"type": "integer", "minimum": 1},
+        "total_bytes": {"type": "integer", "minimum": 1},
+        "tree_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "entry_path": {"type": "string", "minLength": 1},
+        "entry_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+      }
+    }
+  },
+  "$defs": {
+    "fileIntegrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sha256", "bytes"],
+      "properties": {
+        "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "bytes": {"type": "integer", "minimum": 100000}
+      }
+    }
+  }
+}

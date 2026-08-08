@@ -1,0 +1,5 @@
+{
+  "schema_version": 1,
+  "description": "Coloque sequências panorâmicas locais nesta pasta. Cada sequência deve obedecer ao schema e referenciar arquivos locais por hash.",
+  "schema": "../../schemas/panorama-sequence.schema.json"
+}

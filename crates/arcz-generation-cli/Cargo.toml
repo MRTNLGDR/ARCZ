@@ -1,0 +1,20 @@
+[package]
+name = "arcz-generation-cli"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+description = "Worker local de geração procedural e exportação GLB do ARCZ"
+
+[[bin]]
+name = "arcz-generation-cli"
+path = "src/main.rs"
+
+[dependencies]
+anyhow.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+arcz-determinism = { path = "../arcz-determinism" }
+arcz-procedural = { path = "../arcz-procedural" }
+arcz-region = { path = "../arcz-region" }

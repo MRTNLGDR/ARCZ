@@ -1,0 +1,11 @@
+[package]
+name = "arcz-geo"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+description = "Geodesia WGS84, quadros ENU locais e indexacao de tiles Web Mercator para o ARCZ"
+
+# Sem dependencias externas de proposito: este crate e a base de precisao do
+# projeto inteiro e nao deve depender de nada que possa introduzir f32.
+[dependencies]

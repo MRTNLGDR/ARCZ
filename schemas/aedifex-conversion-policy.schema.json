@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "arcz://schemas/aedifex-conversion-policy.schema.json",
+  "title": "Aedifex conversion admission policy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "upstream_commit", "blocking_statuses", "categories"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "upstream_commit": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
+    "blocking_statuses": { "type": "array", "minItems": 1, "items": { "type": "string" }, "uniqueItems": true },
+    "categories": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["pattern", "status", "owner", "integration", "rationale"],
+          "properties": {
+            "pattern": { "type": "string", "minLength": 1 },
+            "status": { "type": "string", "minLength": 1 },
+            "owner": { "type": "string", "minLength": 1 },
+            "integration": { "type": "string" },
+            "rationale": { "type": "string" },
+            "source_patterns": { "type": "array", "items": { "type": "string" } },
+            "source_exclude_patterns": { "type": "array", "items": { "type": "string" } }
+          }
+        }
+      }
+    }
+  }
+}

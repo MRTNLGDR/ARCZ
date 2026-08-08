@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "kind": "render.photoreal",
+  "command": [
+    "{python}",
+    "workers/blender/launch_blender.py",
+    "{request}",
+    "{output_dir}"
+  ],
+  "timeout_seconds": 21600,
+  "description": "Blender local: GLB real Aedifex preferencial, fallback paramétrico explícito, Cycles/Eevee, passes técnicos, manifestos semânticos e enhancement local opcional",
+  "network_mode": "offline_strict",
+  "produces": [
+    "manifest.json",
+    "scene.blend",
+    "render/*",
+    "render/passes/*.exr",
+    "mappings/*.json"
+  ]
+}

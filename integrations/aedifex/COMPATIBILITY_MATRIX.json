@@ -1,0 +1,94 @@
+{
+  "schema_version": 3,
+  "decision": "INTEGRATE_AS_BUILDING_AUTHORING_KERNEL_WITH_ARCZ_WORLD_CORE",
+  "rejected": [
+    "REPLACE_ARCZ_WORLD_CORE",
+    "GLB_ONLY_INTEGRATION",
+    "REMOTE_EDITOR_RUNTIME",
+    "BIG_BANG_RUST_REWRITE",
+    "TWO_CHAT_AUTHORITIES"
+  ],
+  "authorities": {
+    "arcz_world_core": [
+      "WGS84/ECEF/ENU",
+      "active region/lot",
+      "terrain/context/source packages",
+      "procedural surroundings",
+      "globe/Street/cinema/render",
+      "prompts/media/global chat",
+      "jobs/budget/provenance"
+    ],
+    "aedifex_authoring_kernel": [
+      "SceneSnapshot",
+      "2D/3D editor",
+      "46 node kinds",
+      "selection/inspector/snaps",
+      "materials/catalog/history",
+      "plugins/IFC",
+      "building MCP tools"
+    ],
+    "derived_globe_representation": [
+      "GLB",
+      "readonly",
+      "content-addressed",
+      "revision/hash/GeoAnchor/generation_epoch bound"
+    ]
+  },
+  "runtime_host": {
+    "v10": "loopback sidecar plus interactive split globe host",
+    "reason": "current ARCZ frontend is pure ES modules without bundler; Aedifex is React/Next/R3F",
+    "security": [
+      "loopback only",
+      "sandbox",
+      "origin/source/channel validation",
+      "build manifest",
+      "no remote navigation"
+    ],
+    "target": "single Tauri/React host after browser/parity/lifecycle gates"
+  },
+  "shared_contracts": [
+    "ModelingContextPackage",
+    "GeoAnchor",
+    "SceneRevision",
+    "ContextLayer",
+    "FloorplannerDerivative",
+    "PrimaryModel",
+    "ToolRun",
+    "PhotorealRenderRequest"
+  ],
+  "axis_policy": {
+    "arcz_enu": "X east, Y north, Z up",
+    "aedifex": "X east, Y up, Z south",
+    "north": "-Z in Aedifex",
+    "rule": "never infer model transform from camera/view rotation"
+  },
+  "chat_policy": {
+    "ui": "one global history",
+    "aedifex_tools": "imported from real MCP catalog",
+    "mutation": "dry-run + preview + explicit approval + expected_revision",
+    "native_ghost": "required parity gate, currently build-blocked"
+  },
+  "rust_policy": {
+    "current_authority": "Aedifex SceneSnapshot",
+    "target": "CadDocument/BimDocument compute core",
+    "admission": [
+      "schema parity",
+      "loss report",
+      "golden geometry",
+      "round-trip",
+      "undo/redo parity",
+      "benchmark",
+      "feature flag",
+      "rollback"
+    ]
+  },
+  "forbidden": [
+    "two editable copies",
+    "Aedifex changing WGS84 anchor",
+    "ARCZ rewriting Aedifex node IDs",
+    "unknown plugin auto-install",
+    "provider as core",
+    "silent field loss",
+    "runtime success without build"
+  ]
+}

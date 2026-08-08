@@ -1,0 +1,13 @@
+[package]
+name = "arcz-vegetation"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+description = "Scatter determinístico de vegetação com exclusões e biomas funcionais"
+
+[dependencies]
+serde.workspace = true
+thiserror.workspace = true
+arcz-determinism = { path = "../arcz-determinism" }
+arcz-validation = { path = "../arcz-validation" }

@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "id": "builtin:render.aerial.context.cinematic",
+  "slug": "render.aerial.context.cinematic",
+  "title": "Aérea urbana cinematográfica",
+  "category": "cinema",
+  "purpose": "Imagem aérea da implantação sobre contexto real/procedural",
+  "language": "pt-BR",
+  "template": "Vista aérea cinematográfica de {{project.name}} implantado na região {{region.name}}, com terreno, vias, lotes e entorno mantidos nas coordenadas reais. Altitude {{camera.altitude_m}} m, lente {{camera.focal_length_mm}} mm, horário {{environment.time}}. Transição visual contínua entre contexto geográfico, vegetação regional e modelo autoral; atmosfera, nuvens e haze com escala planetária correta; empreendimento como foco sem parecer colado.",
+  "negative_template": "sem alterar implantação, sem litoral ou montanhas inventadas, sem ruas deslocadas, sem textura borrada perto do projeto, sem vinheta forte, sem texto",
+  "tags": [
+    "aerial",
+    "cinematic",
+    "context"
+  ],
+  "variables": {
+    "project.name": {
+      "required": true
+    },
+    "region.name": {
+      "required": true
+    },
+    "camera.altitude_m": {
+      "required": true
+    },
+    "camera.focal_length_mm": {
+      "required": true
+    },
+    "environment.time": {
+      "required": true
+    }
+  },
+  "version": 1,
+  "builtin": true,
+  "active": true,
+  "content_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "created_at": "2026-08-06T00:00:00Z",
+  "updated_at": "2026-08-06T00:00:00Z"
+}

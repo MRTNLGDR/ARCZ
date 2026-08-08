@@ -1,0 +1,42 @@
+{
+  "tipo": "gerador",
+  "id": "arcz.terrain.local",
+  "nome": "Terreno local",
+  "versao": "2.0.0",
+  "apiVersion": "2",
+  "escalas": [
+    "lote",
+    "endereco",
+    "quarteirao",
+    "bairro"
+  ],
+  "modos": [
+    "globo",
+    "walk",
+    "render"
+  ],
+  "capacidades": [
+    "region.read",
+    "scene.stage",
+    "scene.commit",
+    "budget.reserve",
+    "jobs.progress",
+    "jobs.create",
+    "jobs.subscribe",
+    "jobs.wait",
+    "jobs.read_manifest",
+    "inputs.resolve"
+  ],
+  "deterministico": true,
+  "worker": "rust",
+  "custoBase": {
+    "triangulos": 350000,
+    "memoriaMB": 120,
+    "texturasMB": 64,
+    "drawCalls": 8
+  },
+  "entrypoint": "/app/plugins/builtin/terrain.js",
+  "backend_kind": "terrain.generate",
+  "parameters_schema": "/schemas/generator-parameters.schema.json",
+  "minimum_core_version": "0.2.0"
+}

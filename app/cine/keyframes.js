@@ -1,0 +1,4 @@
+import { interpolateValue } from "./interpolation.js";
+export function sortKeyframes(keyframes){return[...keyframes].sort((a,b)=>a.frame-b.frame);}
+export function upsertKeyframe(track,keyframe){if(!Number.isInteger(keyframe.frame)||keyframe.frame<0)throw new Error("frame inválido");const frames=sortKeyframes(track.keyframes||[]);const i=frames.findIndex(k=>k.frame===keyframe.frame);if(i>=0)frames[i]={...frames[i],...keyframe};else frames.push(keyframe);track.keyframes=sortKeyframes(frames);return track;}
+export function evaluateTrack(track,frame){const ks=track.keyframes;if(!ks?.length)return undefined;if(frame<=ks[0].frame)return ks[0].value;if(frame>=ks.at(-1).frame)return ks.at(-1).value;let lo=0,hi=ks.length-1;while(lo+1<hi){const mid=(lo+hi)>>1;if(ks[mid].frame<=frame)lo=mid;else hi=mid;}return interpolateValue(ks[lo],ks[hi],frame,track.value_type);}

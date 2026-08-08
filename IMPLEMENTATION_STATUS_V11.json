@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "product": "ARCZ",
+  "repository_target": "MRTNLGDR/ARCZ",
+  "handoff_version": "11.1.0-world-foundation",
+  "generated_at": "2026-08-08T22:28:00Z",
+  "foundation": {
+    "source": "ARCZ_EARTH_AEDIFEX_GLOBAL_V10_1(1).zip",
+    "retained": true
+  },
+  "verified_in_session": {
+    "python_pytest": "119 passed, 3 skipped",
+    "javascript_tests": "41 passed",
+    "plugin_catalog": "66 plugins / 253 capabilities / 0 errors",
+    "upstream_materializer_dry_run": "4 pinned sources resolved",
+    "handoff": "22 passed / 0 failed / 9 blocked (blocked gates remain explicit)"
+  },
+  "blocked_in_session": [
+    "sandbox has no direct GitHub DNS, so git push and immutable upstream cloning cannot run from the container; publication uses the connected GitHub API",
+    "rustc/cargo/rustfmt are absent in this execution environment, so the new Rust crates still require compilation on a Rust-enabled runner",
+    "Cesium/Aedifex/Kepler/IfcOpenShell runtime builds remain unmaterialized in this sandbox",
+    "E2E address-to-lot-to-reconstruction-to-authoring-to-GLB/3D-Tiles has not yet run on target hardware"
+  ],
+  "new_v11_components": [
+    "crates/arcz-plugin-sdk",
+    "crates/arcz-plugin-host",
+    "crates/arcz-agent",
+    "crates/arcz-world",
+    "plugins/catalog.json",
+    "upstreams/manifest.toml",
+    "tools/materialize_upstreams.py",
+    "ARCHITECTURE.md",
+    "docs/product/ARCZ_PRODUCT_SPEC.md",
+    "docs/architecture/ARCZ_V11_MASTER_PLAN.md",
+    "docs/architecture/WORLD_SCALE_ARCHITECTURE.md",
+    "docs/architecture/UPSTREAM_INTEGRATION.md",
+    "docs/architecture/PLUGIN_ARCHITECTURE.md",
+    "docs/geo/ADDRESS_TO_WORLD_PIPELINE.md",
+    "docs/ai/ARCZ_AGENT.md",
+    "docs/roadmap/MASTER_EXECUTION_PLAN.md"
+  ],
+  "claim_policy": "contract_ready or partial is not production-ready; parity requires upstream build + golden tests + E2E"
+}

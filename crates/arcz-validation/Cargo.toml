@@ -1,0 +1,11 @@
+[package]
+name = "arcz-validation"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+description = "Validação geométrica e numérica compartilhada por todos os geradores ARCZ"
+
+[dependencies]
+serde.workspace = true
+thiserror.workspace = true

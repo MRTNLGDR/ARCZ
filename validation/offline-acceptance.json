@@ -1,0 +1,81 @@
+{
+  "schema_version": 2,
+  "mode": "offline_strict",
+  "automated_checks": [
+    {
+      "name": "remote_denied:example.com",
+      "status": "PASSED",
+      "details": {
+        "allowed": false,
+        "mode": "offline_strict"
+      }
+    },
+    {
+      "name": "remote_denied:8.8.8.8",
+      "status": "PASSED",
+      "details": {
+        "allowed": false,
+        "mode": "offline_strict"
+      }
+    },
+    {
+      "name": "loopback_allowed:127.0.0.1",
+      "status": "PASSED",
+      "details": {
+        "allowed": true,
+        "mode": "offline_strict"
+      }
+    },
+    {
+      "name": "loopback_allowed:localhost",
+      "status": "PASSED",
+      "details": {
+        "allowed": true,
+        "mode": "offline_strict"
+      }
+    },
+    {
+      "name": "loopback_allowed:::1",
+      "status": "PASSED",
+      "details": {
+        "allowed": true,
+        "mode": "offline_strict"
+      }
+    },
+    {
+      "name": "generation_worker_built",
+      "status": "BLOCKED",
+      "worker": null,
+      "searched": [
+        "/mnt/data/ARCZ_EARTH_IMPLEMENTATION_HANDOFF_V5/target/release/arcz-generation-cli",
+        "/mnt/data/ARCZ_EARTH_IMPLEMENTATION_HANDOFF_V5/target/release/arcz-generation-cli.exe",
+        "/mnt/data/ARCZ_EARTH_IMPLEMENTATION_HANDOFF_V5/target/debug/arcz-generation-cli",
+        "/mnt/data/ARCZ_EARTH_IMPLEMENTATION_HANDOFF_V5/target/debug/arcz-generation-cli.exe"
+      ],
+      "remediation": "python tools/build_generation_worker.py"
+    },
+    {
+      "name": "cesium_local_vendor",
+      "status": "BLOCKED",
+      "missing": [
+        "vendor/cesium/Cesium/Cesium.js",
+        "vendor/cesium/Cesium/Widgets/widgets.css",
+        "vendor/cesium/Cesium/Assets/Textures/NaturalEarthII/tilemapresource.xml",
+        "vendor/cesium/LICENSE.md",
+        "vendor/cesium/manifest.json"
+      ],
+      "remediation": "python tools/vendor_cesium.py --source <Build/Cesium-local> --license-file <LICENSE-local> --version 1.143.0"
+    }
+  ],
+  "manual_checks_required": [
+    "navegador/Cesium real abre com DNS e egress bloqueados",
+    "busca de região funciona exclusivamente sobre índice local",
+    "geração e render concluem usando somente pacotes locais verificados",
+    "cancelamento remove primitivas, listeners, timers e staging",
+    "save/crash/reopen perde no máximo 5 segundos e mantém JSON parseável",
+    "auditoria de sockets/firewall confirma zero egress em offline_strict",
+    "captura de frame confirma Natural Earth local e ausência de requests CDN"
+  ],
+  "overall": "BLOCKED",
+  "notice": "PARTIAL_PASS significa que somente os checks automatizáveis deste script passaram; os checks manuais continuam obrigatórios."
+}

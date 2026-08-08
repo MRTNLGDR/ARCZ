@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "arcz://schemas/aedifex-conversion-matrix.schema.json",
+  "title": "ARCZ Aedifex mass conversion matrix",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "upstream", "decision", "authorities", "packages",
+    "apps", "plugins", "node_kinds", "extension_node_kinds", "tool_families",
+    "global_modules", "community_sources", "gates", "counts", "matrix_hash"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "upstream": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository", "commit", "license", "plugin_api_version"],
+      "properties": {
+        "repository": { "type": "string", "minLength": 1 },
+        "commit": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
+        "license": { "type": "string", "minLength": 1 },
+        "plugin_api_version": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "decision": { "type": "object" },
+    "authorities": { "type": "object" },
+    "packages": { "type": "array", "items": { "$ref": "#/$defs/entry" } },
+    "apps": { "type": "array", "items": { "$ref": "#/$defs/entry" } },
+    "plugins": { "type": "array", "items": { "$ref": "#/$defs/entry" } },
+    "node_kinds": { "type": "array", "items": { "$ref": "#/$defs/node" } },
+    "extension_node_kinds": { "type": "array", "items": { "$ref": "#/$defs/node" } },
+    "tool_families": { "type": "array", "items": { "$ref": "#/$defs/tool" } },
+    "global_modules": { "type": "array", "items": { "$ref": "#/$defs/entry" } },
+    "community_sources": { "type": "array", "items": { "$ref": "#/$defs/entry" } },
+    "gates": { "type": "array", "items": { "$ref": "#/$defs/gate" } },
+    "counts": {
+      "type": "object",
+      "additionalProperties": { "type": "integer", "minimum": 0 }
+    },
+    "matrix_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  },
+  "$defs": {
+    "entry": {
+      "type": "object",
+      "required": ["id", "authority", "integration", "status"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "authority": { "type": "string", "minLength": 1 },
+        "integration": { "type": "string", "minLength": 1 },
+        "status": { "type": "string", "minLength": 1 },
+        "source": { "type": "string" },
+        "target": { "type": "string" },
+        "loss_policy": { "type": "string" },
+        "feature_flag": { "type": "string" },
+        "tests": { "type": "array", "items": { "type": "string" } },
+        "blockers": { "type": "array", "items": { "type": "string" } },
+        "notes": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": true
+    },
+    "node": {
+      "allOf": [
+        { "$ref": "#/$defs/entry" },
+        {
+          "type": "object",
+          "required": ["category", "document_authority", "globe_policy", "rust_parity"],
+          "properties": {
+            "category": { "type": "string", "minLength": 1 },
+            "document_authority": { "const": "AEDIFEX" },
+            "globe_policy": { "const": "READONLY_GLB_DERIVATIVE" },
+            "rust_parity": { "type": "string", "minLength": 1 }
+          }
+        }
+      ]
+    },
+    "tool": {
+      "allOf": [
+        { "$ref": "#/$defs/entry" },
+        {
+          "type": "object",
+          "required": ["execution_policy", "revision_guard", "audit"],
+          "properties": {
+            "execution_policy": {
+              "enum": ["AUTO_READ", "CONFIRM_EXPORT", "PREVIEW_APPROVE_MUTATION", "MIXED_FAIL_CLOSED"]
+            },
+            "revision_guard": { "type": "boolean" },
+            "audit": { "type": "boolean" }
+          }
+        }
+      ]
+    },
+    "gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "status", "proof", "blocking"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "status": { "enum": ["PASSED", "BLOCKED", "FAILED", "PENDING"] },
+        "proof": { "type": "string", "minLength": 1 },
+        "blocking": { "type": "boolean" }
+      }
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "id": "builtin:render.archviz.exterior.photoreal",
+  "slug": "render.archviz.exterior.photoreal",
+  "title": "Exterior arquitetônico fotorreal",
+  "category": "render",
+  "purpose": "Enhancement de exterior preservando arquitetura",
+  "language": "pt-BR",
+  "template": "Renderização arquitetônica exterior de {{project.name}}, baseada rigorosamente na geometria, materiais, câmera e máscaras fornecidas. Contexto regional: {{region.profile}}. Horário: {{environment.time}}. Clima: {{environment.weather}}. Qualidade cinematográfica, escala humana correta, materiais PBR fisicamente plausíveis, vidro e reflexos coerentes, vegetação botanicamente compatível, iluminação global natural, microdetalhe realista sem alterar volumetria, aberturas, recuos ou topografia. Lente {{camera.focal_length_mm}} mm, saída {{output.width}}x{{output.height}}.",
+  "negative_template": "não alterar arquitetura, não mover janelas ou portas, não criar pavimentos, sem geometria derretida, sem repetição de vegetação, sem halos, sem texto, sem logotipos, sem pessoas deformadas, sem oversharpen, sem aparência de IA",
+  "tags": [
+    "archviz",
+    "exterior",
+    "photoreal",
+    "geometry-locked"
+  ],
+  "variables": {
+    "project.name": {
+      "required": true
+    },
+    "region.profile": {
+      "required": true
+    },
+    "environment.time": {
+      "required": true
+    },
+    "environment.weather": {
+      "required": true
+    },
+    "camera.focal_length_mm": {
+      "required": true
+    },
+    "output.width": {
+      "required": true
+    },
+    "output.height": {
+      "required": true
+    }
+  },
+  "version": 1,
+  "builtin": true,
+  "active": true,
+  "content_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "created_at": "2026-08-06T00:00:00Z",
+  "updated_at": "2026-08-06T00:00:00Z"
+}
