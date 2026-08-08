@@ -66,10 +66,13 @@ fn fs_main(input: VertexOut) -> @location(0) vec4<f32> {
     }
 
     let n = normalize(input.world_normal);
-    let sun_dir = normalize(globais.luz.xyz);
-    let diffuse = max(dot(n, sun_dir), 0.0);
+    let l = normalize(globais.luz.xyz);
+    // Imported CAD/glTF frequently contains inconsistent winding/normals. Keep
+    // architectural surfaces readable from either side, matching the no-cull
+    // model pipeline used by the Rust renderer.
+    let diffuse = abs(dot(n, l));
     let ambient = clamp(globais.luz.w, 0.04, 1.0);
-    let hemi = 0.10 + 0.12 * max(n.z, 0.0);
+    let hemi = 0.10 + 0.12 * abs(n.z);
     var rgb = base.rgb * (ambient + hemi + diffuse * 0.82);
 
     // Vista 1 = planta humanizada; vista 2 = sketch tecnico.
