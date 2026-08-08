@@ -1,0 +1,33 @@
+schema_version = 1
+
+[[source]]
+id = "aedifex"
+repository = "https://github.com/TangSY/aedifex.git"
+commit = "5319368bae16500ca5267f6f8d68b36c9586d5bb"
+license = "MIT"
+path = "upstreams/sources/aedifex"
+integration = "architectural authoring reference + parity oracle"
+
+[[source]]
+id = "cesiumjs"
+repository = "https://github.com/CesiumGS/cesium.git"
+commit = "6d5d8b1f0725b6f831b336463f4b11c98023427b"
+license = "Apache-2.0"
+path = "upstreams/sources/cesium"
+integration = "globe / terrain / 3D Tiles web sidecar"
+
+[[source]]
+id = "kepler-gl"
+repository = "https://github.com/keplergl/kepler.gl.git"
+commit = "621bb236fb33f0f6de9dbd730c2e18edac40b764"
+license = "MIT"
+path = "upstreams/sources/kepler.gl"
+integration = "geospatial analytics and visualization sidecar"
+
+[[source]]
+id = "ifcopenshell-bonsai"
+repository = "https://github.com/IfcOpenShell/IfcOpenShell.git"
+commit = "7ed8584edc6609654cea608d699348c9cca7ce5d"
+license = "LGPL-3.0-or-later; Bonsai subtree GPL-3.0-or-later"
+path = "upstreams/sources/ifcopenshell"
+integration = "isolated IFC engine; Bonsai application/reference boundary"

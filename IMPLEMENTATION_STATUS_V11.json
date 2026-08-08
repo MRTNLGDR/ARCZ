@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "product": "ARCZ",
+  "repository_target": "MRTNLGDR/ARCZ",
+  "handoff_version": "11.1.0-world-foundation",
+  "published_branch": "agent/arcz-world-foundation",
+  "local_foundation": {
+    "commit": "560950402b515c9241cb12b7243cf46a9fa3b1d0",
+    "tracked_files": 565,
+    "publication_state": "partial_remote_import"
+  },
+  "published_scope": [
+    "world-scale product and architecture documentation",
+    "complete capability matrix for the requested ARCZ domains",
+    "plugin SDK contract",
+    "plugin host capability/permission contract",
+    "planet-to-object world authority contract",
+    "resumable per-cell world-generation DAG contract",
+    "revision-guarded agent action-plan contract",
+    "pinned upstream manifest",
+    "address-to-world pipeline",
+    "upstream/license/security/governance boundaries",
+    "dependency-ordered execution roadmap"
+  ],
+  "verified_in_session_on_local_foundation": {
+    "python": "119 passed, 3 skipped",
+    "javascript": "41 passed, 0 failed",
+    "plugin_catalog": "66 plugins, 253 capabilities, 0 catalog errors",
+    "handoff": "22 passed, 0 failed, 9 blocked"
+  },
+  "blocked_or_not_yet_verified": [
+    "bulk publication of the retained 565-file V10.1/V11.1 local tree: current runtime lacks gh and direct git network/DNS; GitHub connector supports file writes but not directory/archive upload",
+    "Rust compilation in this runtime: rustc/cargo are unavailable",
+    "materialized/build-tested Aedifex, CesiumJS, Kepler.gl and IfcOpenShell upstreams",
+    "Blender/Cycles and heavyweight local AI/reconstruction runtimes",
+    "Windows desktop/WebGPU target-hardware end-to-end validation"
+  ],
+  "claim_policy": "contract_ready/partial/blocked must never be represented as production-ready; see docs/governance/DEFINITION_OF_DONE.md"
+}
