@@ -85,6 +85,13 @@ jobs:
           rustup toolchain install 1.97.1 --profile minimal --component rustfmt --component clippy --target wasm32-unknown-unknown
           rustc --version
           cargo --version
+      - name: Resolve dependency lock
+        run: cargo generate-lockfile
+      - uses: actions/upload-artifact@v4
+        with:
+          name: arcz-cargo-lock
+          path: Cargo.lock
+          if-no-files-found: error
       - name: Check workspace
         run: cargo check --locked --workspace --all-targets
       - name: Test workspace
