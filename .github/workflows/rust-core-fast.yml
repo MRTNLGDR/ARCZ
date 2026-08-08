@@ -1,0 +1,39 @@
+name: ARCZ Rust Core Fast Gate
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: arcz-rust-core-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  core:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      RUSTUP_TOOLCHAIN: 1.97.1
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Rust
+        run: rustup toolchain install 1.97.1 --profile minimal --component rustfmt --component clippy
+      - name: Normalize source for parser gate
+        run: cargo fmt --all
+      - name: Resolve lockfile
+        run: cargo generate-lockfile
+      - uses: actions/upload-artifact@v4
+        with:
+          name: arcz-fast-rust-state
+          path: |
+            Cargo.lock
+            crates/**/*.rs
+          if-no-files-found: error
+      - name: Check non-desktop workspace
+        run: cargo check --locked --workspace --all-targets --exclude arcz-tauri
+      - name: Test non-desktop workspace
+        run: cargo test --locked --workspace --all-targets --exclude arcz-tauri
