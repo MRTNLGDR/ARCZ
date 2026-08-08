@@ -38,7 +38,7 @@ pub struct FacadeLayout {
     pub modules: Vec<FacadeModule>,
 }
 
-pub fn layout(request: &FacadeRequest, selector: impl Fn(u32, u32) -> f64) -> Result<FacadeLayout, FacadeError> {
+pub fn layout(request: &FacadeRequest, mut selector: impl FnMut(u32, u32) -> f64) -> Result<FacadeLayout, FacadeError> {
     if !request.width_m.is_finite() || request.width_m <= 1.0 || request.floors == 0
         || !request.floor_height_m.is_finite() || request.floor_height_m <= 2.0
         || !request.preferred_module_width_m.is_finite() || request.preferred_module_width_m <= 0.5
