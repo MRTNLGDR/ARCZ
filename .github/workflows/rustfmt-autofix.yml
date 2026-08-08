@@ -1,4 +1,4 @@
-name: ARCZ Rustfmt Autofix
+name: ARCZ Rust Autofix
 
 on:
   push:
@@ -9,34 +9,36 @@ permissions:
   contents: write
 
 concurrency:
-  group: arcz-rustfmt-autofix
+  group: arcz-rust-autofix
   cancel-in-progress: true
 
 jobs:
-  format:
-    if: ${{ !contains(github.event.head_commit.message, '[rustfmt]') }}
+  normalize:
+    if: ${{ !contains(github.event.head_commit.message, '[rust-autofix]') }}
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 20
     env:
       RUSTUP_TOOLCHAIN: stable
     steps:
       - uses: actions/checkout@v4
         with:
           ref: agent/arcz-100-done
-      - name: Install rustfmt
+      - name: Install Rust formatter
         run: rustup toolchain install stable --profile minimal --component rustfmt
-      - name: Format full workspace
-        run: cargo fmt --all
-      - name: Commit formatter result
+      - name: Normalize workspace and lock dependencies
+        run: |
+          cargo fmt --all
+          cargo generate-lockfile
+      - name: Commit deterministic Rust state
         shell: bash
         run: |
           set -euo pipefail
-          if git diff --quiet; then
-            echo 'rustfmt produced no changes'
+          if git diff --quiet && git ls-files --error-unmatch Cargo.lock >/dev/null 2>&1; then
+            echo 'Rust workspace already normalized'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -- '*.rs'
-          git commit -m 'style: apply cargo fmt [rustfmt]'
+          git add -- '*.rs' Cargo.lock
+          git commit -m 'style: normalize Rust workspace and lock dependencies [rust-autofix]'
           git push origin HEAD:agent/arcz-100-done
