@@ -1,10 +1,10 @@
 //! Planet-to-object world authority contracts for ARCZ.
-
-pub mod pipeline;
 //!
 //! ARCZ never treats the globe renderer as the canonical editable scene. This
 //! crate owns the scale hierarchy, world-layer policy and streaming budgets that
 //! let one project grow from a chair or parcel to a city, country or planet.
+
+pub mod pipeline;
 
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeSet;
@@ -179,17 +179,28 @@ mod tests {
         let project = LockedWorldProject {
             project_id: "p".into(),
             scope: WorldScope::City,
-            anchor: GeoAnchor { latitude_deg: 0.0, longitude_deg: 0.0, altitude_m: 0.0, true_north_deg: 0.0 },
+            anchor: GeoAnchor {
+                latitude_deg: 0.0,
+                longitude_deg: 0.0,
+                altitude_m: 0.0,
+                true_north_deg: 0.0,
+            },
             frame: CoordinateFrame::LocalEnu,
             source_revision: 1,
             selected_cell_ids: vec![],
             layers: vec![WorldLayerPolicy {
-                id: "terrain".into(), kind: WorldLayerKind::Terrain,
+                id: "terrain".into(),
+                kind: WorldLayerKind::Terrain,
                 mutability: LayerMutability::CanonicalEditable,
-                min_lod: 0, max_lod: 18, provenance_required: true,
+                min_lod: 0,
+                max_lod: 18,
+                provenance_required: true,
             }],
             budget: StreamBudget::default(),
         };
-        assert!(matches!(validate_world_project(&project), Err(WorldContractError::EditableSourceLayer(_))));
+        assert!(matches!(
+            validate_world_project(&project),
+            Err(WorldContractError::EditableSourceLayer(_))
+        ));
     }
 }
