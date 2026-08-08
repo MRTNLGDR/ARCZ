@@ -5,15 +5,17 @@
   "handoff_version": "11.1.0-world-foundation",
   "published_branch": "agent/arcz-world-foundation",
   "local_foundation": {
-    "commit": "6826e4f9decabf2d960dfce77813c0166a80d84e",
-    "tracked_files": 563,
+    "commit": "560950402b515c9241cb12b7243cf46a9fa3b1d0",
+    "tracked_files": 565,
     "publication_state": "partial_remote_import"
   },
   "published_scope": [
     "world-scale product and architecture documentation",
+    "complete capability matrix for the requested ARCZ domains",
     "plugin SDK contract",
     "plugin host capability/permission contract",
     "planet-to-object world authority contract",
+    "resumable per-cell world-generation DAG contract",
     "revision-guarded agent action-plan contract",
     "pinned upstream manifest",
     "address-to-world pipeline",
@@ -27,7 +29,7 @@
     "handoff": "22 passed, 0 failed, 9 blocked"
   },
   "blocked_or_not_yet_verified": [
-    "bulk publication of the retained 563-file V10.1/V11.1 local tree: current runtime lacks gh and direct git network/DNS; GitHub connector supports file writes but not directory/archive upload",
+    "bulk publication of the retained 565-file V10.1/V11.1 local tree: current runtime lacks gh and direct git network/DNS; GitHub connector supports file writes but not directory/archive upload",
     "Rust compilation in this runtime: rustc/cargo are unavailable",
     "materialized/build-tested Aedifex, CesiumJS, Kepler.gl and IfcOpenShell upstreams",
     "Blender/Cycles and heavyweight local AI/reconstruction runtimes",
