@@ -33,7 +33,10 @@ impl PluginRegistry {
         }
         let id = manifest.id.clone();
         for Capability(capability) in &manifest.capabilities {
-            self.capability_index.entry(capability.clone()).or_default().insert(id.clone());
+            self.capability_index
+                .entry(capability.clone())
+                .or_default()
+                .insert(id.clone());
         }
         self.manifests.insert(id, manifest);
         Ok(())
@@ -58,22 +61,35 @@ impl PluginRegistry {
         requested_capability: &str,
         grant: &PermissionGrant,
     ) -> Result<(), PluginHostError> {
-        let plugin = self.manifests.get(plugin_id).ok_or_else(|| PluginHostError::UnknownPlugin(plugin_id.into()))?;
-        if !plugin.capabilities.iter().any(|cap| cap.0 == requested_capability) {
+        let plugin = self
+            .manifests
+            .get(plugin_id)
+            .ok_or_else(|| PluginHostError::UnknownPlugin(plugin_id.into()))?;
+        if !plugin
+            .capabilities
+            .iter()
+            .any(|cap| cap.0 == requested_capability)
+        {
             return Err(PluginHostError::CapabilityNotDeclared {
-                plugin: plugin_id.into(), capability: requested_capability.into(),
+                plugin: plugin_id.into(),
+                capability: requested_capability.into(),
             });
         }
         if !grant.capabilities.contains(requested_capability) {
             return Err(PluginHostError::CapabilityNotGranted {
-                plugin: plugin_id.into(), capability: requested_capability.into(),
+                plugin: plugin_id.into(),
+                capability: requested_capability.into(),
             });
         }
         Ok(())
     }
 
-    pub fn len(&self) -> usize { self.manifests.len() }
-    pub fn is_empty(&self) -> bool { self.manifests.is_empty() }
+    pub fn len(&self) -> usize {
+        self.manifests.len()
+    }
+    pub fn is_empty(&self) -> bool {
+        self.manifests.is_empty()
+    }
 }
 
 #[derive(Debug, Error)]
@@ -98,10 +114,19 @@ mod tests {
 
     fn manifest() -> PluginManifest {
         PluginManifest {
-            id: "roads".into(), name: "Roads".into(), version: "0.1.0".into(), api_version: PLUGIN_API_VERSION,
-            runtime: RuntimeKind::BuiltinRust, entrypoint: "builtin://roads".into(),
-            capabilities: vec![Capability("road.generate".into())], reads: vec![], writes: vec![],
-            network: NetworkPolicy::None, deterministic: true, gpu_optional: true, metadata: Value::Null,
+            id: "roads".into(),
+            name: "Roads".into(),
+            version: "0.1.0".into(),
+            api_version: PLUGIN_API_VERSION,
+            runtime: RuntimeKind::BuiltinRust,
+            entrypoint: "builtin://roads".into(),
+            capabilities: vec![Capability("road.generate".into())],
+            reads: vec![],
+            writes: vec![],
+            network: NetworkPolicy::None,
+            deterministic: true,
+            gpu_optional: true,
+            metadata: Value::Null,
         }
     }
 

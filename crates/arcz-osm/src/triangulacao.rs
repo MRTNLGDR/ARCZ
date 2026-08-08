@@ -169,7 +169,9 @@ pub fn ponto_interno(anel: &[P2]) -> Option<P2> {
     let tris = triangular(anel);
     let melhor = tris.iter().max_by(|a, b| {
         let ar = |t: &[usize; 3]| area(&[anel[t[0]], anel[t[1]], anel[t[2]]]);
-        ar(a).partial_cmp(&ar(b)).unwrap_or(std::cmp::Ordering::Equal)
+        ar(a)
+            .partial_cmp(&ar(b))
+            .unwrap_or(std::cmp::Ordering::Equal)
     })?;
     let (a, b, c) = (anel[melhor[0]], anel[melhor[1]], anel[melhor[2]]);
     Some([(a[0] + b[0] + c[0]) / 3.0, (a[1] + b[1] + c[1]) / 3.0])
@@ -324,7 +326,10 @@ mod tests {
         // Conferencia contra a decomposicao manual do "L": retangulo 10x4 em
         // (5,2) mais retangulo 4x6 em (2,7), area total 64.
         let c = centroide(&ele());
-        assert!((c[0] - 3.875).abs() < 1e-9 && (c[1] - 3.875).abs() < 1e-9, "{c:?}");
+        assert!(
+            (c[0] - 3.875).abs() < 1e-9 && (c[1] - 3.875).abs() < 1e-9,
+            "{c:?}"
+        );
     }
 
     #[test]

@@ -93,7 +93,10 @@ pub struct Diagnostic {
 }
 
 pub fn validate_manifest(manifest: &PluginManifest) -> Result<(), PluginContractError> {
-    if manifest.id.trim().is_empty() || manifest.name.trim().is_empty() || manifest.version.trim().is_empty() {
+    if manifest.id.trim().is_empty()
+        || manifest.name.trim().is_empty()
+        || manifest.version.trim().is_empty()
+    {
         return Err(PluginContractError::MissingIdentity);
     }
     if manifest.api_version != PLUGIN_API_VERSION {
@@ -113,7 +116,10 @@ pub fn validate_manifest(manifest: &PluginManifest) -> Result<(), PluginContract
         }
     }
     if matches!(manifest.network, NetworkPolicy::ExplicitRemote)
-        && !manifest.capabilities.iter().any(|capability| capability.0 == "network.remote")
+        && !manifest
+            .capabilities
+            .iter()
+            .any(|capability| capability.0 == "network.remote")
     {
         return Err(PluginContractError::RemoteNetworkWithoutCapability);
     }
@@ -143,12 +149,23 @@ mod tests {
     #[test]
     fn rejects_implicit_remote_network() {
         let manifest = PluginManifest {
-            id: "x".into(), name: "X".into(), version: "0.1.0".into(),
-            api_version: PLUGIN_API_VERSION, runtime: RuntimeKind::LocalProcess,
-            entrypoint: "x".into(), capabilities: vec![], reads: vec![], writes: vec![],
-            network: NetworkPolicy::ExplicitRemote, deterministic: false,
-            gpu_optional: true, metadata: Value::Null,
+            id: "x".into(),
+            name: "X".into(),
+            version: "0.1.0".into(),
+            api_version: PLUGIN_API_VERSION,
+            runtime: RuntimeKind::LocalProcess,
+            entrypoint: "x".into(),
+            capabilities: vec![],
+            reads: vec![],
+            writes: vec![],
+            network: NetworkPolicy::ExplicitRemote,
+            deterministic: false,
+            gpu_optional: true,
+            metadata: Value::Null,
         };
-        assert_eq!(validate_manifest(&manifest), Err(PluginContractError::RemoteNetworkWithoutCapability));
+        assert_eq!(
+            validate_manifest(&manifest),
+            Err(PluginContractError::RemoteNetworkWithoutCapability)
+        );
     }
 }

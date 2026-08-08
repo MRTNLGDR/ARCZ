@@ -4,8 +4,8 @@
 //! Gaussian Splatting (.ply) e malhas de realidade (.glb, .gltf, .obj).
 //! Converte em nós autoritativos `SceneNode` com nível de confiança `NodeConfidence::Observed` (GREEN badge).
 
+use crate::cena::{Georeference64, NodeConfidence, NodeType, SceneNode};
 use std::path::{Path, PathBuf};
-use crate::cena::{SceneNode, NodeType, NodeConfidence, Georeference64};
 
 #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
 pub enum RealityAssetKind {
@@ -48,16 +48,29 @@ impl ReconstructWorker {
     }
 
     /// Processa o arquivo de realidade e gera o no SceneNode autoritativo com confianca VERDE.
-    pub fn processar_asset(&self, req: IngestRealityAssetRequest) -> anyhow::Result<IngestRealityAssetResult> {
+    pub fn processar_asset(
+        &self,
+        req: IngestRealityAssetRequest,
+    ) -> anyhow::Result<IngestRealityAssetResult> {
         let path = Path::new(&req.file_path);
-        let ext = path.extension().and_then(|s| s.to_str()).unwrap_or("").to_lowercase();
+        let ext = path
+            .extension()
+            .and_then(|s| s.to_str())
+            .unwrap_or("")
+            .to_lowercase();
 
-        let id = format!("reality_{}_{}", path.file_stem().and_then(|s| s.to_str()).unwrap_or("asset"), std::process::id());
+        let id = format!(
+            "reality_{}_{}",
+            path.file_stem().and_then(|s| s.to_str()).unwrap_or("asset"),
+            std::process::id()
+        );
 
         let node_type = match req.asset_kind {
             RealityAssetKind::PointCloud => NodeType::PointCloud,
             RealityAssetKind::GaussianSplat => NodeType::GaussianSplat,
-            RealityAssetKind::RealityMesh | RealityAssetKind::ColmapReconstruction => NodeType::RealityMesh,
+            RealityAssetKind::RealityMesh | RealityAssetKind::ColmapReconstruction => {
+                NodeType::RealityMesh
+            }
         };
 
         let mut node = SceneNode::novo(id, req.name, node_type);
@@ -125,7 +138,10 @@ mod tests {
         assert_eq!(result.node.confidence, NodeConfidence::Observed);
         assert_eq!(result.node.confidence.color_code(), "GREEN");
         assert_eq!(result.node.node_type, NodeType::PointCloud);
-        assert_eq!(result.node.asset_ref, Some("caminho/scan_terreno.ply".to_string()));
+        assert_eq!(
+            result.node.asset_ref,
+            Some("caminho/scan_terreno.ply".to_string())
+        );
 
         let _ = std::fs::remove_dir_all(&dir);
     }

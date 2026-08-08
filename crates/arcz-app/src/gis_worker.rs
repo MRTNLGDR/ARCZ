@@ -3,10 +3,10 @@
 //! Converte feições GIS de footprints de edifícios, vias e superfícies aquáticas/terrestres
 //! em nós autoritativos `SceneNode` com nível de confiança `NodeConfidence::GisDerived` (BLUE badge).
 
-use std::path::{Path, PathBuf};
+use crate::cena::{Georeference64, NodeConfidence, NodeType, SceneNode};
 use arcz_geo::{EnuFrame, GeoBBox, Geodetic};
-use arcz_osm::{Camadas, ClienteOverpass, Entorno, ClasseSuperficie, ATRIBUICAO, PROVENIENCIA};
-use crate::cena::{SceneNode, NodeType, NodeConfidence, Georeference64};
+use arcz_osm::{Camadas, ClasseSuperficie, ClienteOverpass, Entorno, ATRIBUICAO, PROVENIENCIA};
+use std::path::{Path, PathBuf};
 
 pub struct GisContextWorker {
     cache_dir: PathBuf,
@@ -47,7 +47,10 @@ impl GisContextWorker {
         for bldg in &entorno.edificios {
             count_bldg += 1;
             let id = format!("gis_bldg_{}", bldg.id);
-            let nome = bldg.nome.clone().unwrap_or_else(|| format!("Edifício GIS #{}", bldg.id));
+            let nome = bldg
+                .nome
+                .clone()
+                .unwrap_or_else(|| format!("Edifício GIS #{}", bldg.id));
 
             let mut node = SceneNode::novo(id, nome, NodeType::Building);
             node.confidence = NodeConfidence::GisDerived; // BLUE
@@ -76,7 +79,10 @@ impl GisContextWorker {
         for via in &entorno.vias {
             count_road += 1;
             let id = format!("gis_road_{}", via.id);
-            let nome = via.nome.clone().unwrap_or_else(|| format!("Via GIS #{}", via.id));
+            let nome = via
+                .nome
+                .clone()
+                .unwrap_or_else(|| format!("Via GIS #{}", via.id));
 
             let mut node = SceneNode::novo(id, nome, NodeType::Road);
             node.confidence = NodeConfidence::GisDerived; // BLUE
@@ -105,7 +111,11 @@ impl GisContextWorker {
             let id = format!("gis_surf_{}", surf.id);
             let nome = format!("Superfície GIS #{}", surf.id);
 
-            let node_type = if surf.classe == ClasseSuperficie::Agua { NodeType::Water } else { NodeType::Parcel };
+            let node_type = if surf.classe == ClasseSuperficie::Agua {
+                NodeType::Water
+            } else {
+                NodeType::Parcel
+            };
             let mut node = SceneNode::novo(id, nome, node_type);
             node.confidence = NodeConfidence::GisDerived; // BLUE
             node.layer = "Environment/GIS".to_string();
@@ -159,7 +169,10 @@ mod tests {
             id: 101,
             nome: Some("Edificio Teste".to_string()),
             classe: arcz_osm::ClasseEdificio::Residencial,
-            contorno: vec![arcz_osm::PontoGeo { lat: -27.5, lon: -48.5 }],
+            contorno: vec![arcz_osm::PontoGeo {
+                lat: -27.5,
+                lon: -48.5,
+            }],
             altura_m: 30.0,
             base_m: 0.0,
             fonte_altura: arcz_osm::FonteAltura::Estimada,

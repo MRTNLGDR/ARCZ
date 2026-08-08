@@ -378,7 +378,8 @@ pub fn gerar_edificacoes(
 
                     // A edificacao ocupa parte do lote; o resto vira quintal.
                     let frente = regras.testada_m * (0.62 + r_forma * 0.24);
-                    let fundo = regras.profundidade_m * regras.taxa_ocupacao * (0.8 + r_forma * 0.3);
+                    let fundo =
+                        regras.profundidade_m * regras.taxa_ocupacao * (0.8 + r_forma * 0.3);
 
                     // O centro fica a meia profundidade do alinhamento, entao a
                     // face frontal cai exatamente no recuo, qualquer que seja o
@@ -583,8 +584,14 @@ mod tests {
             classe,
             largura_m: largura,
             eixo: vec![
-                PontoGeo { lat, lon: lon - 0.002 },
-                PontoGeo { lat, lon: lon + 0.002 },
+                PontoGeo {
+                    lat,
+                    lon: lon - 0.002,
+                },
+                PontoGeo {
+                    lat,
+                    lon: lon + 0.002,
+                },
             ],
         }
     }
@@ -601,7 +608,11 @@ mod tests {
         let e = entorno_com_rua();
         let f = frame();
         let novos = gerar_edificacoes(&e, &f, RegrasUrbanas::default());
-        assert!(novos.len() > 10, "so {} edificacoes em 400 m de rua", novos.len());
+        assert!(
+            novos.len() > 10,
+            "so {} edificacoes em 400 m de rua",
+            novos.len()
+        );
 
         let lados: Vec<f64> = novos
             .iter()
@@ -723,8 +734,14 @@ mod tests {
             contorno: vec![
                 PontoGeo { lat, lon: lon - d },
                 PontoGeo { lat, lon: lon + d },
-                PontoGeo { lat: lat + 0.0002, lon: lon + d },
-                PontoGeo { lat: lat + 0.0002, lon: lon - d },
+                PontoGeo {
+                    lat: lat + 0.0002,
+                    lon: lon + d,
+                },
+                PontoGeo {
+                    lat: lat + 0.0002,
+                    lon: lon - d,
+                },
             ],
             altura_m: 24.0,
             base_m: 0.0,
@@ -734,7 +751,11 @@ mod tests {
             cor_telhado: None,
         });
 
-        let anel: Vec<P2> = e.edificios[0].contorno.iter().map(|p| plano(&f, *p)).collect();
+        let anel: Vec<P2> = e.edificios[0]
+            .contorno
+            .iter()
+            .map(|p| plano(&f, *p))
+            .collect();
         let centro = triangulacao::centroide(&anel);
         let raio = anel
             .iter()
@@ -743,7 +764,10 @@ mod tests {
 
         for ed in gerar_edificacoes(&e, &f, RegrasUrbanas::default()) {
             let c = triangulacao::centroide(
-                &ed.contorno.iter().map(|p| plano(&f, *p)).collect::<Vec<_>>(),
+                &ed.contorno
+                    .iter()
+                    .map(|p| plano(&f, *p))
+                    .collect::<Vec<_>>(),
             );
             let dist = (c[0] - centro[0]).hypot(c[1] - centro[1]);
             assert!(dist > raio, "edificacao sintetica dentro do predio mapeado");
@@ -760,20 +784,39 @@ mod tests {
             id: 1,
             classe: ClasseSuperficie::Agua,
             contorno: vec![
-                PontoGeo { lat: lat + 0.00008, lon: lon - 0.002 },
-                PontoGeo { lat: lat + 0.00008, lon: lon + 0.002 },
-                PontoGeo { lat: lat + 0.001, lon: lon + 0.002 },
-                PontoGeo { lat: lat + 0.001, lon: lon - 0.002 },
+                PontoGeo {
+                    lat: lat + 0.00008,
+                    lon: lon - 0.002,
+                },
+                PontoGeo {
+                    lat: lat + 0.00008,
+                    lon: lon + 0.002,
+                },
+                PontoGeo {
+                    lat: lat + 0.001,
+                    lon: lon + 0.002,
+                },
+                PontoGeo {
+                    lat: lat + 0.001,
+                    lon: lon - 0.002,
+                },
             ],
         });
 
-        let anel: Vec<P2> = e.superficies[0].contorno.iter().map(|p| plano(&f, *p)).collect();
+        let anel: Vec<P2> = e.superficies[0]
+            .contorno
+            .iter()
+            .map(|p| plano(&f, *p))
+            .collect();
         let novos = gerar_edificacoes(&e, &f, RegrasUrbanas::default());
         assert!(!novos.is_empty(), "o lado sul deveria continuar loteado");
 
         for ed in &novos {
             let c = triangulacao::centroide(
-                &ed.contorno.iter().map(|p| plano(&f, *p)).collect::<Vec<_>>(),
+                &ed.contorno
+                    .iter()
+                    .map(|p| plano(&f, *p))
+                    .collect::<Vec<_>>(),
             );
             assert!(!triangulacao::contem(&anel, c), "edificacao dentro da agua");
         }
@@ -830,7 +873,10 @@ mod tests {
         };
         let avenida = media(ClasseVia::Arterial, 12.0);
         let local = media(ClasseVia::Local, 6.0);
-        assert!(avenida > local, "avenida {avenida:.1} m <= local {local:.1} m");
+        assert!(
+            avenida > local,
+            "avenida {avenida:.1} m <= local {local:.1} m"
+        );
     }
 
     #[test]
@@ -887,9 +933,15 @@ mod tests {
                 largura_m: 6.0,
                 // ~1 km de extensao, saindo largamente do recorte de 200 m.
                 eixo: vec![
-                    PontoGeo { lat, lon: lon - 0.005 },
+                    PontoGeo {
+                        lat,
+                        lon: lon - 0.005,
+                    },
                     PontoGeo { lat, lon },
-                    PontoGeo { lat, lon: lon + 0.005 },
+                    PontoGeo {
+                        lat,
+                        lon: lon + 0.005,
+                    },
                 ],
             }],
             ..Default::default()
@@ -922,9 +974,15 @@ mod tests {
                 classe: ClasseVia::Local,
                 largura_m: 6.0,
                 eixo: vec![
-                    PontoGeo { lat, lon: lon - 0.02 },
+                    PontoGeo {
+                        lat,
+                        lon: lon - 0.02,
+                    },
                     PontoGeo { lat, lon },
-                    PontoGeo { lat, lon: lon + 0.02 },
+                    PontoGeo {
+                        lat,
+                        lon: lon + 0.02,
+                    },
                 ],
             }],
             ..Default::default()
@@ -963,11 +1021,17 @@ mod tests {
 
         // Diagonal: para no eixo que atinge o limite primeiro.
         let (_, b) = clipar_segmento([0.0, 0.0], [400.0, 200.0], m).unwrap();
-        assert!((b[0] - m).abs() < 1e-9 && (b[1] - 50.0).abs() < 1e-9, "{b:?}");
+        assert!(
+            (b[0] - m).abs() < 1e-9 && (b[1] - 50.0).abs() < 1e-9,
+            "{b:?}"
+        );
 
         // Atravessa inteiro sem nenhum vertice dentro — o caso que apagava ruas.
         let (a, b) = clipar_segmento([-400.0, 0.0], [400.0, 0.0], m).unwrap();
-        assert!((a[0] + m).abs() < 1e-9 && (b[0] - m).abs() < 1e-9, "{a:?} {b:?}");
+        assert!(
+            (a[0] + m).abs() < 1e-9 && (b[0] - m).abs() < 1e-9,
+            "{a:?} {b:?}"
+        );
 
         // Totalmente fora, sem tocar o quadrado.
         assert!(clipar_segmento([200.0, 200.0], [400.0, 400.0], m).is_none());
@@ -991,8 +1055,14 @@ mod tests {
                 classe: ClasseVia::Local,
                 largura_m: 6.0,
                 eixo: vec![
-                    PontoGeo { lat, lon: lon - 0.02 },
-                    PontoGeo { lat, lon: lon + 0.02 },
+                    PontoGeo {
+                        lat,
+                        lon: lon - 0.02,
+                    },
+                    PontoGeo {
+                        lat,
+                        lon: lon + 0.02,
+                    },
                 ],
             }],
             ..Default::default()
@@ -1006,7 +1076,10 @@ mod tests {
     fn recortar_derruba_o_que_esta_totalmente_fora() {
         let f = frame();
         let (lat, lon) = (-27.1544967, -48.5022653);
-        let longe = PontoGeo { lat: lat + 0.05, lon: lon + 0.05 };
+        let longe = PontoGeo {
+            lat: lat + 0.05,
+            lon: lon + 0.05,
+        };
         let mut e = Entorno {
             arvores: vec![
                 Arvore {
@@ -1052,8 +1125,14 @@ mod tests {
                 classe: ClasseVia::Local,
                 largura_m: 6.0,
                 eixo: vec![
-                    PontoGeo { lat, lon: lon - 0.01 },
-                    PontoGeo { lat, lon: lon + 0.01 },
+                    PontoGeo {
+                        lat,
+                        lon: lon - 0.01,
+                    },
+                    PontoGeo {
+                        lat,
+                        lon: lon + 0.01,
+                    },
                 ],
             }],
             ..Default::default()
@@ -1061,7 +1140,10 @@ mod tests {
         recortar(&mut e, &f, 300.0);
         for ed in gerar_edificacoes(&e, &f, RegrasUrbanas::default()) {
             let c = triangulacao::centroide(
-                &ed.contorno.iter().map(|p| plano(&f, *p)).collect::<Vec<_>>(),
+                &ed.contorno
+                    .iter()
+                    .map(|p| plano(&f, *p))
+                    .collect::<Vec<_>>(),
             );
             assert!(
                 c[0].abs() < 1_200.0,

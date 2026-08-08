@@ -5,9 +5,9 @@
 //!
 //! Permite operação 100% offline-first com atualização em segundo plano.
 
+use crate::cena::{Georeference64, NodeConfidence, NodeType, SceneNode};
 use std::path::{Path, PathBuf};
 use std::time::{SystemTime, UNIX_EPOCH};
-use crate::cena::{SceneNode, NodeType, NodeConfidence, Georeference64};
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct AutoSyncConfig {
@@ -22,7 +22,7 @@ impl Default for AutoSyncConfig {
         Self {
             enabled: true,
             sync_interval_seconds: 86400, // 24 horas
-            max_cache_size_mb: 5000,     // 5 GB
+            max_cache_size_mb: 5000,      // 5 GB
             preferred_sources: vec![
                 "OpenStreetMap Overpass / Planet".to_string(),
                 "Open DEM Terrarium".to_string(),
@@ -57,7 +57,10 @@ impl OfflineGisSyncWorker {
     }
 
     /// Executa a sincronização de dados GIS e atualiza o cache local offline.
-    pub fn executar_sincronizacao(&self, _bbox_latlon: [f64; 4]) -> anyhow::Result<SyncStatusReport> {
+    pub fn executar_sincronizacao(
+        &self,
+        _bbox_latlon: [f64; 4],
+    ) -> anyhow::Result<SyncStatusReport> {
         let now = SystemTime::now().duration_since(UNIX_EPOCH)?.as_secs();
 
         // Garante estrutura de diretórios offline
@@ -88,7 +91,11 @@ impl OfflineGisSyncWorker {
         let mut nodes = Vec::new();
 
         // Terreno Quantized Mesh / DEM
-        let mut terrain_node = SceneNode::novo("offline_dem_layer0".to_string(), "Terreno DEM Offline (Cesium Specification)".to_string(), NodeType::Terrain);
+        let mut terrain_node = SceneNode::novo(
+            "offline_dem_layer0".to_string(),
+            "Terreno DEM Offline (Cesium Specification)".to_string(),
+            NodeType::Terrain,
+        );
         terrain_node.confidence = NodeConfidence::GisDerived; // BLUE badge
         terrain_node.layer = "GIS/OfflineDEM".to_string();
         terrain_node.source = "OfflineGisSyncWorker / Terrarium Quantized Mesh".to_string();
@@ -101,7 +108,11 @@ impl OfflineGisSyncWorker {
         nodes.push(terrain_node);
 
         // Edificações OpenStreetMap Offline
-        let mut osm_node = SceneNode::novo("offline_osm_buildings".to_string(), "Edificações OSM Offline".to_string(), NodeType::Building);
+        let mut osm_node = SceneNode::novo(
+            "offline_osm_buildings".to_string(),
+            "Edificações OSM Offline".to_string(),
+            NodeType::Building,
+        );
         osm_node.confidence = NodeConfidence::GisDerived; // BLUE badge
         osm_node.layer = "GIS/OfflineOSM".to_string();
         osm_node.source = "OfflineGisSyncWorker / Overpass Offline Cache".to_string();
@@ -126,7 +137,9 @@ mod tests {
         let temp_dir = std::env::temp_dir().join("arcz_sync_test");
         let worker = OfflineGisSyncWorker::novo(&temp_dir, AutoSyncConfig::default());
 
-        let report = worker.executar_sincronizacao([-27.16, -48.51, -27.14, -48.49]).unwrap();
+        let report = worker
+            .executar_sincronizacao([-27.16, -48.51, -27.14, -48.49])
+            .unwrap();
         assert!(report.last_sync_timestamp > 0);
         assert!(report.is_offline_mode);
 

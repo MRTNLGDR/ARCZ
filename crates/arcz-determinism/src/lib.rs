@@ -22,7 +22,9 @@ impl Seed {
         hasher.update((key.len() as u64).to_le_bytes());
         hasher.update(key);
         let digest = hasher.finalize();
-        Self(u64::from_le_bytes(digest[0..8].try_into().expect("slice length")))
+        Self(u64::from_le_bytes(
+            digest[0..8].try_into().expect("slice length"),
+        ))
     }
 
     pub fn from_parts(parts: &[&[u8]]) -> Self {
@@ -32,7 +34,9 @@ impl Seed {
             hasher.update(part);
         }
         let digest = hasher.finalize();
-        Self(u64::from_le_bytes(digest[0..8].try_into().expect("slice length")))
+        Self(u64::from_le_bytes(
+            digest[0..8].try_into().expect("slice length"),
+        ))
     }
 
     pub fn rng(self) -> StableRng {
@@ -119,8 +123,12 @@ mod tests {
 
     #[test]
     fn mesma_cadeia_produz_mesma_semente() {
-        let a = Seed(7).derive("region", b"bombinhas").derive("tile", b"18/1/2");
-        let b = Seed(7).derive("region", b"bombinhas").derive("tile", b"18/1/2");
+        let a = Seed(7)
+            .derive("region", b"bombinhas")
+            .derive("tile", b"18/1/2");
+        let b = Seed(7)
+            .derive("region", b"bombinhas")
+            .derive("tile", b"18/1/2");
         assert_eq!(a, b);
     }
 

@@ -178,8 +178,9 @@ pub fn codificar(z: u8, x: u32, y: u32, dem: Option<&HeightMosaic>) -> Vec<u8> {
     }
     let mut raio: f64 = 0.0;
     for c in &cantos {
-        let d = ((c[0] - centro[0]).powi(2) + (c[1] - centro[1]).powi(2) + (c[2] - centro[2]).powi(2))
-            .sqrt();
+        let d =
+            ((c[0] - centro[0]).powi(2) + (c[1] - centro[1]).powi(2) + (c[2] - centro[2]).powi(2))
+                .sqrt();
         raio = raio.max(d);
     }
 
@@ -372,7 +373,10 @@ mod testes {
         assert!(j.contains(r#"{"startX":0,"startY":0,"endX":1,"endY":0}"#));
         let (nx, _) = tiles_no_nivel(12);
         let ix = ((-48.51 + 180.0) / (360.0 / f64::from(nx))).floor() as u32;
-        assert!(j.contains(&format!(r#"{{"startX":{ix},"#)), "faltou o tile da regiao: {j}");
+        assert!(
+            j.contains(&format!(r#"{{"startX":{ix},"#)),
+            "faltou o tile da regiao: {j}"
+        );
         assert!(j.contains("quantized-mesh-1.0"));
     }
 

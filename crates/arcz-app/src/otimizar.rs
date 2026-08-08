@@ -122,12 +122,21 @@ fn compactar_textura(t: &arcz_model::Textura) -> (Vec<u8>, &'static str, bool) {
 
     let mut saida = Vec::new();
     let mime = if tem_alfa {
-        let _ = dyn_img.write_to(&mut std::io::Cursor::new(&mut saida), image::ImageFormat::Png);
+        let _ = dyn_img.write_to(
+            &mut std::io::Cursor::new(&mut saida),
+            image::ImageFormat::Png,
+        );
         "image/png"
     } else {
         let rgb = dyn_img.to_rgb8();
-        let mut enc = image::codecs::jpeg::JpegEncoder::new_with_quality(&mut saida, QUALIDADE_JPEG);
-        let _ = enc.encode(rgb.as_raw(), rgb.width(), rgb.height(), image::ExtendedColorType::Rgb8);
+        let mut enc =
+            image::codecs::jpeg::JpegEncoder::new_with_quality(&mut saida, QUALIDADE_JPEG);
+        let _ = enc.encode(
+            rgb.as_raw(),
+            rgb.width(),
+            rgb.height(),
+            image::ExtendedColorType::Rgb8,
+        );
         "image/jpeg"
     };
     (saida, mime, reduziu)
@@ -143,7 +152,11 @@ pub fn gerar(m: &Model, destino: &Path) -> anyhow::Result<Ganho> {
     let mut acessores: Vec<String> = Vec::new();
 
     // Alinha em 4 bytes: o glTF exige, e alguns leitores recusam sem isso.
-    let alinhar = |b: &mut Vec<u8>| while b.len() % 4 != 0 { b.push(0) };
+    let alinhar = |b: &mut Vec<u8>| {
+        while b.len() % 4 != 0 {
+            b.push(0)
+        }
+    };
 
     let inicio_pos = bin.len();
     let (mut lo, mut hi) = ([f32::MAX; 3], [f32::MIN; 3]);
@@ -221,9 +234,7 @@ pub fn gerar(m: &Model, destino: &Path) -> anyhow::Result<Ganho> {
             bytes.len()
         ));
         let iv = views.len() - 1;
-        imagens.push(format!(
-            r#"{{"bufferView":{iv},"mimeType":"{mime}"}}"#
-        ));
+        imagens.push(format!(r#"{{"bufferView":{iv},"mimeType":"{mime}"}}"#));
         texturas_json.push(format!(r#"{{"source":{}}}"#, imagens.len() - 1));
     }
 
@@ -364,7 +375,11 @@ mod testes {
     use arcz_model::{Material, ModelVertex, Submesh, Textura};
 
     fn v(p: [f32; 3], n: [f32; 3], uv: [f32; 2]) -> ModelVertex {
-        ModelVertex { position: p, normal: n, uv }
+        ModelVertex {
+            position: p,
+            normal: n,
+            uv,
+        }
     }
 
     fn modelo(vertices: Vec<ModelVertex>, indices: Vec<u32>) -> Model {
@@ -372,7 +387,11 @@ mod testes {
         Model {
             vertices,
             indices,
-            submeshes: vec![Submesh { material: 0, offset: 0, count }],
+            submeshes: vec![Submesh {
+                material: 0,
+                offset: 0,
+                count,
+            }],
             materiais: vec![Material::default()],
             texturas: Vec::new(),
             min: [0.0; 3],
@@ -446,7 +465,11 @@ mod testes {
         let (bytes, mime, reduziu) = compactar_textura(&grande);
         assert!(reduziu, "2048 px tinha de encolher");
         assert_eq!(mime, "image/jpeg");
-        assert!(bytes.len() < 400_000, "ficou grande demais: {}", bytes.len());
+        assert!(
+            bytes.len() < 400_000,
+            "ficou grande demais: {}",
+            bytes.len()
+        );
 
         let pequena = Textura {
             nome: "p".into(),
@@ -464,7 +487,12 @@ mod testes {
         // recorte viraria um retangulo preto.
         let mut rgba = vec![255u8; 32 * 32 * 4];
         rgba[3] = 0;
-        let t = Textura { nome: "vidro".into(), largura: 32, altura: 32, rgba };
+        let t = Textura {
+            nome: "vidro".into(),
+            largura: 32,
+            altura: 32,
+            rgba,
+        };
         let (_, mime, _) = compactar_textura(&t);
         assert_eq!(mime, "image/png");
     }

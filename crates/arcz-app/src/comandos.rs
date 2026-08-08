@@ -225,7 +225,9 @@ pub fn executar(comando: &str, params: &serde_json::Value, ctx: &Contexto<'_>) -
             let lat = params.get("lat").and_then(|v| v.as_f64());
             let lon = params.get("lon").and_then(|v| v.as_f64());
             match (lat, lon) {
-                (Some(lat), Some(lon)) if (-90.0..=90.0).contains(&lat) && (-180.0..=180.0).contains(&lon) => {
+                (Some(lat), Some(lon))
+                    if (-90.0..=90.0).contains(&lat) && (-180.0..=180.0).contains(&lon) =>
+                {
                     Resposta::ok(comando, serde_json::json!({ "lat": lat, "lon": lon }))
                 }
                 _ => Resposta::erro(comando, "camera.set exige lat e lon validos"),
@@ -234,10 +236,16 @@ pub fn executar(comando: &str, params: &serde_json::Value, ctx: &Contexto<'_>) -
 
         "layer.toggle" => {
             let camada = params.get("camada").and_then(|v| v.as_str()).unwrap_or("");
-            let visivel = params.get("visivel").and_then(|v| v.as_bool()).unwrap_or(true);
+            let visivel = params
+                .get("visivel")
+                .and_then(|v| v.as_bool())
+                .unwrap_or(true);
             const CAMADAS: &[&str] = &["terreno", "modelo", "entorno", "mobiliario", "gizmo"];
             if CAMADAS.contains(&camada) {
-                Resposta::ok(comando, serde_json::json!({ "camada": camada, "visivel": visivel }))
+                Resposta::ok(
+                    comando,
+                    serde_json::json!({ "camada": camada, "visivel": visivel }),
+                )
             } else {
                 Resposta::erro(
                     comando,
@@ -264,33 +272,33 @@ pub fn executar(comando: &str, params: &serde_json::Value, ctx: &Contexto<'_>) -
         }
 
         // ---- projetos ------------------------------------------------------
-        "project.list" => match crate::workspace::Workspace::new(
-            crate::workspace::Workspace::raiz_padrao(),
-        ) {
-            Ok(ws) => {
-                let projetos: Vec<_> = ws
-                    .listar()
-                    .into_iter()
-                    .map(|p| {
-                        serde_json::json!({
-                            "slug": p.slug,
-                            "nome": p.nome,
-                            "caminho": p.caminho.display().to_string(),
-                            "bytes": p.bytes,
-                            "modificado_em": p.modificado_em,
-                            "tem_miniatura": p.tem_miniatura,
-                            "recuperavel": p.recuperavel,
-                            "snapshots": p.snapshots,
+        "project.list" => {
+            match crate::workspace::Workspace::new(crate::workspace::Workspace::raiz_padrao()) {
+                Ok(ws) => {
+                    let projetos: Vec<_> = ws
+                        .listar()
+                        .into_iter()
+                        .map(|p| {
+                            serde_json::json!({
+                                "slug": p.slug,
+                                "nome": p.nome,
+                                "caminho": p.caminho.display().to_string(),
+                                "bytes": p.bytes,
+                                "modificado_em": p.modificado_em,
+                                "tem_miniatura": p.tem_miniatura,
+                                "recuperavel": p.recuperavel,
+                                "snapshots": p.snapshots,
+                            })
                         })
-                    })
-                    .collect();
-                Resposta::ok(
-                    comando,
-                    serde_json::json!({ "total": projetos.len(), "projetos": projetos }),
-                )
+                        .collect();
+                    Resposta::ok(
+                        comando,
+                        serde_json::json!({ "total": projetos.len(), "projetos": projetos }),
+                    )
+                }
+                Err(e) => Resposta::erro(comando, e.to_string()),
             }
-            Err(e) => Resposta::erro(comando, e.to_string()),
-        },
+        }
 
         "project.get" => {
             let slug = params.get("slug").and_then(|v| v.as_str()).unwrap_or("");
@@ -489,9 +497,15 @@ mod tests {
     #[test]
     fn resposta_serializa_sem_campos_nulos() {
         let s = serde_json::to_string(&Resposta::ok("x", serde_json::json!({"a":1}))).unwrap();
-        assert!(!s.contains("erro"), "ok nao deve carregar campo de erro: {s}");
+        assert!(
+            !s.contains("erro"),
+            "ok nao deve carregar campo de erro: {s}"
+        );
         let s = serde_json::to_string(&Resposta::pendente("y")).unwrap();
-        assert!(!s.contains("\"dado\""), "pendente nao deve carregar dado: {s}");
+        assert!(
+            !s.contains("\"dado\""),
+            "pendente nao deve carregar dado: {s}"
+        );
     }
 
     #[test]

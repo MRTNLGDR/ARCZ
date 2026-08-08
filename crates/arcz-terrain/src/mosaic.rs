@@ -927,7 +927,13 @@ mod tests_cor_media {
 
     /// Mosaico 8x8 de um tile so, com uma cor por pixel definida pelo caller.
     fn mosaico(pintar: impl Fn(u32, u32) -> [u8; 3]) -> (ImageMosaic, f64, f64) {
-        let range = TileRange { z: 1, x_min: 0, x_max: 0, y_min: 0, y_max: 0 };
+        let range = TileRange {
+            z: 1,
+            x_min: 0,
+            x_max: 0,
+            y_min: 0,
+            y_max: 0,
+        };
         let ts = 8u32;
         let mut rgba = Vec::with_capacity((ts * ts * 4) as usize);
         for y in 0..ts {
@@ -962,8 +968,17 @@ mod tests_cor_media {
         let crua = m.cor_media_crua(lon, lat, 3);
 
         // Sem filtro o verde contamina (G sobe); com filtro sai telha pura.
-        assert!(crua[1] > filtrada[1] + 0.05, "filtro nao mudou nada: crua G {} vs {}", crua[1], filtrada[1]);
-        assert!((filtrada[0] - 180.0 / 255.0).abs() < 0.02, "R contaminado: {}", filtrada[0]);
+        assert!(
+            crua[1] > filtrada[1] + 0.05,
+            "filtro nao mudou nada: crua G {} vs {}",
+            crua[1],
+            filtrada[1]
+        );
+        assert!(
+            (filtrada[0] - 180.0 / 255.0).abs() < 0.02,
+            "R contaminado: {}",
+            filtrada[0]
+        );
     }
 
     #[test]

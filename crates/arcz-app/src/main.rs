@@ -4,13 +4,13 @@
 //! de uma biblioteca ou projeto salvo, monta a cena editavel e exibe no viewport.
 //! Suporta salvar/carregar projetos `.arcz` (formato versionado JSON).
 
+mod agua;
 mod archviz_worker;
 mod cad_worker;
-mod agua;
 mod camera;
 mod cena;
-mod comandos;
 mod cesium_worker;
+mod comandos;
 mod config;
 mod db;
 mod entorno;

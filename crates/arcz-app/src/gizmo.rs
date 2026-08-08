@@ -200,7 +200,8 @@ pub fn aplicar_snapping_placement(
 
     if let Some(angle_step) = config.angle_snap_deg {
         if angle_step > 0.001 {
-            placement.heading_deg = (placement.heading_deg / angle_step as f64).round() * angle_step as f64;
+            placement.heading_deg =
+                (placement.heading_deg / angle_step as f64).round() * angle_step as f64;
         }
     }
 

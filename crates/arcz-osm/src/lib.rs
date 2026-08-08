@@ -43,13 +43,13 @@ pub use entidade::{
     altura_do_edificio, largura_da_via, metros_da_tag, Arvore, ClasseEdificio, ClasseSuperficie,
     ClasseVia, Edificio, Entorno, FonteAltura, PontoGeo, Superficie, Tags, Telhado, Via,
 };
-pub use gltf_saida::exportar_glb;
 pub use especies::{Bioma, Especie, Instancia};
+pub use gltf_saida::exportar_glb;
 pub use malha::{gerar_edificio, MalhaProcedural, Opcoes, Terreno, TerrenoPlano, Vertice};
-pub use procedural::{adensar, gerar_edificacoes, RegrasUrbanas};
 pub use overpass::{
     area_km2, interpretar, montar_consulta, Camadas, ClienteOverpass, Origem, OsmError, ATRIBUICAO,
 };
+pub use procedural::{adensar, gerar_edificacoes, RegrasUrbanas};
 
 /// Registro de proveniencia exigido pelo protocolo de open source do projeto.
 pub const PROVENIENCIA: Proveniencia = Proveniencia {

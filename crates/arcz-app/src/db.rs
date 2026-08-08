@@ -3,9 +3,9 @@
 //! Tabela autoritativa de nós da cena (`scene_nodes`), registro de projeto (`projects`),
 //! catalogo de assets (`assets`) e diario de comandos (`journal_entries`).
 
-use std::path::{Path, PathBuf};
+use crate::cena::{JournalEntry, NodeType, SceneNode};
 use rusqlite::{params, Connection, Result};
-use crate::cena::{SceneNode, NodeType, JournalEntry};
+use std::path::{Path, PathBuf};
 
 pub struct SafeProjectStore {
     db_path: PathBuf,
@@ -169,7 +169,11 @@ impl SafeProjectStore {
             let material_refs = serde_json::from_str(&mat_refs_json).unwrap_or_default();
             let metadata = serde_json::from_str(&metadata_json).unwrap_or_default();
             let confidence = crate::cena::NodeConfidence::from_value(confidence_val);
-            let asset_ref = if asset_ref_str.is_empty() { None } else { Some(asset_ref_str) };
+            let asset_ref = if asset_ref_str.is_empty() {
+                None
+            } else {
+                Some(asset_ref_str)
+            };
 
             Ok(SceneNode {
                 id,
@@ -207,11 +211,10 @@ impl SafeProjectStore {
     /// guardar.
     pub fn proxima_sequencia(&self) -> Result<u64> {
         let conn = self.conectar()?;
-        let maior: Option<u64> = conn.query_row(
-            "SELECT MAX(sequence_id) FROM journal_entries",
-            [],
-            |r| r.get(0),
-        )?;
+        let maior: Option<u64> =
+            conn.query_row("SELECT MAX(sequence_id) FROM journal_entries", [], |r| {
+                r.get(0)
+            })?;
         Ok(maior.unwrap_or(0) + 1)
     }
 
@@ -225,7 +228,12 @@ impl SafeProjectStore {
             tx.execute(
                 "INSERT INTO journal_entries (sequence_id, timestamp, command_name, payload_json)
                  VALUES (?1, ?2, ?3, ?4)",
-                params![entry.sequence_id, entry.timestamp, entry.command_name, payload_str],
+                params![
+                    entry.sequence_id,
+                    entry.timestamp,
+                    entry.command_name,
+                    payload_str
+                ],
             )?;
         }
 
@@ -237,7 +245,9 @@ impl SafeProjectStore {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::cena::{SceneNode, NodeType, NodeConfidence, Transform64, Georeference64, JournalEntry};
+    use crate::cena::{
+        Georeference64, JournalEntry, NodeConfidence, NodeType, SceneNode, Transform64,
+    };
 
     #[test]
     fn salva_e_carrega_cena_sqlite_com_sucesso() {
@@ -290,7 +300,9 @@ mod tests {
         store.registrar_journal(&[entry]).unwrap();
 
         let conn = store.conectar().unwrap();
-        let count: i64 = conn.query_row("SELECT COUNT(*) FROM journal_entries", [], |r| r.get(0)).unwrap();
+        let count: i64 = conn
+            .query_row("SELECT COUNT(*) FROM journal_entries", [], |r| r.get(0))
+            .unwrap();
         assert_eq!(count, 1);
 
         let _ = std::fs::remove_dir_all(&dir);
@@ -330,7 +342,9 @@ mod tests_ciclo_completo {
         // conferir que a posicao voltou igual.
         let (store, dir) = banco("posicao");
         let p = placement();
-        store.salvar_cena(&[SceneNode::do_placement("zenite", &p)]).unwrap();
+        store
+            .salvar_cena(&[SceneNode::do_placement("zenite", &p)])
+            .unwrap();
         drop(store);
 
         let store2 = SafeProjectStore::abrir(dir.join("project.sqlite")).unwrap();
@@ -353,7 +367,9 @@ mod tests_ciclo_completo {
         // f32 nesta latitude erra ~1 m. O ciclo inteiro tem de ser f64.
         let (store, dir) = banco("precisao");
         let p = placement();
-        store.salvar_cena(&[SceneNode::do_placement("z", &p)]).unwrap();
+        store
+            .salvar_cena(&[SceneNode::do_placement("z", &p)])
+            .unwrap();
         let voltou = store.carregar_cena().unwrap()[0].para_placement().unwrap();
         // Igualdade exata, nao tolerancia: qualquer f32 no caminho quebraria.
         assert_eq!(voltou.lat_deg, -27.1544967);
@@ -366,7 +382,9 @@ mod tests_ciclo_completo {
         // `assentar_no_terreno` na volta moveria o modelo para a cota do DEM,
         // desfazendo o ajuste vertical que o usuario fez.
         let (store, dir) = banco("assentar");
-        store.salvar_cena(&[SceneNode::do_placement("z", &placement())]).unwrap();
+        store
+            .salvar_cena(&[SceneNode::do_placement("z", &placement())])
+            .unwrap();
         let voltou = store.carregar_cena().unwrap()[0].para_placement().unwrap();
         assert!(!voltou.assentar_no_terreno);
         let _ = std::fs::remove_dir_all(&dir);

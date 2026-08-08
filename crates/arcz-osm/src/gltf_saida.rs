@@ -160,8 +160,7 @@ pub fn exportar_glb(malhas: &[MalhaProcedural]) -> Vec<u8> {
             r#""nodes":[{}],"meshes":[{}],"materials":[{}],"#,
             r#""accessors":[{}],"bufferViews":[{}],"buffers":[{{"byteLength":{}}}]}}"#
         ),
-        raiz
-            .iter()
+        raiz.iter()
             .map(|n| n.to_string())
             .collect::<Vec<_>>()
             .join(","),
@@ -219,9 +218,7 @@ fn alinhar(bin: &mut Vec<u8>) -> usize {
 }
 
 fn view(offset: usize, length: usize, alvo: u32) -> String {
-    format!(
-        r#"{{"buffer":0,"byteOffset":{offset},"byteLength":{length},"target":{alvo}}}"#
-    )
+    format!(r#"{{"buffer":0,"byteOffset":{offset},"byteLength":{length},"target":{alvo}}}"#)
 }
 
 /// Formata `f32` sem notação científica, que o JSON do glTF aceita mas alguns
@@ -264,9 +261,21 @@ mod tests {
             origem: Origem::Edificio(1),
             cor: [0.8, 0.4, 0.2],
             vertices: vec![
-                Vertice { pos: [10.0, 0.0, 10.0], normal: [0.0, 1.0, 0.0], uv: [0.0, 0.0] },
-                Vertice { pos: [20.0, 0.0, 10.0], normal: [0.0, 1.0, 0.0], uv: [1.0, 0.0] },
-                Vertice { pos: [20.0, 0.0, 20.0], normal: [0.0, 1.0, 0.0], uv: [1.0, 1.0] },
+                Vertice {
+                    pos: [10.0, 0.0, 10.0],
+                    normal: [0.0, 1.0, 0.0],
+                    uv: [0.0, 0.0],
+                },
+                Vertice {
+                    pos: [20.0, 0.0, 10.0],
+                    normal: [0.0, 1.0, 0.0],
+                    uv: [1.0, 0.0],
+                },
+                Vertice {
+                    pos: [20.0, 0.0, 20.0],
+                    normal: [0.0, 1.0, 0.0],
+                    uv: [1.0, 1.0],
+                },
             ],
             indices: vec![0, 1, 2],
         }
@@ -278,7 +287,9 @@ mod tests {
 
     fn json_do_glb(glb: &[u8]) -> String {
         let len = ler_u32(glb, 12) as usize;
-        String::from_utf8_lossy(&glb[20..20 + len]).trim_end().to_string()
+        String::from_utf8_lossy(&glb[20..20 + len])
+            .trim_end()
+            .to_string()
     }
 
     #[test]
@@ -292,7 +303,11 @@ mod tests {
         assert_eq!(ler_u32(&glb, 0), MAGIC, "a constante nao bate com os bytes");
         assert_eq!(ler_u32(&glb, 4), 2, "versao do glTF");
         assert_eq!(ler_u32(&glb, 8) as usize, glb.len(), "tamanho declarado");
-        assert_eq!(ler_u32(&glb, 16), CHUNK_JSON, "primeiro chunk tem de ser JSON");
+        assert_eq!(
+            ler_u32(&glb, 16),
+            CHUNK_JSON,
+            "primeiro chunk tem de ser JSON"
+        );
     }
 
     #[test]

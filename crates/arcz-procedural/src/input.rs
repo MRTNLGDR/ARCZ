@@ -72,9 +72,15 @@ pub struct TerrainGrid {
     #[serde(default = "default_terrain_material")]
     pub material_id: String,
 }
-fn default_true() -> bool { true }
-fn default_density_multiplier() -> f64 { 1.0 }
-fn default_terrain_material() -> String { "terrain.grass".to_owned() }
+fn default_true() -> bool {
+    true
+}
+fn default_density_multiplier() -> f64 {
+    1.0
+}
+fn default_terrain_material() -> String {
+    "terrain.grass".to_owned()
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FlatTerrainFallback {
@@ -86,7 +92,9 @@ pub struct FlatTerrainFallback {
     #[serde(default = "default_terrain_material")]
     pub material_id: String,
 }
-fn default_flat_resolution() -> usize { 2 }
+fn default_flat_resolution() -> usize {
+    2
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ParcelInput {
@@ -99,7 +107,9 @@ pub struct ParcelInput {
     #[serde(default)]
     pub source: SourceEvidence,
 }
-fn default_parcel_material() -> String { "parcel.surface".to_owned() }
+fn default_parcel_material() -> String {
+    "parcel.surface".to_owned()
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RoadInput {
@@ -117,8 +127,12 @@ pub struct RoadInput {
     #[serde(default)]
     pub source: SourceEvidence,
 }
-fn default_road_material() -> String { "road.asphalt".to_owned() }
-fn default_sidewalk_material() -> String { "sidewalk.concrete".to_owned() }
+fn default_road_material() -> String {
+    "road.asphalt".to_owned()
+}
+fn default_sidewalk_material() -> String {
+    "sidewalk.concrete".to_owned()
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct BuildingInput {
@@ -150,13 +164,27 @@ pub struct BuildingInput {
     #[serde(default)]
     pub source: SourceEvidence,
 }
-fn default_floors() -> u32 { 1 }
-fn default_wall_material() -> String { "facade.offwhite".to_owned() }
-fn default_roof_material() -> String { "roof.ceramic".to_owned() }
-fn default_glass_material() -> String { "glass.window".to_owned() }
-fn default_balcony_material() -> String { "balcony.concrete".to_owned() }
-fn default_module_width() -> f64 { 3.0 }
-fn default_balcony_probability() -> f64 { 0.25 }
+fn default_floors() -> u32 {
+    1
+}
+fn default_wall_material() -> String {
+    "facade.offwhite".to_owned()
+}
+fn default_roof_material() -> String {
+    "roof.ceramic".to_owned()
+}
+fn default_glass_material() -> String {
+    "glass.window".to_owned()
+}
+fn default_balcony_material() -> String {
+    "balcony.concrete".to_owned()
+}
+fn default_module_width() -> f64 {
+    3.0
+}
+fn default_balcony_probability() -> f64 {
+    0.25
+}
 
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -177,12 +205,22 @@ pub struct RoofSpec {
     #[serde(default = "default_eave")]
     pub eave_m: f64,
 }
-fn default_roof_kind() -> RoofKind { RoofKind::Gable }
-fn default_roof_pitch() -> f64 { 28.0 }
-fn default_eave() -> f64 { 0.45 }
+fn default_roof_kind() -> RoofKind {
+    RoofKind::Gable
+}
+fn default_roof_pitch() -> f64 {
+    28.0
+}
+fn default_eave() -> f64 {
+    0.45
+}
 impl Default for RoofSpec {
     fn default() -> Self {
-        Self { kind: default_roof_kind(), pitch_deg: default_roof_pitch(), eave_m: default_eave() }
+        Self {
+            kind: default_roof_kind(),
+            pitch_deg: default_roof_pitch(),
+            eave_m: default_eave(),
+        }
     }
 }
 
@@ -215,7 +253,9 @@ pub struct MaterialInput {
     #[serde(default)]
     pub alpha_mode: AlphaMode,
 }
-fn default_roughness() -> f32 { 0.8 }
+fn default_roughness() -> f32 {
+    0.8
+}
 
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
@@ -237,10 +277,18 @@ pub struct EstimatedInfill {
     #[serde(default = "default_infill_height")]
     pub house_height_m: [f64; 2],
 }
-fn default_front_setback() -> f64 { 4.0 }
-fn default_side_setback() -> f64 { 1.5 }
-fn default_coverage() -> f64 { 0.55 }
-fn default_infill_height() -> [f64; 2] { [3.0, 6.2] }
+fn default_front_setback() -> f64 {
+    4.0
+}
+fn default_side_setback() -> f64 {
+    1.5
+}
+fn default_coverage() -> f64 {
+    0.55
+}
+fn default_infill_height() -> [f64; 2] {
+    [3.0, 6.2]
+}
 impl Default for EstimatedInfill {
     fn default() -> Self {
         Self {
@@ -260,7 +308,9 @@ pub struct TilePlanInput {
     #[serde(default = "default_rings")]
     pub rings_m: [f64; 4],
 }
-fn default_rings() -> [f64; 4] { [100.0, 300.0, 800.0, 1600.0] }
+fn default_rings() -> [f64; 4] {
+    [100.0, 300.0, 800.0, 1600.0]
+}
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct SourceEvidence {

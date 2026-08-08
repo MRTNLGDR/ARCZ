@@ -78,7 +78,14 @@ impl MalhaProcedural {
     /// render e (x=leste, y=cima, z=-norte) — uma reflexao, que troca a
     /// orientacao. Em vez de deduzir, mede-se: se a normal geometrica aponta ao
     /// contrario da desejada, trocam-se dois indices.
-    fn emitir(&mut self, a: [f64; 3], b: [f64; 3], c: [f64; 3], normal: [f64; 3], uv: [[f32; 2]; 3]) {
+    fn emitir(
+        &mut self,
+        a: [f64; 3],
+        b: [f64; 3],
+        c: [f64; 3],
+        normal: [f64; 3],
+        uv: [[f32; 2]; 3],
+    ) {
         let ab = [b[0] - a[0], b[1] - a[1], b[2] - a[2]];
         let ac = [c[0] - a[0], c[1] - a[1], c[2] - a[2]];
         let geo = [
@@ -468,7 +475,10 @@ fn faixa(eixo: &[P2], meia: f64) -> Option<Vec<(P2, P2)>> {
     // Remove pontos repetidos, que zeram a direcao e propagam NaN.
     let mut p: Vec<P2> = Vec::with_capacity(eixo.len());
     for q in eixo {
-        if p.last().map(|u: &P2| (u[0] - q[0]).hypot(u[1] - q[1]) > 1e-6).unwrap_or(true) {
+        if p.last()
+            .map(|u: &P2| (u[0] - q[0]).hypot(u[1] - q[1]) > 1e-6)
+            .unwrap_or(true)
+        {
             p.push(*q);
         }
     }
@@ -735,7 +745,13 @@ fn gerar_vegetacao(arvores: &[(P2, Arvore)], terreno: &impl Terreno) -> MalhaPro
                 m.emitir(c0, c1, apice, normal, [[0.0, 0.0], [1.0, 0.0], [0.5, 1.0]]);
                 // Fundo da saia, para a copa nao ser vazada vista de baixo.
                 let centro = para_render(p[0], p[1], z0);
-                m.emitir(c0, centro, c1, [0.0, -1.0, 0.0], [[0.0, 0.0], [0.5, 0.5], [1.0, 0.0]]);
+                m.emitir(
+                    c0,
+                    centro,
+                    c1,
+                    [0.0, -1.0, 0.0],
+                    [[0.0, 0.0], [0.5, 0.5], [1.0, 0.0]],
+                );
             }
         }
     }
@@ -756,9 +772,18 @@ mod tests {
         let (lat, lon) = (-27.1544967, -48.5022653);
         vec![
             PontoGeo { lat, lon },
-            PontoGeo { lat, lon: lon + lado_graus },
-            PontoGeo { lat: lat + lado_graus, lon: lon + lado_graus },
-            PontoGeo { lat: lat + lado_graus, lon },
+            PontoGeo {
+                lat,
+                lon: lon + lado_graus,
+            },
+            PontoGeo {
+                lat: lat + lado_graus,
+                lon: lon + lado_graus,
+            },
+            PontoGeo {
+                lat: lat + lado_graus,
+                lon,
+            },
         ]
     }
 
@@ -879,7 +904,10 @@ mod tests {
         let b = faixa(&eixo, 3.0).unwrap();
         assert_eq!(b.len(), 2);
         for (e, d) in b {
-            assert!(e[0].is_finite() && e[1].is_finite(), "NaN na borda esquerda");
+            assert!(
+                e[0].is_finite() && e[1].is_finite(),
+                "NaN na borda esquerda"
+            );
             assert!(d[0].is_finite() && d[1].is_finite(), "NaN na borda direita");
         }
     }
@@ -1046,7 +1074,11 @@ mod tests {
         assert!(winding_consistente(&m), "copa ou tronco com face invertida");
 
         let (min, max) = m.envolvente();
-        assert!((min[1]).abs() < 0.01, "arvore nao encosta no chao: {}", min[1]);
+        assert!(
+            (min[1]).abs() < 0.01,
+            "arvore nao encosta no chao: {}",
+            min[1]
+        );
         assert!((max[1] - 10.0).abs() < 0.01, "altura da arvore: {}", max[1]);
     }
 
@@ -1079,16 +1111,22 @@ mod tests {
         };
         let malhas = gerar(&entorno, &frame(), &TerrenoPlano(3.0), Opcoes::default());
 
-        assert!(malhas.iter().any(|m| matches!(m.origem, Origem::Edificio(_))));
+        assert!(malhas
+            .iter()
+            .any(|m| matches!(m.origem, Origem::Edificio(_))));
         assert!(malhas.iter().any(|m| matches!(m.origem, Origem::Vias(_))));
-        assert!(malhas.iter().any(|m| matches!(m.origem, Origem::Superficie(_))));
+        assert!(malhas
+            .iter()
+            .any(|m| matches!(m.origem, Origem::Superficie(_))));
         assert!(malhas.iter().any(|m| m.origem == Origem::Vegetacao));
 
         for m in &malhas {
             assert!(!m.indices.is_empty(), "malha vazia: {}", m.nome);
             assert!(winding_consistente(m), "winding invertido em {}", m.nome);
             assert!(
-                m.vertices.iter().all(|v| v.pos.iter().all(|c| c.is_finite())),
+                m.vertices
+                    .iter()
+                    .all(|v| v.pos.iter().all(|c| c.is_finite())),
                 "NaN em {}",
                 m.nome
             );
@@ -1100,7 +1138,10 @@ mod tests {
         // O que separa "casa" de "caixa" na vista aerea. O tipo `Telhado` ja
         // existia e o gerador o ignorava: tudo saia com laje.
         let mut ed = edificio(6.0);
-        ed.telhado = Telhado::DuasAguas { altura_m: 2.0, beiral_m: 0.0 };
+        ed.telhado = Telhado::DuasAguas {
+            altura_m: 2.0,
+            beiral_m: 0.0,
+        };
         let m = gerar_edificio(&ed, &frame(), &TerrenoPlano(0.0)).unwrap();
         let (_, max) = m.envolvente();
         assert!(
@@ -1123,7 +1164,10 @@ mod tests {
     fn o_telhado_de_duas_aguas_tem_winding_consistente() {
         // Agua com face invertida some no culling e deixa o predio aberto.
         let mut ed = edificio(6.0);
-        ed.telhado = Telhado::DuasAguas { altura_m: 2.5, beiral_m: 0.0 };
+        ed.telhado = Telhado::DuasAguas {
+            altura_m: 2.5,
+            beiral_m: 0.0,
+        };
         let m = gerar_edificio(&ed, &frame(), &TerrenoPlano(0.0)).unwrap();
         assert!(winding_consistente(&m), "face invertida no telhado");
     }
@@ -1135,13 +1179,25 @@ mod tests {
         // alto tem de estar no meio em norte-sul.
         let (lat, lon) = (-27.1544967, -48.5022653);
         let mut ed = edificio(5.0);
-        ed.telhado = Telhado::DuasAguas { altura_m: 3.0, beiral_m: 0.0 };
+        ed.telhado = Telhado::DuasAguas {
+            altura_m: 3.0,
+            beiral_m: 0.0,
+        };
         // 4x mais larga em longitude que em latitude.
         ed.contorno = vec![
             PontoGeo { lat, lon },
-            PontoGeo { lat, lon: lon + 0.0008 },
-            PontoGeo { lat: lat + 0.0002, lon: lon + 0.0008 },
-            PontoGeo { lat: lat + 0.0002, lon },
+            PontoGeo {
+                lat,
+                lon: lon + 0.0008,
+            },
+            PontoGeo {
+                lat: lat + 0.0002,
+                lon: lon + 0.0008,
+            },
+            PontoGeo {
+                lat: lat + 0.0002,
+                lon,
+            },
         ];
         let m = gerar_edificio(&ed, &frame(), &TerrenoPlano(0.0)).unwrap();
 
@@ -1167,17 +1223,31 @@ mod tests {
         // Meia-largura zero levaria a divisao por zero e NaN na malha inteira.
         let (lat, lon) = (-27.1544967, -48.5022653);
         let mut ed = edificio(4.0);
-        ed.telhado = Telhado::DuasAguas { altura_m: 2.0, beiral_m: 0.0 };
+        ed.telhado = Telhado::DuasAguas {
+            altura_m: 2.0,
+            beiral_m: 0.0,
+        };
         // Faixa muito fina: profundidade quase nula.
         ed.contorno = vec![
             PontoGeo { lat, lon },
-            PontoGeo { lat, lon: lon + 0.0004 },
-            PontoGeo { lat: lat + 0.0000001, lon: lon + 0.0004 },
-            PontoGeo { lat: lat + 0.0000001, lon },
+            PontoGeo {
+                lat,
+                lon: lon + 0.0004,
+            },
+            PontoGeo {
+                lat: lat + 0.0000001,
+                lon: lon + 0.0004,
+            },
+            PontoGeo {
+                lat: lat + 0.0000001,
+                lon,
+            },
         ];
         if let Some(m) = gerar_edificio(&ed, &frame(), &TerrenoPlano(0.0)) {
             assert!(
-                m.vertices.iter().all(|v| v.pos.iter().all(|c| c.is_finite())),
+                m.vertices
+                    .iter()
+                    .all(|v| v.pos.iter().all(|c| c.is_finite())),
                 "NaN na malha"
             );
         }

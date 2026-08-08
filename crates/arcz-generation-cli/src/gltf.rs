@@ -28,7 +28,9 @@ struct BufferBuilder {
 
 impl BufferBuilder {
     fn align4(&mut self) {
-        while self.bytes.len() % 4 != 0 { self.bytes.push(0); }
+        while self.bytes.len() % 4 != 0 {
+            self.bytes.push(0);
+        }
     }
 
     fn push_view(&mut self, raw: &[u8], target: Option<u32>) -> usize {
@@ -39,14 +41,20 @@ impl BufferBuilder {
         view.insert("buffer".to_owned(), json!(0));
         view.insert("byteOffset".to_owned(), json!(offset));
         view.insert("byteLength".to_owned(), json!(raw.len()));
-        if let Some(target) = target { view.insert("target".to_owned(), json!(target)); }
+        if let Some(target) = target {
+            view.insert("target".to_owned(), json!(target));
+        }
         self.views.push(Value::Object(view));
         self.views.len() - 1
     }
 
     fn push_vec2(&mut self, values: &[[f32; 2]], target: Option<u32>) -> usize {
         let mut raw = Vec::with_capacity(values.len() * 8);
-        for value in values { for component in value { raw.extend_from_slice(&component.to_le_bytes()); } }
+        for value in values {
+            for component in value {
+                raw.extend_from_slice(&component.to_le_bytes());
+            }
+        }
         let view = self.push_view(&raw, target);
         self.accessors.push(json!({
             "bufferView": view, "componentType": COMPONENT_F32,
@@ -82,7 +90,11 @@ impl BufferBuilder {
 
     fn push_vec4(&mut self, values: &[[f32; 4]], target: Option<u32>) -> usize {
         let mut raw = Vec::with_capacity(values.len() * 16);
-        for value in values { for component in value { raw.extend_from_slice(&component.to_le_bytes()); } }
+        for value in values {
+            for component in value {
+                raw.extend_from_slice(&component.to_le_bytes());
+            }
+        }
         let view = self.push_view(&raw, target);
         self.accessors.push(json!({
             "bufferView": view, "componentType": COMPONENT_F32,
@@ -94,7 +106,10 @@ impl BufferBuilder {
     fn push_indices(&mut self, values: &[u32]) -> usize {
         let mut raw = Vec::with_capacity(values.len() * 4);
         let mut maximum = 0_u32;
-        for value in values { raw.extend_from_slice(&value.to_le_bytes()); maximum = maximum.max(*value); }
+        for value in values {
+            raw.extend_from_slice(&value.to_le_bytes());
+            maximum = maximum.max(*value);
+        }
         let view = self.push_view(&raw, Some(ELEMENT_ARRAY_BUFFER));
         self.accessors.push(json!({
             "bufferView": view, "componentType": COMPONENT_U32,
@@ -109,8 +124,12 @@ pub fn write_glb(path: &Path, scene: &SceneOutput) -> Result<()> {
         bail!("cena sem geometria");
     }
     let mut buffer = BufferBuilder::default();
-    let material_index: std::collections::BTreeMap<_, _> = scene.materials.iter().enumerate()
-        .map(|(index, material)| (material.id.as_str(), index)).collect();
+    let material_index: std::collections::BTreeMap<_, _> = scene
+        .materials
+        .iter()
+        .enumerate()
+        .map(|(index, material)| (material.id.as_str(), index))
+        .collect();
     let materials: Vec<Value> = scene.materials.iter().map(material_json).collect();
     let mut meshes = Vec::<Value>::new();
     let mut nodes = Vec::<Value>::new();
@@ -126,7 +145,14 @@ pub fn write_glb(path: &Path, scene: &SceneOutput) -> Result<()> {
     }
 
     for batch in &scene.instance_batches {
-        append_instance_batch(batch, &material_index, &mut buffer, &mut meshes, &mut nodes, &mut scene_nodes)?;
+        append_instance_batch(
+            batch,
+            &material_index,
+            &mut buffer,
+            &mut meshes,
+            &mut nodes,
+            &mut scene_nodes,
+        )?;
     }
 
     buffer.align4();
@@ -136,22 +162,36 @@ pub fn write_glb(path: &Path, scene: &SceneOutput) -> Result<()> {
         "extras":{"coordinateSystem":"ENU_LOCAL","provenance":scene.provenance.clone(),"warnings":scene.warnings.clone()}
     }));
     root.insert("scene".to_owned(), json!(0));
-    root.insert("scenes".to_owned(), json!([{"name":"ARCZ generated scene","nodes":scene_nodes}]));
+    root.insert(
+        "scenes".to_owned(),
+        json!([{"name":"ARCZ generated scene","nodes":scene_nodes}]),
+    );
     root.insert("nodes".to_owned(), Value::Array(nodes));
     root.insert("meshes".to_owned(), Value::Array(meshes));
     root.insert("materials".to_owned(), Value::Array(materials));
-    root.insert("buffers".to_owned(), json!([{"byteLength":buffer.bytes.len()}]));
+    root.insert(
+        "buffers".to_owned(),
+        json!([{"byteLength":buffer.bytes.len()}]),
+    );
     root.insert("bufferViews".to_owned(), Value::Array(buffer.views));
     root.insert("accessors".to_owned(), Value::Array(buffer.accessors));
     if !scene.instance_batches.is_empty() {
-        root.insert("extensionsUsed".to_owned(), json!(["EXT_mesh_gpu_instancing"]));
+        root.insert(
+            "extensionsUsed".to_owned(),
+            json!(["EXT_mesh_gpu_instancing"]),
+        );
     }
     let mut json_bytes = serde_json::to_vec(&Value::Object(root)).context("serializar glTF")?;
-    while json_bytes.len() % 4 != 0 { json_bytes.push(b' '); }
-    while buffer.bytes.len() % 4 != 0 { buffer.bytes.push(0); }
+    while json_bytes.len() % 4 != 0 {
+        json_bytes.push(b' ');
+    }
+    while buffer.bytes.len() % 4 != 0 {
+        buffer.bytes.push(0);
+    }
 
     let total_length = 12_usize
-        .checked_add(8 + json_bytes.len()).and_then(|value| value.checked_add(8 + buffer.bytes.len()))
+        .checked_add(8 + json_bytes.len())
+        .and_then(|value| value.checked_add(8 + buffer.bytes.len()))
         .context("GLB grande demais")?;
     let total_length = u32::try_from(total_length).context("GLB excede limite de 4 GiB")?;
     let parent = path.parent().context("destino GLB sem diretório")?;
@@ -172,14 +212,20 @@ pub fn write_glb(path: &Path, scene: &SceneOutput) -> Result<()> {
     Ok(())
 }
 
-fn primitive_json(primitive: &Primitive, materials: &std::collections::BTreeMap<&str, usize>,
-                  buffer: &mut BufferBuilder) -> Result<Value> {
-    if primitive.positions.is_empty() || primitive.indices.is_empty() { bail!("primitive {} vazia", primitive.name); }
+fn primitive_json(
+    primitive: &Primitive,
+    materials: &std::collections::BTreeMap<&str, usize>,
+    buffer: &mut BufferBuilder,
+) -> Result<Value> {
+    if primitive.positions.is_empty() || primitive.indices.is_empty() {
+        bail!("primitive {} vazia", primitive.name);
+    }
     let position = buffer.push_vec3(&primitive.positions, Some(ARRAY_BUFFER), true);
     let normal = buffer.push_vec3(&primitive.normals, Some(ARRAY_BUFFER), false);
     let uv = buffer.push_vec2(&primitive.uvs, Some(ARRAY_BUFFER));
     let indices = buffer.push_indices(&primitive.indices);
-    let material = materials.get(primitive.material_id.as_str())
+    let material = materials
+        .get(primitive.material_id.as_str())
         .with_context(|| format!("material desconhecido: {}", primitive.material_id))?;
     Ok(json!({
         "attributes":{"POSITION":position,"NORMAL":normal,"TEXCOORD_0":uv},
@@ -187,14 +233,26 @@ fn primitive_json(primitive: &Primitive, materials: &std::collections::BTreeMap<
     }))
 }
 
-fn append_instance_batch(batch: &InstanceBatch, materials: &std::collections::BTreeMap<&str, usize>,
-                         buffer: &mut BufferBuilder, meshes: &mut Vec<Value>, nodes: &mut Vec<Value>,
-                         scene_nodes: &mut Vec<usize>) -> Result<()> {
-    if batch.transforms.is_empty() { bail!("batch {} sem transforms", batch.name); }
-    let primitives: Vec<Value> = batch.primitives.iter()
-        .map(|primitive| primitive_json(primitive, materials, buffer)).collect::<Result<_>>()?;
+fn append_instance_batch(
+    batch: &InstanceBatch,
+    materials: &std::collections::BTreeMap<&str, usize>,
+    buffer: &mut BufferBuilder,
+    meshes: &mut Vec<Value>,
+    nodes: &mut Vec<Value>,
+    scene_nodes: &mut Vec<usize>,
+) -> Result<()> {
+    if batch.transforms.is_empty() {
+        bail!("batch {} sem transforms", batch.name);
+    }
+    let primitives: Vec<Value> = batch
+        .primitives
+        .iter()
+        .map(|primitive| primitive_json(primitive, materials, buffer))
+        .collect::<Result<_>>()?;
     let mesh_index = meshes.len();
-    meshes.push(json!({"name":batch.name.clone(),"primitives":primitives,"extras":batch.extras.clone()}));
+    meshes.push(
+        json!({"name":batch.name.clone(),"primitives":primitives,"extras":batch.extras.clone()}),
+    );
     let translations: Vec<[f32; 3]> = batch.transforms.iter().map(|t| t.translation).collect();
     let rotations: Vec<[f32; 4]> = batch.transforms.iter().map(|t| t.rotation).collect();
     let scales: Vec<[f32; 3]> = batch.transforms.iter().map(|t| t.scale).collect();
@@ -228,6 +286,8 @@ fn material_json(material: &Material) -> Value {
         "doubleSided":material.double_sided,
         "alphaMode":alpha
     });
-    if material.alpha_mode == AlphaMode::Mask { value["alphaCutoff"] = json!(0.5); }
+    if material.alpha_mode == AlphaMode::Mask {
+        value["alphaCutoff"] = json!(0.5);
+    }
     value
 }

@@ -4,7 +4,7 @@
 //! (Albedo, Normal, Roughness, Metallic, Ambient Occlusion).
 //! Instancia elementos na cena como nós autoritativos `SceneNode` com suporte a override de materiais.
 
-use crate::cena::{SceneNode, NodeType, NodeConfidence, Transform64};
+use crate::cena::{NodeConfidence, NodeType, SceneNode, Transform64};
 
 #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
 pub enum ArchvizCategory {
@@ -52,7 +52,10 @@ impl ArchvizWorker {
     }
 
     /// Instancia um bloco ou ativo da biblioteca Archviz como no SceneNode autoritativo.
-    pub fn instanciar_asset(&self, req: InstantiateAssetRequest) -> anyhow::Result<InstantiateAssetResult> {
+    pub fn instanciar_asset(
+        &self,
+        req: InstantiateAssetRequest,
+    ) -> anyhow::Result<InstantiateAssetResult> {
         let node_id = format!("archviz_{}_{}", req.asset_id, std::process::id());
 
         let node_type = match req.category {
@@ -123,7 +126,10 @@ mod tests {
         assert_eq!(result.node.confidence, NodeConfidence::Observed);
         assert_eq!(result.node.confidence.color_code(), "GREEN");
         assert_eq!(result.node.node_type, NodeType::Furniture);
-        assert_eq!(result.node.material_refs, vec!["mat_couro_preto".to_string()]);
+        assert_eq!(
+            result.node.material_refs,
+            vec!["mat_couro_preto".to_string()]
+        );
         assert_eq!(result.materials_applied.len(), 1);
     }
 }

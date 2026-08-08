@@ -45,15 +45,27 @@ impl CesiumWorker {
         }));
 
         for node in nodes {
-            let lat = node.georeference.as_ref().map(|g| g.latitude).unwrap_or(-27.15);
-            let lon = node.georeference.as_ref().map(|g| g.longitude).unwrap_or(-48.50);
-            let height = node.georeference.as_ref().map(|g| g.altitude).unwrap_or(0.0);
+            let lat = node
+                .georeference
+                .as_ref()
+                .map(|g| g.latitude)
+                .unwrap_or(-27.15);
+            let lon = node
+                .georeference
+                .as_ref()
+                .map(|g| g.longitude)
+                .unwrap_or(-48.50);
+            let height = node
+                .georeference
+                .as_ref()
+                .map(|g| g.altitude)
+                .unwrap_or(0.0);
 
             let color_rgba = match node.confidence {
-                NodeConfidence::Observed => [52, 168, 83, 200],      // GREEN
-                NodeConfidence::GisDerived => [66, 133, 244, 200],    // BLUE
-                NodeConfidence::Reconstructed => [251, 188, 4, 200],  // YELLOW
-                NodeConfidence::Inferred => [234, 67, 53, 200],       // RED
+                NodeConfidence::Observed => [52, 168, 83, 200], // GREEN
+                NodeConfidence::GisDerived => [66, 133, 244, 200], // BLUE
+                NodeConfidence::Reconstructed => [251, 188, 4, 200], // YELLOW
+                NodeConfidence::Inferred => [234, 67, 53, 200], // RED
             };
 
             let packet = serde_json::json!({
@@ -113,13 +125,17 @@ impl CesiumWorker {
 mod tests {
     // NodeType so aparece nas fixtures; importar no topo do modulo deixaria
     // o import sem uso no build sem testes.
-    use crate::cena::NodeType;
     use super::*;
+    use crate::cena::NodeType;
 
     #[test]
     fn converte_nos_de_cena_em_czml_valido_com_cores_de_confianca() {
         let worker = CesiumWorker::novo();
-        let mut n1 = SceneNode::novo("n1".to_string(), "Edificio Teste".to_string(), NodeType::Building);
+        let mut n1 = SceneNode::novo(
+            "n1".to_string(),
+            "Edificio Teste".to_string(),
+            NodeType::Building,
+        );
         n1.confidence = NodeConfidence::Observed; // GREEN
 
         let mut n2 = SceneNode::novo("n2".to_string(), "Via GIS".to_string(), NodeType::Road);

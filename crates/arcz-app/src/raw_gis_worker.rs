@@ -3,8 +3,8 @@
 //! Processa tiles de satélite WMTS/XYZ, superfícies de terreno DEM e dados vetoriais de camada 0
 //! como nós autoritativos `SceneNode` com nível de confiança `NodeConfidence::GisDerived` (BLUE badge).
 
+use crate::cena::{Georeference64, NodeConfidence, NodeType, SceneNode};
 use std::path::{Path, PathBuf};
-use crate::cena::{SceneNode, NodeType, NodeConfidence, Georeference64};
 
 #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
 pub enum GisTileKind {
@@ -52,14 +52,21 @@ impl RawGisWorker {
         let n = 2.0f64.powi(zoom as i32);
         let x = ((lon + 180.0) / 360.0 * n).floor() as u32;
         let lat_rad = lat.to_radians();
-        let y = ((1.0 - (lat_rad.tan() + (1.0 / lat_rad.cos())).ln() / std::f64::consts::PI) / 2.0 * n).floor() as u32;
+        let y = ((1.0 - (lat_rad.tan() + (1.0 / lat_rad.cos())).ln() / std::f64::consts::PI) / 2.0
+            * n)
+            .floor() as u32;
         (x, y)
     }
 
     /// Ingesta tiles GIS da camada 0 e registra nós de terreno no Scene Graph.
-    pub fn processar_raw_gis(&self, req: IngestRawGisRequest) -> anyhow::Result<IngestRawGisResult> {
-        let (min_x, max_y) = Self::latlon_para_tile(req.bbox_latlon[0], req.bbox_latlon[1], req.zoom);
-        let (max_x, min_y) = Self::latlon_para_tile(req.bbox_latlon[2], req.bbox_latlon[3], req.zoom);
+    pub fn processar_raw_gis(
+        &self,
+        req: IngestRawGisRequest,
+    ) -> anyhow::Result<IngestRawGisResult> {
+        let (min_x, max_y) =
+            Self::latlon_para_tile(req.bbox_latlon[0], req.bbox_latlon[1], req.zoom);
+        let (max_x, min_y) =
+            Self::latlon_para_tile(req.bbox_latlon[2], req.bbox_latlon[3], req.zoom);
 
         let mut tiles = Vec::new();
         let mut nodes = Vec::new();
@@ -86,7 +93,11 @@ impl RawGisWorker {
                     GisTileKind::OsmPbf => (NodeType::Building, "GIS/OsmLayer0"),
                 };
 
-                let mut node = SceneNode::novo(node_id, format!("Tile L0 z{}/{}/{}", req.zoom, x, y), node_type);
+                let mut node = SceneNode::novo(
+                    node_id,
+                    format!("Tile L0 z{}/{}/{}", req.zoom, x, y),
+                    node_type,
+                );
                 node.confidence = NodeConfidence::GisDerived; // BLUE badge (fonte pública GIS)
                 node.layer = layer_name.to_string();
                 node.source = format!("RawGis/{:?}", req.tile_kind);
@@ -110,7 +121,11 @@ impl RawGisWorker {
             }
         }
 
-        let cache_path = self.cache_dir.join(format!("l0_z{}", req.zoom)).to_string_lossy().to_string();
+        let cache_path = self
+            .cache_dir
+            .join(format!("l0_z{}", req.zoom))
+            .to_string_lossy()
+            .to_string();
 
         Ok(IngestRawGisResult {
             nodes,

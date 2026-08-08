@@ -74,28 +74,49 @@ fn parse_args() -> Args {
         match argv[i].as_str() {
             "--lat" => {
                 i += 1;
-                lat = Some(argv.get(i).unwrap_or_else(|| ajuda()).parse().unwrap_or_else(|_| ajuda()));
+                lat = Some(
+                    argv.get(i)
+                        .unwrap_or_else(|| ajuda())
+                        .parse()
+                        .unwrap_or_else(|_| ajuda()),
+                );
             }
             "--lon" => {
                 i += 1;
-                lon = Some(argv.get(i).unwrap_or_else(|| ajuda()).parse().unwrap_or_else(|_| ajuda()));
+                lon = Some(
+                    argv.get(i)
+                        .unwrap_or_else(|| ajuda())
+                        .parse()
+                        .unwrap_or_else(|_| ajuda()),
+                );
             }
             "--lado" => {
                 i += 1;
-                lado = Some(argv.get(i).unwrap_or_else(|| ajuda()).parse().unwrap_or_else(|_| ajuda()));
+                lado = Some(
+                    argv.get(i)
+                        .unwrap_or_else(|| ajuda())
+                        .parse()
+                        .unwrap_or_else(|_| ajuda()),
+                );
             }
             "--adensar" => adensar = true,
             "--saida" => {
                 i += 1;
-                saida = Some(PathBuf::from(argv.get(i).unwrap_or_else(|| ajuda()).as_str()));
+                saida = Some(PathBuf::from(
+                    argv.get(i).unwrap_or_else(|| ajuda()).as_str(),
+                ));
             }
             "--cache-dem" => {
                 i += 1;
-                cache_dem = Some(PathBuf::from(argv.get(i).unwrap_or_else(|| ajuda()).as_str()));
+                cache_dem = Some(PathBuf::from(
+                    argv.get(i).unwrap_or_else(|| ajuda()).as_str(),
+                ));
             }
             "--cache-overpass" => {
                 i += 1;
-                cache_overpass = Some(PathBuf::from(argv.get(i).unwrap_or_else(|| ajuda()).as_str()));
+                cache_overpass = Some(PathBuf::from(
+                    argv.get(i).unwrap_or_else(|| ajuda()).as_str(),
+                ));
             }
             "-h" | "--help" => ajuda(),
             outro => {
@@ -151,7 +172,9 @@ impl Terreno for TerrenoDoMosaico<'_> {
 
 async fn carregar_dem(cache_dir: &std::path::Path, bbox: &GeoBBox) -> anyhow::Result<HeightMosaic> {
     let cache = TileCache::new(cache_dir)?;
-    let mosaico = arcz_terrain::mosaic::fetch_height_mosaic(&cache, DemSource::PADRAO, bbox, ZOOM_DEM).await?;
+    let mosaico =
+        arcz_terrain::mosaic::fetch_height_mosaic(&cache, DemSource::PADRAO, bbox, ZOOM_DEM)
+            .await?;
     Ok(mosaico)
 }
 
@@ -164,7 +187,11 @@ async fn executar() -> anyhow::Result<()> {
 
     log::info!(
         "bbox {:.5},{:.5} .. {:.5},{:.5}  (lado {} m)",
-        bbox.west, bbox.south, bbox.east, bbox.north, args.lado
+        bbox.west,
+        bbox.south,
+        bbox.east,
+        bbox.north,
+        args.lado
     );
 
     // Aponta para um diretorio persistente (nao um tempdir) para o cache
@@ -216,7 +243,10 @@ async fn executar() -> anyhow::Result<()> {
 
     let malhas = match &dem {
         Some(mosaico) => {
-            let terreno = TerrenoDoMosaico { mosaico, frame: &frame };
+            let terreno = TerrenoDoMosaico {
+                mosaico,
+                frame: &frame,
+            };
             malha::gerar(&entorno, &frame, &terreno, Opcoes::default())
         }
         None => malha::gerar(&entorno, &frame, &TerrenoPlano(0.0), Opcoes::default()),

@@ -151,10 +151,34 @@ impl Default for ProceduralTakePolicy {
         Self {
             camera_idle_ms_before_full_quality: 350,
             bands: vec![
-                TakeBand { id: "hero".to_string(), radius_m: 150.0, tree_lod: 0, building_lod: 3, terrain_quality: "maximum".to_string() },
-                TakeBand { id: "near".to_string(), radius_m: 500.0, tree_lod: 1, building_lod: 2, terrain_quality: "high".to_string() },
-                TakeBand { id: "mid".to_string(), radius_m: 2000.0, tree_lod: 2, building_lod: 1, terrain_quality: "medium".to_string() },
-                TakeBand { id: "far".to_string(), radius_m: 10000.0, tree_lod: 3, building_lod: 0, terrain_quality: "low".to_string() },
+                TakeBand {
+                    id: "hero".to_string(),
+                    radius_m: 150.0,
+                    tree_lod: 0,
+                    building_lod: 3,
+                    terrain_quality: "maximum".to_string(),
+                },
+                TakeBand {
+                    id: "near".to_string(),
+                    radius_m: 500.0,
+                    tree_lod: 1,
+                    building_lod: 2,
+                    terrain_quality: "high".to_string(),
+                },
+                TakeBand {
+                    id: "mid".to_string(),
+                    radius_m: 2000.0,
+                    tree_lod: 2,
+                    building_lod: 1,
+                    terrain_quality: "medium".to_string(),
+                },
+                TakeBand {
+                    id: "far".to_string(),
+                    radius_m: 10000.0,
+                    tree_lod: 3,
+                    building_lod: 0,
+                    terrain_quality: "low".to_string(),
+                },
             ],
         }
     }
@@ -190,18 +214,52 @@ impl ArczEarthEngine {
             project_id: Some("proj_default".to_string()),
             world: WorldConfig {
                 ellipsoid: "WGS84".to_string(),
-                origin: WorldOrigin { longitude: -48.50, latitude: -27.15, height: 0.0 },
+                origin: WorldOrigin {
+                    longitude: -48.50,
+                    latitude: -27.15,
+                    height: 0.0,
+                },
                 local_frame: "ENU".to_string(),
             },
             camera: CameraConfig {
-                position: CameraPosition { longitude: -48.50, latitude: -27.15, height: 1500.0 },
-                orientation: CameraOrientation { heading: 0.0, pitch: -45.0, roll: 0.0 },
-                lens: CameraLens { fov_degrees: 60.0, aspect_ratio: 1.777, focal_length_mm: Some(35.0) },
+                position: CameraPosition {
+                    longitude: -48.50,
+                    latitude: -27.15,
+                    height: 1500.0,
+                },
+                orientation: CameraOrientation {
+                    heading: 0.0,
+                    pitch: -45.0,
+                    roll: 0.0,
+                },
+                lens: CameraLens {
+                    fov_degrees: 60.0,
+                    aspect_ratio: 1.777,
+                    focal_length_mm: Some(35.0),
+                },
             },
             layers: vec![
-                LayerConfig { id: "layer_terrain".to_string(), r#type: "terrain".to_string(), visible: true, opacity: 1.0, uri: Some("cache/gis_offline/dem".to_string()) },
-                LayerConfig { id: "layer_imagery".to_string(), r#type: "imagery".to_string(), visible: true, opacity: 1.0, uri: Some("cache/gis_offline/osm".to_string()) },
-                LayerConfig { id: "layer_buildings".to_string(), r#type: "3d_tiles".to_string(), visible: true, opacity: 1.0, uri: Some("cesium/tileset.json".to_string()) },
+                LayerConfig {
+                    id: "layer_terrain".to_string(),
+                    r#type: "terrain".to_string(),
+                    visible: true,
+                    opacity: 1.0,
+                    uri: Some("cache/gis_offline/dem".to_string()),
+                },
+                LayerConfig {
+                    id: "layer_imagery".to_string(),
+                    r#type: "imagery".to_string(),
+                    visible: true,
+                    opacity: 1.0,
+                    uri: Some("cache/gis_offline/osm".to_string()),
+                },
+                LayerConfig {
+                    id: "layer_buildings".to_string(),
+                    r#type: "3d_tiles".to_string(),
+                    visible: true,
+                    opacity: 1.0,
+                    uri: Some("cesium/tileset.json".to_string()),
+                },
             ],
             sources: vec![],
             procedural: serde_json::json!({ "enabled": true, "world_seed": "arcz_master_seed_2026" }),
@@ -246,7 +304,11 @@ mod tests {
     fn calcula_politica_de_take_conforme_altitude() {
         let temp = std::env::temp_dir().join("arcz_earth_take_test");
         let engine = ArczEarthEngine::novo(&temp);
-        let pos = CameraPosition { longitude: -48.50, latitude: -27.15, height: 6000.0 };
+        let pos = CameraPosition {
+            longitude: -48.50,
+            latitude: -27.15,
+            height: 6000.0,
+        };
 
         let bands = engine.renderizar_take(&pos);
         assert_eq!(bands.len(), 4);

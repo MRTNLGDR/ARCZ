@@ -3,8 +3,8 @@
 //! Converte camadas, polilinhas, blocos e primitivas CAD em nós autoritativos `SceneNode`
 //! com nível de confiança `NodeConfidence::Reconstructed` (YELLOW badge) ou `GisDerived` (BLUE badge).
 
+use crate::cena::{Georeference64, NodeConfidence, NodeType, SceneNode};
 use std::path::Path;
-use crate::cena::{SceneNode, NodeType, NodeConfidence, Georeference64};
 
 #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
 pub enum CadFormat {
@@ -46,17 +46,40 @@ impl CadWorker {
     /// Processa um arquivo CAD vetorial e converte as camadas em nos SceneNode autoritativos.
     pub fn processar_cad(&self, req: IngestCadRequest) -> anyhow::Result<IngestCadResult> {
         let path = Path::new(&req.file_path);
-        let stem = path.file_stem().and_then(|s| s.to_str()).unwrap_or("projeto_cad");
+        let stem = path
+            .file_stem()
+            .and_then(|s| s.to_str())
+            .unwrap_or("projeto_cad");
 
         let mut nodes = Vec::new();
         let mut layers = Vec::new();
 
         // Camadas típicas de um projeto CAD de arquitetura/urbanismo
         let camadas_cad: Vec<(&str, [u8; 3], NodeType, NodeConfidence)> = vec![
-            ("PAREDES", [255, 255, 255], NodeType::Building, NodeConfidence::Reconstructed),
-            ("ALINHAMENTO", [255, 255, 0], NodeType::Parcel, NodeConfidence::Reconstructed),
-            ("VIAS_PUBLICAS", [128, 128, 128], NodeType::Road, NodeConfidence::GisDerived),
-            ("ESQUADRIAS", [0, 255, 255], NodeType::CadObject, NodeConfidence::Reconstructed),
+            (
+                "PAREDES",
+                [255, 255, 255],
+                NodeType::Building,
+                NodeConfidence::Reconstructed,
+            ),
+            (
+                "ALINHAMENTO",
+                [255, 255, 0],
+                NodeType::Parcel,
+                NodeConfidence::Reconstructed,
+            ),
+            (
+                "VIAS_PUBLICAS",
+                [128, 128, 128],
+                NodeType::Road,
+                NodeConfidence::GisDerived,
+            ),
+            (
+                "ESQUADRIAS",
+                [0, 255, 255],
+                NodeType::CadObject,
+                NodeConfidence::Reconstructed,
+            ),
         ];
 
         let mut total_entities = 0;
@@ -66,7 +89,8 @@ impl CadWorker {
             let entity_count = 12 + idx * 8;
             total_entities += entity_count;
 
-            let mut node = SceneNode::novo(node_id, format!("CAD Layer: {}", nome_camada), *node_type);
+            let mut node =
+                SceneNode::novo(node_id, format!("CAD Layer: {}", nome_camada), *node_type);
             node.confidence = *confidence; // YELLOW para projeto executivo / BLUE para entorno vetorial
             node.layer = format!("CAD/{}", nome_camada);
             node.source = format!("CAD/{:?}", req.format);
