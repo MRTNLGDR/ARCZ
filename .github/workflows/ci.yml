@@ -68,14 +68,14 @@ jobs:
           rustup toolchain install stable --profile minimal --component rustfmt --component clippy
           rustc --version
           cargo --version
-      - name: Format
-        run: cargo fmt --all -- --check
       - name: Check workspace
         run: cargo check --workspace --all-targets
       - name: Test workspace
         run: cargo test --workspace --all-targets
       - name: Clippy
         run: cargo clippy --workspace --all-targets -- -D warnings
+      - name: Format
+        run: cargo fmt --all -- --check
 
   integrity-report:
     name: Handoff integrity report
