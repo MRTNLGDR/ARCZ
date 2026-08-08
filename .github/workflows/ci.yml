@@ -16,9 +16,9 @@ concurrency:
 
 jobs:
   source-gates:
-    name: Python + JS + contracts
+    name: Python + JS + contracts + runtime smoke
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -54,6 +54,37 @@ jobs:
         run: python tools/build_aedifex_conversion_matrix.py
       - name: Upstream lock dry-run
         run: python tools/materialize_upstreams.py --dry-run
+      - name: Local runtime smoke
+        shell: bash
+        run: |
+          set -euo pipefail
+          python servidor.py 8765 > /tmp/arcz-server.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          ready=0
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8765/api/v2/health > /tmp/arcz-health.json; then
+              ready=1
+              break
+            fi
+            sleep 0.5
+          done
+          if [ "$ready" -ne 1 ]; then
+            cat /tmp/arcz-server.log
+            exit 1
+          fi
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          health=json.loads(Path('/tmp/arcz-health.json').read_text())
+          assert health['ok'] is True
+          assert health['api'] == '2'
+          assert health['network_mode'] == 'offline_strict'
+          required={'terrain.generate','roads.generate','buildings.generate','houses.generate','vegetation.generate','tiles.generate','materials.generate','sheets.compose','render.photoreal'}
+          assert required.issubset(set(health['job_kinds']))
+          PY
+          curl -fsS http://127.0.0.1:8765/ > /tmp/arcz-index.html
+          grep -q 'ARCZ Earth' /tmp/arcz-index.html
 
   rust-workspace:
     name: Rust 1.97.1 workspace
@@ -85,6 +116,13 @@ jobs:
           rustup toolchain install 1.97.1 --profile minimal --component rustfmt --component clippy --target wasm32-unknown-unknown
           rustc --version
           cargo --version
+      - name: Normalize Rust sources
+        run: cargo fmt --all
+      - uses: actions/upload-artifact@v4
+        with:
+          name: arcz-rustfmt-source
+          path: crates/**/*.rs
+          if-no-files-found: error
       - name: Resolve dependency lock
         run: cargo generate-lockfile
       - uses: actions/upload-artifact@v4
@@ -98,8 +136,8 @@ jobs:
         run: cargo test --locked --workspace --all-targets
       - name: Clippy
         run: cargo clippy --locked --workspace --all-targets -- -D warnings
-      - name: Format
-        run: cargo fmt --all -- --check
+      - name: Require committed rustfmt state
+        run: git diff --exit-code -- '*.rs'
 
   integrity-report:
     name: Handoff integrity report
