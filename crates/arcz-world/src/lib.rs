@@ -1,5 +1,7 @@
 //! Planet-to-object world authority contracts for ARCZ.
 
+pub mod pipeline;
+
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeSet;
 use thiserror::Error;
