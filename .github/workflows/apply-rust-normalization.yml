@@ -1,0 +1,59 @@
+name: ARCZ Apply Rust Normalization
+
+on:
+  workflow_run:
+    workflows: ['ARCZ Rust Core Fast Gate']
+    types: [completed]
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: arcz-apply-rust-normalization
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    if: >-
+      github.event.workflow_run.head_branch == 'agent/arcz-100-done' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/arcz-100-done
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          name: arcz-fast-rust-state
+          path: /tmp/arcz-rust-state
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          run-id: ${{ github.event.workflow_run.id }}
+      - name: Apply only audited Rust source and lockfile
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f /tmp/arcz-rust-state/Cargo.lock
+          test -d /tmp/arcz-rust-state/crates
+          find /tmp/arcz-rust-state -type f ! -name '*.rs' ! -name 'Cargo.lock' -print -quit | grep -q . && {
+            echo 'unexpected artifact file'; exit 1;
+          } || true
+          cp /tmp/arcz-rust-state/Cargo.lock Cargo.lock
+          cp -a /tmp/arcz-rust-state/crates/. crates/
+          git diff --check
+      - name: Commit normalization
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet; then
+            echo 'Nothing to normalize'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add Cargo.lock crates
+          git commit -m 'style: apply verified rustfmt and dependency lock'
+          git push origin HEAD:agent/arcz-100-done
