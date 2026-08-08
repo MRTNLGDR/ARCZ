@@ -1,0 +1,42 @@
+name: ARCZ Rustfmt Autofix
+
+on:
+  push:
+    branches: ['agent/arcz-100-done']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: arcz-rustfmt-autofix
+  cancel-in-progress: true
+
+jobs:
+  format:
+    if: ${{ !contains(github.event.head_commit.message, '[rustfmt]') }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      RUSTUP_TOOLCHAIN: stable
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/arcz-100-done
+      - name: Install rustfmt
+        run: rustup toolchain install stable --profile minimal --component rustfmt
+      - name: Format full workspace
+        run: cargo fmt --all
+      - name: Commit formatter result
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet; then
+            echo 'rustfmt produced no changes'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- '*.rs'
+          git commit -m 'style: apply cargo fmt [rustfmt]'
+          git push origin HEAD:agent/arcz-100-done
