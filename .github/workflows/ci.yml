@@ -56,15 +56,16 @@ jobs:
         run: python tools/materialize_upstreams.py --dry-run
 
   rust-workspace:
-    name: Rust 1.82 workspace
+    name: Rust stable workspace
     runs-on: ubuntu-24.04
     timeout-minutes: 45
+    env:
+      RUSTUP_TOOLCHAIN: stable
     steps:
       - uses: actions/checkout@v4
-      - name: Install pinned Rust toolchain
+      - name: Install stable Rust toolchain
         run: |
-          rustup toolchain install 1.82.0 --profile minimal --component rustfmt --component clippy
-          rustup default 1.82.0
+          rustup toolchain install stable --profile minimal --component rustfmt --component clippy
           rustc --version
           cargo --version
       - name: Format
@@ -82,6 +83,8 @@ jobs:
     timeout-minutes: 30
     needs: [source-gates, rust-workspace]
     if: always()
+    env:
+      RUSTUP_TOOLCHAIN: stable
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -94,10 +97,8 @@ jobs:
         run: |
           python -m pip install -r requirements-dev.txt
           npm install --global typescript@5
-      - name: Install pinned Rust toolchain
-        run: |
-          rustup toolchain install 1.82.0 --profile minimal --component rustfmt
-          rustup default 1.82.0
+      - name: Install stable Rust toolchain
+        run: rustup toolchain install stable --profile minimal --component rustfmt
       - name: Generate honest handoff report
         continue-on-error: true
         run: python tools/verify_handoff.py
