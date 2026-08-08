@@ -35,7 +35,7 @@ pub fn scatter(request: &ScatterRequest) -> Result<Vec<Instance>, VegetationErro
     let mut rng=Seed(request.seed).rng();let mut points:Vec<Point2>=Vec::new();let mut result=Vec::new();let weights:Vec<_>=request.variants.iter().map(|v|(v,v.weight)).collect();
     let max_attempts=request.target_count.saturating_mul(request.attempts_per_instance);
     for _ in 0..max_attempts {if result.len()>=request.target_count{break;}let p=[rng.range_f64(min_x,max_x),rng.range_f64(min_y,max_y)];if !point_in_polygon(p,&request.polygon){continue;}if request.exclusions.iter().any(|e|distance(p,e.center)<e.radius_m){continue;}if points.iter().any(|q|distance(p,*q)<request.minimum_distance_m){continue;}
-        let variant=rng.choose_weighted(&weights).copied();let (id,scale)=match variant{Some(v)=>(v.id.clone(),rng.range_f64(v.scale_min,v.scale_max)),None=>("generic".to_owned(),rng.range_f64(.85,1.15))};
+        let variant=rng.choose_weighted(&weights).copied();let (id,scale)=match variant{Some(v)=>(v.id.clone(),rng.range_f64(v.scale_min,v.scale_max)),None=>("generic".to_owned(),rng.range_f64(0.85,1.15))};
         points.push(p);result.push(Instance{position:p,rotation_rad:rng.range_f64(0.,std::f64::consts::TAU),scale,variant:id,reason:"inside_mask_and_outside_exclusions".to_owned()});}
     Ok(result)
 }
