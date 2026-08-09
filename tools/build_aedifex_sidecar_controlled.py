@@ -5,8 +5,9 @@ from __future__ import annotations
 
 Next.js standalone generated from this Bun workspace may omit a small number of
 runtime packages even though they are present in the frozen Bun store. We only
-materialize packages that a real standalone smoke has proven missing. We do NOT
-copy every Next dependency, and we never install/fetch anything at smoke time.
+materialize packages that are either declared runtime dependencies of the ARCZ
+host or were proven missing by a real standalone smoke. We never install/fetch
+anything at smoke time.
 
 The controlled fork lock has already been verified by a second frozen/offline
 install. A missing or ambiguous package in that store is fatal. The final vendor
@@ -26,9 +27,18 @@ sys.path.insert(0, str(ROOT))
 import tools.build_aedifex_sidecar as builder
 
 _ORIGINAL_COPYTREE = shutil.copytree
-# Each entry was observed missing by an actual Node standalone smoke after the
-# preceding packaging layer had already passed. Additions require the same proof.
-_REQUIRED_RUNTIME_PACKAGES = ("@swc/helpers", "@next/env")
+# @swc/helpers and @next/env were observed missing by actual standalone smokes.
+# react/react-dom are explicit dependencies of the ARCZ floorplanner host and
+# Next's production server imports them before serving /api/health. scheduler is
+# a runtime dependency of react-dom. Every package is resolved only from the
+# already-frozen Bun store; nothing is fetched by this packager.
+_REQUIRED_RUNTIME_PACKAGES = (
+    "@swc/helpers",
+    "@next/env",
+    "react",
+    "react-dom",
+    "scheduler",
+)
 
 
 def _inside(path: Path, root: Path) -> bool:
@@ -68,9 +78,12 @@ def _fallback_targets(link: Path, standalone: Path) -> list[Path]:
 
 def _declared_runtime_requirement(standalone: Path, package_name: str) -> str | None:
     manifests = [
+        builder.FORK / "apps/arcz-floorplanner/package.json",
         standalone / "node_modules/next/package.json",
         builder.FORK / "node_modules/next/package.json",
         builder.FORK / "apps/arcz-floorplanner/node_modules/next/package.json",
+        builder.FORK / "node_modules/react-dom/package.json",
+        builder.FORK / "apps/arcz-floorplanner/node_modules/react-dom/package.json",
     ]
     for manifest_path in manifests:
         package = _read_package(manifest_path)
@@ -121,7 +134,7 @@ def _exact_requirement_version(requirement: str | None) -> str | None:
     if not requirement:
         return None
     match = re.fullmatch(
-        r"(?:npm:)?(\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?)",
+        r"(?:npm:)?(?:[~^])?(\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?)",
         requirement.strip(),
     )
     return match.group(1) if match else None
