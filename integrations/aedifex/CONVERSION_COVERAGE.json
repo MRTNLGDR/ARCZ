@@ -525,6 +525,76 @@
         "rationale": "Explicit local bridge configuration."
       },
       {
+        "pattern": "AEDIFEX_ALLOWED_ASSET_ORIGINS",
+        "status": "SECURITY_ALLOWLIST_NARROWING",
+        "owner": "network-security",
+        "integration": "Optional origin allowlist only narrows asset URL acceptance; ARCZ offline_strict injects no remote asset origins.",
+        "rationale": "Used by Aedifex asset validation and SSRF-safe fetch as an additional restriction, not as an egress provider."
+      },
+      {
+        "pattern": "AEDIFEX_DEV_DIAGNOSTICS",
+        "status": "DEV_ONLY_DIAGNOSTICS",
+        "owner": "floorplanner-shell",
+        "integration": "Original editor development diagnostics are not enabled in the shipped ARCZ host.",
+        "rationale": "Upstream only reads this when NODE_ENV is development."
+      },
+      {
+        "pattern": "AEDIFEX_MCP_HTTP_LOOPBACK_ANY_ORIGIN",
+        "status": "UNUSED_HTTP_TRANSPORT_SECURITY_CONTROL",
+        "owner": "arcz-global-chat",
+        "integration": "ARCZ uses the in-memory MCP bridge; the optional upstream HTTP transport is not exposed by the shipped floorplanner sidecar.",
+        "rationale": "If upstream HTTP transport is ever enabled it remains loopback/auth guarded and requires a separate release-gate change."
+      },
+      {
+        "pattern": "AEDIFEX_MCP_HTTP_ORIGINS",
+        "status": "UNUSED_HTTP_TRANSPORT_SECURITY_CONTROL",
+        "owner": "arcz-global-chat",
+        "integration": "ARCZ uses the in-memory MCP bridge; this CORS allowlist is not injected into the shipped sidecar.",
+        "rationale": "Exact upstream HTTP security control, not a remote provider credential."
+      },
+      {
+        "pattern": "AEDIFEX_MCP_HTTP_TOKEN",
+        "status": "UNUSED_HTTP_TRANSPORT_SECURITY_CONTROL",
+        "owner": "arcz-global-chat",
+        "integration": "ARCZ uses the in-memory MCP bridge; no MCP HTTP token is persisted or injected by the floorplanner host.",
+        "rationale": "Upstream requires this token before binding its optional HTTP transport to a non-loopback interface."
+      },
+      {
+        "pattern": "AEDIFEX_SCENE_API_ORIGINS",
+        "status": "UPSTREAM_APP_SECURITY_CONTROL_NOT_SHIPPED",
+        "owner": "floorplanner-shell",
+        "integration": "The original Next editor API is not the ARCZ runtime; ARCZ overlay routes own their own loopback policy.",
+        "rationale": "Exact CORS control for an upstream app route excluded from the shipped host."
+      },
+      {
+        "pattern": "AEDIFEX_SCENE_API_RATE_LIMIT",
+        "status": "UPSTREAM_APP_SECURITY_CONTROL_NOT_SHIPPED",
+        "owner": "floorplanner-shell",
+        "integration": "The original Next editor API is not the ARCZ runtime; ARCZ overlay routes own rate limiting.",
+        "rationale": "Exact rate-limit control for an upstream app route excluded from the shipped host."
+      },
+      {
+        "pattern": "AEDIFEX_SCENE_API_TOKEN",
+        "status": "UPSTREAM_APP_SECURITY_CONTROL_NOT_SHIPPED",
+        "owner": "floorplanner-shell",
+        "integration": "The original Next editor API is not the ARCZ runtime; this token is never persisted or injected by ARCZ.",
+        "rationale": "Exact auth control for an upstream app route excluded from the shipped host."
+      },
+      {
+        "pattern": "PORT",
+        "status": "STANDARD_LOCAL_PORT",
+        "owner": "floorplanner-runtime",
+        "integration": "Local development/server port only; ARCZ runtime endpoints remain explicitly loopback-scoped.",
+        "rationale": "Port selection alone grants no egress or provider authority."
+      },
+      {
+        "pattern": "SKIP_ENV_VALIDATION",
+        "status": "BUILD_ONLY_ENV_VALIDATION_SWITCH",
+        "owner": "toolchain",
+        "integration": "Retained only for the upstream Next build environment and not injected into ARCZ runtime state.",
+        "rationale": "Build-time validation switch, not a credential or network endpoint."
+      },
+      {
         "pattern": "*",
         "status": "REVIEW_REQUIRED",
         "owner": "security-review",
@@ -567,6 +637,69 @@
         "owner": "format-standards",
         "integration": "Schema/namespace reference, not implicit runtime egress.",
         "rationale": "Standards namespace."
+      },
+      {
+        "pattern": "http://${requestHost*",
+        "status": "SAME_ORIGIN_TEMPLATE",
+        "owner": "network-security",
+        "integration": "Dynamic request-host comparison used by the upstream CORS guard; it is not a fixed remote endpoint.",
+        "rationale": "Same-origin validation string."
+      },
+      {
+        "pattern": "https://${requestHost*",
+        "status": "SAME_ORIGIN_TEMPLATE",
+        "owner": "network-security",
+        "integration": "Dynamic request-host comparison used by the upstream CORS guard; it is not a fixed remote endpoint.",
+        "rationale": "Same-origin validation string."
+      },
+      {
+        "pattern": "http://localhost*",
+        "status": "LOOPBACK_ONLY_REFERENCE",
+        "owner": "network-security",
+        "integration": "Loopback URL used for local parsing, local APIs or tests; ARCZ runtime policy still mediates network calls.",
+        "rationale": "Cannot identify a public provider or external dependency."
+      },
+      {
+        "pattern": "http://127.*",
+        "status": "LOOPBACK_ONLY_REFERENCE",
+        "owner": "network-security",
+        "integration": "IPv4 loopback URL used by local transports/tests; no public egress authority.",
+        "rationale": "Loopback address class."
+      },
+      {
+        "pattern": "http://[[]::1]*",
+        "status": "LOOPBACK_ONLY_REFERENCE",
+        "owner": "network-security",
+        "integration": "IPv6 loopback URL used by local transports/tests; no public egress authority.",
+        "rationale": "Loopback address class."
+      },
+      {
+        "pattern": "http://10.*",
+        "status": "PRIVATE_NETWORK_SECURITY_REFERENCE",
+        "owner": "network-security",
+        "integration": "Private-network literal is retained only as audited security/test input; ARCZ offline_strict does not grant private-network egress.",
+        "rationale": "RFC1918 address class, not a public provider dependency."
+      },
+      {
+        "pattern": "http://172.*",
+        "status": "PRIVATE_NETWORK_SECURITY_REFERENCE",
+        "owner": "network-security",
+        "integration": "Private-network literal is retained only as audited security/test input; ARCZ offline_strict does not grant private-network egress.",
+        "rationale": "RFC1918 address class, not a public provider dependency."
+      },
+      {
+        "pattern": "http://192.168.*",
+        "status": "PRIVATE_NETWORK_SECURITY_REFERENCE",
+        "owner": "network-security",
+        "integration": "Private-network literal is retained only as audited security/test input; ARCZ offline_strict does not grant private-network egress.",
+        "rationale": "RFC1918 address class, not a public provider dependency."
+      },
+      {
+        "pattern": "http://169.254.*",
+        "status": "LINK_LOCAL_SECURITY_REFERENCE",
+        "owner": "network-security",
+        "integration": "Link-local/cloud-metadata literals are explicit SSRF-denial fixtures; ARCZ must never route them.",
+        "rationale": "Aedifex safeFetch explicitly blocks link-local addresses including cloud metadata."
       },
       {
         "pattern": "*",
