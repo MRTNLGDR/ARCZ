@@ -18,7 +18,7 @@ permissions:
   contents: read
 
 env:
-  ARCZ_UPSTREAM_PROBE_GENERATION: '3'
+  ARCZ_UPSTREAM_PROBE_GENERATION: '4'
 
 jobs:
   immutable-pins:
@@ -100,6 +100,7 @@ jobs:
           assert build['wasm_integrity']['web-ifc-mt.wasm']['bytes'] > 100000
           PY
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: aedifex-validation
           path: |
@@ -107,4 +108,4 @@ jobs:
             integrations/aedifex/generated/
             opensources/integrations/aedifex-materialization.json
             vendor/aedifex-floorplanner/arcz-aedifex-build.json
-          if-no-files-found: error
+          if-no-files-found: warn
