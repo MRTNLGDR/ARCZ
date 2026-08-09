@@ -93,7 +93,7 @@ def write_evidence(source: dict[str, object], checkout: Path, head: str) -> Path
     EVIDENCE_ROOT.mkdir(parents=True, exist_ok=True)
     output = EVIDENCE_ROOT / f"{source['id']}.json"
     stamp = {
-        "schema_version": 5,
+        "schema_version": 6,
         "id": source["id"],
         "repository": source["repository"],
         "commit": head,
@@ -103,16 +103,34 @@ def write_evidence(source: dict[str, object], checkout: Path, head: str) -> Path
         "checkout": str(checkout.relative_to(ROOT)).replace("\\", "/"),
         "immutable": True,
         "git_status_clean": True,
-        "license_evidence_source": "declared_git_objects_at_pinned_head",
+        "license_evidence_source": "declared_git_objects_at_self_contained_pinned_head",
         "legal_candidates_at_pinned_head": legal_candidates(checkout),
     }
     output.write_text(json.dumps(stamp, indent=2) + "\n", encoding="utf-8")
     return output
 
 
+def initialize_checkout(checkout: Path, repository: str, commit: str, dry: bool) -> None:
+    """Fetch exactly one complete snapshot without partial-clone/promisor semantics."""
+    checkout.parent.mkdir(parents=True, exist_ok=True)
+    if dry:
+        print(f"+ git init {checkout}")
+        print(f"+ git -C {checkout} remote add origin {repository}")
+        print(f"+ git -C {checkout} fetch --depth 1 origin {commit}")
+        print(f"+ git -C {checkout} checkout --detach FETCH_HEAD")
+        return
+    checkout.mkdir(parents=True, exist_ok=True)
+    run(["git", "init"], cwd=checkout)
+    run(["git", "remote", "add", "origin", repository], cwd=checkout)
+    # No --filter here: license/provenance validation must never depend on a
+    # promised blob or a lazy network fetch after the snapshot is materialized.
+    run(["git", "fetch", "--depth", "1", "origin", commit], cwd=checkout)
+    run(["git", "checkout", "--detach", "FETCH_HEAD"], cwd=checkout)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Materialize exact ARCZ upstream snapshots without modifying them"
+        description="Materialize exact, self-contained ARCZ upstream snapshots without modifying them"
     )
     parser.add_argument("--only", action="append", default=[])
     parser.add_argument("--dry-run", action="store_true")
@@ -133,25 +151,23 @@ def main() -> int:
         if selected and source_id not in selected:
             continue
         checkout = ROOT / str(source["path"])
+        repository = str(source["repository"])
+        commit = str(source["commit"])
+
         if not checkout.exists():
-            checkout.parent.mkdir(parents=True, exist_ok=True)
-            run(
-                [
-                    "git",
-                    "clone",
-                    "--filter=blob:none",
-                    "--no-checkout",
-                    str(source["repository"]),
-                    str(checkout),
-                ],
-                dry=args.dry_run,
-            )
+            initialize_checkout(checkout, repository, commit, args.dry_run)
+        elif args.dry_run:
+            print(f"+ reuse {checkout}")
+
         if args.dry_run:
             print(
-                f"  pin {source_id} -> {source['commit']} "
+                f"  pin {source_id} -> {commit} "
                 f"legal={','.join(map(str, source.get('legal_files', [])))}"
             )
             continue
+
+        if not (checkout / ".git").exists():
+            raise SystemExit(f"existing upstream path is not a Git checkout: {checkout}")
 
         if args.reset:
             run(["git", "reset", "--hard"], cwd=checkout)
@@ -161,11 +177,14 @@ def main() -> int:
         if dirty:
             raise SystemExit(f"refusing dirty immutable upstream: {source_id}\n{dirty}")
 
-        run(["git", "remote", "set-url", "origin", str(source["repository"])], cwd=checkout)
-        run(["git", "fetch", "--depth", "1", "origin", str(source["commit"])], cwd=checkout)
-        run(["git", "checkout", "--detach", str(source["commit"])], cwd=checkout)
+        run(["git", "remote", "set-url", "origin", repository], cwd=checkout)
         head = run(["git", "rev-parse", "HEAD"], cwd=checkout)
-        if head != source["commit"]:
+        if head != commit:
+            # Existing checkouts may have been produced by an older materializer.
+            run(["git", "fetch", "--depth", "1", "origin", commit], cwd=checkout)
+            run(["git", "checkout", "--detach", "FETCH_HEAD"], cwd=checkout)
+            head = run(["git", "rev-parse", "HEAD"], cwd=checkout)
+        if head != commit:
             raise SystemExit(f"pin mismatch for {source_id}: {head}")
 
         if run(["git", "status", "--porcelain"], cwd=checkout):
