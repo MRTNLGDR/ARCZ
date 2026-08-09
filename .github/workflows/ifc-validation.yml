@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   ifcopenshell-roundtrip:
-    name: Verified wheel → ARCZ export → reopen → geometry
+    name: Verified source/license + wheel → ARCZ export → reopen → geometry
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     env:
@@ -31,6 +31,8 @@ jobs:
           python -m venv .venv
           .venv/bin/python -m pip install --upgrade pip
           .venv/bin/python -m pip install -r requirements.txt
+      - name: Materialize exact immutable IfcOpenShell source and legal evidence
+        run: .venv/bin/python tools/materialize_upstreams.py --only ifcopenshell-bonsai
       - name: Install exact verified IfcOpenShell wheel
         run: .venv/bin/python tools/install_ifcopenshell.py
       - name: Prove fast offline integrity
@@ -59,6 +61,8 @@ jobs:
         with:
           name: ifcopenshell-runtime-evidence
           path: |
+            validation/upstreams/ifcopenshell-bonsai.json
             vendor/ifcopenshell/manifest.json
-            vendor/ifcopenshell/LICENSE
+            vendor/ifcopenshell/LICENSE.GPL-3.0
+            vendor/ifcopenshell/LICENSE.LGPL-3.0
           if-no-files-found: warn
