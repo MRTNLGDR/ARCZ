@@ -13,6 +13,7 @@ on:
       - 'tools/vendor_aedifex.py'
       - 'tools/vendor_aedifex_controlled.py'
       - 'tools/build_aedifex_sidecar.py'
+      - 'tools/build_aedifex_sidecar_controlled.py'
       - 'tools/smoke_aedifex_sidecar.py'
       - 'tools/vendor_cesium.py'
       - '.github/workflows/upstream-validation.yml'
@@ -85,6 +86,7 @@ jobs:
           test -s vendor/cesium/Cesium/Cesium.js
           test -s vendor/cesium/Cesium/Widgets/widgets.css
           test -s vendor/cesium/Cesium/Assets/Textures/NaturalEarthII/tilemapresource.xml
+          test -s vendor/cesium/resolved-package-lock.json
           test -s vendor/cesium/manifest.json
           test -z "$(git -C upstreams/sources/cesium status --porcelain)"
           python - <<'PY'
@@ -96,6 +98,8 @@ jobs:
           assert manifest['version'] == '1.144.0'
           assert manifest['runtime_network_required'] is False
           assert manifest['upstream_commit'] == '6d5d8b1f0725b6f831b336463f4b11c98023427b'
+          assert manifest['resolved_lockfile']['verified_frozen_offline'] is True
+          assert len(manifest['resolved_lockfile']['sha256']) == 64
           files={item['path']:item for item in manifest['files']}
           for required in ['Cesium.js','Widgets/widgets.css','Assets/Textures/NaturalEarthII/tilemapresource.xml']:
               assert required in files and files[required]['bytes'] > 0 and len(files[required]['sha256']) == 64
@@ -106,6 +110,7 @@ jobs:
           name: cesium-local-vendor-evidence
           path: |
             vendor/cesium/manifest.json
+            vendor/cesium/resolved-package-lock.json
             validation/upstreams/cesiumjs.json
           if-no-files-found: warn
 
@@ -135,8 +140,8 @@ jobs:
         run: python tools/materialize_upstreams.py --only aedifex
       - name: Audit upstream and create provenance-safe ARCZ fork
         run: python tools/vendor_aedifex_controlled.py --source upstreams/sources/aedifex
-      - name: Build and test controlled local sidecar
-        run: python tools/build_aedifex_sidecar.py --allow-network
+      - name: Build and test self-contained local sidecar
+        run: python tools/build_aedifex_sidecar_controlled.py --allow-network
       - name: Smoke standalone runtime and authenticated MCP catalog
         run: python tools/smoke_aedifex_sidecar.py
       - name: Verify build manifest, localization and upstream cleanliness
