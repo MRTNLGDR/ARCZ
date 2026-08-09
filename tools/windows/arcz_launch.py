@@ -89,10 +89,12 @@ def run(
         shell=False,
     )
     if capture:
-        if completed.stdout.strip():
-            LOG.write(completed.stdout.rstrip())
-        if completed.stderr.strip():
-            LOG.write(completed.stderr.rstrip())
+        stdout = completed.stdout or ""
+        stderr = completed.stderr or ""
+        if stdout.strip():
+            LOG.write(stdout.rstrip())
+        if stderr.strip():
+            LOG.write(stderr.rstrip())
     if completed.returncode and not allow_failure:
         raise RuntimeError(
             f"command failed rc={completed.returncode}: {' '.join(command)}"
@@ -173,39 +175,70 @@ def update_repository(git: Path, *, skip: bool) -> None:
         return
     if not (ROOT / ".git").is_dir():
         raise RuntimeError(
-            "repository has no .git; use a real clone of MRTNLGDR/ARCZ instead of a source ZIP"
+            "repository has no .git; ARCZ.bat should adopt source ZIPs before this controller runs"
         )
     branch_result = run(
         [git, "-C", ROOT, "symbolic-ref", "--quiet", "--short", "HEAD"],
         allow_failure=True,
         capture=True,
     )
-    branch = branch_result.stdout.strip()
+    branch = (branch_result.stdout or "").strip()
     if not branch:
         raise RuntimeError("Git checkout is detached; automatic update refuses to guess a branch")
 
-    dirty = run(
-        [git, "-C", ROOT, "status", "--porcelain", "--untracked-files=all"],
-        capture=True,
-    ).stdout.strip()
-    if dirty:
-        stamp = time.strftime("%Y%m%d-%H%M%S")
-        stash_name = f"ARCZ launcher autostash {stamp}"
-        LOG.write("[ARCZ] local changes found; preserving them in git stash")
-        run([git, "-C", ROOT, "stash", "push", "-u", "-m", stash_name])
-        (STATE / "last-autostash.txt").write_text(stash_name + "\n", encoding="utf-8")
+    # Fetch before touching the worktree. If the Internet is unavailable, a
+    # previously prepared checkout must still be allowed to run fully offline.
+    fetched = run(
+        [git, "-C", ROOT, "fetch", "--prune", "origin"],
+        allow_failure=True,
+    )
+    if fetched.returncode:
+        LOG.write(
+            "[WARN] git fetch failed; continuing with the current local commit. "
+            "Setup will still fail closed later if this commit lacks required vendors."
+        )
+        return
 
-    run([git, "-C", ROOT, "fetch", "--prune", "origin"])
     remote = f"refs/remotes/origin/{branch}"
     exists = run(
         [git, "-C", ROOT, "show-ref", "--verify", "--quiet", remote],
         allow_failure=True,
     ).returncode == 0
-    if exists:
+    if not exists:
+        LOG.write(f"[WARN] origin/{branch} does not exist; local branch kept after fetch")
+        return
+
+    dirty = run(
+        [git, "-C", ROOT, "status", "--porcelain", "--untracked-files=all"],
+        capture=True,
+    ).stdout.strip()
+    stashed = False
+    stash_name = ""
+    if dirty:
+        stamp = time.strftime("%Y%m%d-%H%M%S")
+        stash_name = f"ARCZ launcher autostash {stamp}"
+        LOG.write("[ARCZ] local changes found; preserving them temporarily in git stash")
+        run([git, "-C", ROOT, "stash", "push", "-u", "-m", stash_name])
+        (STATE / "last-autostash.txt").write_text(stash_name + "\n", encoding="utf-8")
+        stashed = True
+
+    merge_error: Exception | None = None
+    try:
         run([git, "-C", ROOT, "merge", "--ff-only", f"origin/{branch}"])
         LOG.write(f"[OK] synchronized {branch} with origin/{branch}")
-    else:
-        LOG.write(f"[WARN] origin/{branch} does not exist; local branch kept after fetch")
+    except Exception as error:
+        merge_error = error
+    finally:
+        if stashed:
+            restored = run([git, "-C", ROOT, "stash", "pop"], allow_failure=True)
+            if restored.returncode:
+                raise RuntimeError(
+                    f"Git update used stash '{stash_name}', but automatic reapply conflicted. "
+                    "Your edits remain recoverable in the worktree/stash; resolve the Git conflict before ARCZ continues."
+                )
+            LOG.write("[OK] local edits restored after Git update")
+    if merge_error is not None:
+        raise merge_error
 
 
 def head_sha(git: Path) -> str:
@@ -312,12 +345,11 @@ def cargo_tool() -> Path:
     return cargo
 
 
-def interactive_preflight(python: Path) -> bool:
+def _run_offline_probe(python: Path, script: Path, *args: str) -> tuple[int, str]:
     env = os.environ.copy()
     env["ARCZ_NETWORK_MODE"] = "offline_strict"
-    target = STATE / "interactive-preflight.json"
     result = subprocess.run(
-        [str(python), str(ROOT / "tools/runtime_preflight.py"), "--profile", "interactive"],
+        [str(python), str(script), *args],
         cwd=ROOT,
         env=env,
         text=True,
@@ -327,12 +359,37 @@ def interactive_preflight(python: Path) -> bool:
         stderr=subprocess.STDOUT,
         check=False,
     )
-    target.write_text(result.stdout, encoding="utf-8")
-    return result.returncode == 0
+    return result.returncode, result.stdout or ""
+
+
+def interactive_preflight(python: Path) -> bool:
+    runtime_rc, runtime_text = _run_offline_probe(
+        python, ROOT / "tools/runtime_preflight.py", "--profile", "interactive"
+    )
+    ifc_rc, ifc_text = _run_offline_probe(python, ROOT / "tools/ifc_preflight.py")
+    target = STATE / "interactive-preflight.json"
+    try:
+        runtime_report = json.loads(runtime_text)
+    except json.JSONDecodeError:
+        runtime_report = {"ready": False, "raw": runtime_text[-8000:]}
+    try:
+        ifc_report = json.loads(ifc_text)
+    except json.JSONDecodeError:
+        ifc_report = {"ready": False, "raw": ifc_text[-8000:]}
+    combined = {
+        "schema_version": 1,
+        "profile": "interactive+ifc",
+        "network_mode": "offline_strict",
+        "ready": runtime_rc == 0 and ifc_rc == 0,
+        "runtime": runtime_report,
+        "ifc": ifc_report,
+    }
+    target.write_text(json.dumps(combined, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    return bool(combined["ready"])
 
 
 def prepare_interactive(python: Path) -> None:
-    step("Pinned Cesium + controlled Aedifex")
+    step("Pinned Cesium + controlled Aedifex + verified IfcOpenShell")
     env = os.environ.copy()
     env["ARCZ_NETWORK_MODE"] = "import_assisted"
     run(
@@ -341,7 +398,7 @@ def prepare_interactive(python: Path) -> None:
     )
     if not interactive_preflight(python):
         LOG.write((STATE / "interactive-preflight.json").read_text(encoding="utf-8"))
-        raise RuntimeError("interactive profile remained blocked after preparation")
+        raise RuntimeError("interactive+IFC profile remained blocked after preparation")
 
 
 def build_rust(cargo: Path) -> None:
@@ -423,6 +480,26 @@ def ensure_blender_vendor(python: Path, *, skip: bool) -> None:
     if not blender_vendor_ready(python):
         raise RuntimeError("Blender vendor failed the post-copy integrity gate")
     LOG.write("[OK] Blender copied to vendor/blender and validated")
+
+
+def smoke_cycles(python: Path, *, skip: bool) -> None:
+    if skip:
+        return
+    step("Real Cycles production-worker smoke")
+    output = STATE / "cycles-smoke"
+    run(
+        [
+            python,
+            ROOT / "tools/smoke_blender_cycles.py",
+            "--keep-output",
+            output,
+        ]
+    )
+    beauty = output / "output/render/cycles-smoke.png"
+    manifest = output / "output/manifest.json"
+    if not beauty.is_file() or not manifest.is_file():
+        raise RuntimeError("Cycles smoke returned success without PNG/manifest")
+    LOG.write(f"[OK] real Cycles PNG: {beauty}")
 
 
 def validation_suite(python: Path, node: Path, cargo: Path) -> None:
@@ -554,10 +631,11 @@ def main() -> int:
         prepare_interactive(python)
         PREPARED_HEAD.write_text(head + "\n", encoding="ascii")
     else:
-        LOG.write("[OK] pinned interactive vendors already match the validated commit")
+        LOG.write("[OK] pinned interactive vendors + IfcOpenShell match the validated commit")
 
     build_rust(cargo)
     ensure_blender_vendor(python, skip=args.skip_photoreal)
+    smoke_cycles(python, skip=args.skip_photoreal)
 
     if changed_tests:
         validation_suite(python, node, cargo)
@@ -567,7 +645,7 @@ def main() -> int:
 
     if not interactive_preflight(python):
         LOG.write((STATE / "interactive-preflight.json").read_text(encoding="utf-8"))
-        raise RuntimeError("interactive preflight turned red immediately before launch")
+        raise RuntimeError("interactive+IFC preflight turned red immediately before launch")
 
     start_arcz(python, no_browser=args.no_browser)
     LOG.write(f"[DONE] {head} validated and opened without mock/fallback remote")
