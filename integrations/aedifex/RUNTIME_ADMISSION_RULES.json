@@ -1,0 +1,140 @@
+{
+  "schema_version": 1,
+  "upstream_commit": "5319368bae16500ca5267f6f8d68b36c9586d5bb",
+  "categories": {
+    "external_urls": [
+      {
+        "pattern": "https://byrpxoiotywskoojsrzd.supabase.co/storage/v1/object/public/items/*",
+        "source_patterns": ["packages/editor/src/components/ui/item-catalog/catalog-items.tsx"],
+        "status": "CONTROLLED_FORK_LOCALIZATION_REQUIRED",
+        "owner": "floorplanner-assets",
+        "integration": "tools/vendor_aedifex.py rewrites every catalog model/thumbnail to /items local assets and fails closed when required local files are missing; missing optional floor plans are disabled.",
+        "rationale": "Remote catalog content is never accepted as a shipped runtime dependency."
+      },
+      {
+        "pattern": "https://cdn.jsdelivr.net/gh/pmndrs/drei-assets@master/basis/",
+        "status": "CONTROLLED_FORK_LOCALIZATION_REQUIRED",
+        "owner": "floorplanner-rendering",
+        "integration": "Fork rewrites KTX2 transcoderPath to /basis/ and the sidecar build packages basis_transcoder.js/wasm from the pinned three dependency.",
+        "rationale": "Eliminates runtime CDN dependency."
+      },
+      {
+        "pattern": "https://www.gstatic.com/draco/versioned/decoders/1.5.5/",
+        "status": "CONTROLLED_FORK_LOCALIZATION_REQUIRED",
+        "owner": "floorplanner-rendering",
+        "integration": "Fork rewrites the Draco decoder path to /draco/ and the sidecar build packages decoder JS/WASM from the pinned three dependency.",
+        "rationale": "Eliminates runtime gstatic dependency."
+      },
+      {
+        "pattern": "https://${process.env.NEXT_PUBLIC_VERCEL*",
+        "status": "CONTROLLED_FORK_LOCALIZATION_REQUIRED",
+        "owner": "floorplanner-shell",
+        "integration": "Fork removes Vercel-derived production base URL logic and uses NEXT_PUBLIC_APP_URL or the loopback sidecar origin.",
+        "rationale": "ARCZ does not depend on Vercel deployment metadata."
+      },
+      {
+        "pattern": "https://editor.aedifex.com",
+        "status": "CONTROLLED_FORK_LOCALIZATION_REQUIRED",
+        "owner": "floorplanner-shell",
+        "integration": "Fork removes the remote editor fallback and makes relative asset paths same-origin/local.",
+        "rationale": "No hidden editor.aedifex.com dependency in the shipped ARCZ host."
+      },
+      {
+        "pattern": "https://api.openai.com/v1",
+        "source_patterns": ["apps/editor/app/api/ai/*"],
+        "status": "UPSTREAM_APP_ROUTE_NOT_SHIPPED",
+        "owner": "local-ai-broker",
+        "integration": "The original upstream AI API route stays only in the reference tree; ARCZ overlay chat uses the Local AI Broker.",
+        "rationale": "No mandatory OpenAI runtime dependency."
+      },
+      {
+        "pattern": "https://byrpxoiotywskoojsrzd.supabase.co/storage/v1/object/public/ifc_examples",
+        "source_patterns": ["apps/ifc-converter/*"],
+        "status": "UPSTREAM_APP_NOT_SHIPPED_REFERENCE",
+        "owner": "floorplanner-exchange",
+        "integration": "The standalone IFC demo/test-file catalog is not the shipped ARCZ importer.",
+        "rationale": "The integrated IFC converter consumes local/uploaded bytes and packages web-ifc WASM locally."
+      },
+      {
+        "pattern": "https://editor.aedifex.app/docs/developers/plugins",
+        "status": "REFERENCE_LINK_ONLY",
+        "owner": "documentation",
+        "integration": "Optional documentation hyperlink; it is not fetched for core operation.",
+        "rationale": "No runtime dependency."
+      },
+      {
+        "pattern": "https://env.t3.gg/docs/nextjs",
+        "status": "REFERENCE_LINK_ONLY",
+        "owner": "documentation",
+        "integration": "Build-tool documentation reference only.",
+        "rationale": "No runtime dependency."
+      },
+      {
+        "pattern": "https://nextjs.org/docs/app/api-reference/config/typescript",
+        "status": "REFERENCE_LINK_ONLY",
+        "owner": "documentation",
+        "integration": "Generated Next.js type declaration documentation reference only.",
+        "rationale": "No runtime dependency."
+      },
+      {
+        "pattern": "https://x.com/dangreenheck",
+        "status": "REFERENCE_LINK_ONLY",
+        "owner": "documentation",
+        "integration": "Optional attribution/profile link in plugin UI; no fetch is required for plugin operation.",
+        "rationale": "No runtime dependency."
+      },
+      {
+        "pattern": "https://",
+        "status": "URL_SCHEME_LITERAL",
+        "owner": "network-security",
+        "integration": "Protocol prefix used by URL validators/resolvers, not a remote endpoint.",
+        "rationale": "Static scheme literal."
+      },
+      {
+        "pattern": "https://…",
+        "status": "DOCUMENTATION_EXAMPLE",
+        "owner": "documentation",
+        "integration": "Ellipsis example in source documentation.",
+        "rationale": "Not a valid endpoint."
+      },
+      {
+        "pattern": "https://cdn.aedifex.com",
+        "source_patterns": ["packages/core/src/schema/asset-url*"],
+        "status": "VALIDATION_EXAMPLE",
+        "owner": "network-security",
+        "integration": "Example origin for the optional asset-origin allowlist; it is not hardcoded as runtime authority.",
+        "rationale": "Source/test example only."
+      }
+    ],
+    "network_call_sites": [
+      {
+        "pattern": "packages/mcp/src/lib/safe-fetch.ts:*",
+        "status": "SSRF_GUARDED_OPTIONAL_FETCH",
+        "owner": "arcz-global-chat",
+        "integration": "User-supplied image URL fetch is constrained to http(s), blocks loopback/private/link-local hosts, revalidates redirects, caps body size and times out.",
+        "rationale": "Optional import capability with explicit SSRF controls; not a boot/runtime provider dependency."
+      },
+      {
+        "pattern": "packages/mcp/src/tools/photo-to-scene/photo-to-scene.ts:*",
+        "status": "SSRF_GUARDED_OPTIONAL_FETCH",
+        "owner": "arcz-global-chat",
+        "integration": "Photo-to-scene delegates remote image loading to safeFetch; the scanner occurrence includes its explanatory source comment.",
+        "rationale": "No raw unguarded provider fetch is introduced by this tool."
+      },
+      {
+        "pattern": "packages/mcp/src/tools/vision/analyze-room-photo.ts:*",
+        "status": "SSRF_GUARDED_OPTIONAL_FETCH",
+        "owner": "arcz-global-chat",
+        "integration": "Room-photo analysis delegates remote image loading to safeFetch; the scanner occurrence includes its explanatory source comment.",
+        "rationale": "No raw unguarded provider fetch is introduced by this tool."
+      },
+      {
+        "pattern": "packages/editor/src/lib/floorplan/floorplan-pdfkit-renderer.ts:*",
+        "status": "OPTIONAL_USER_ASSET_FETCH",
+        "owner": "floorplanner-export",
+        "integration": "PDF export fetches only an asset URL resolved from scene geometry; local/blob assets work offline and remote user assets are optional input.",
+        "rationale": "Export does not make application boot or authoring dependent on remote network."
+      }
+    ]
+  }
+}
