@@ -129,6 +129,73 @@ def package_quality_commands(bun: str) -> list[tuple[list[str], Path]]:
     return commands
 
 
+def _find_three_root(app: Path) -> Path:
+    candidates = [FORK / "node_modules/three", app / "node_modules/three"]
+    for candidate in candidates:
+        if (candidate / "package.json").is_file():
+            return candidate
+    matches = sorted(FORK.glob("node_modules/.bun/three@*/node_modules/three"))
+    for candidate in matches:
+        if (candidate / "package.json").is_file():
+            return candidate
+    raise RuntimeError("pacote three materializado não foi encontrado; decoders locais não podem ser empacotados")
+
+
+def _copy_required_file(source: Path, destination: Path, *, min_bytes: int = 1) -> dict[str, object]:
+    if not source.is_file() or source.stat().st_size < min_bytes:
+        raise RuntimeError(f"asset obrigatório ausente/inválido: {source}")
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(source, destination)
+    return {"path": destination.as_posix(), "bytes": destination.stat().st_size, "sha256": sha256_file(destination)}
+
+
+def prepare_local_public_assets() -> dict[str, object]:
+    app = FORK / "apps/arcz-floorplanner"
+    public = app / "public"
+    upstream_public = FORK / "apps/editor/public"
+    if not upstream_public.is_dir():
+        raise RuntimeError(f"public upstream Aedifex ausente: {upstream_public}")
+    public.mkdir(parents=True, exist_ok=True)
+    shutil.copytree(upstream_public, public, dirs_exist_ok=True)
+
+    three = _find_three_root(app)
+    basis = three / "examples/jsm/libs/basis"
+    draco_candidates = [
+        three / "examples/jsm/libs/draco/gltf",
+        three / "examples/jsm/libs/draco",
+    ]
+    draco = next((path for path in draco_candidates if (path / "draco_decoder.js").is_file()), None)
+    if not basis.is_dir() or draco is None:
+        raise RuntimeError(f"decoders three ausentes: basis={basis} draco={draco_candidates}")
+
+    decoder_integrity: dict[str, dict[str, object]] = {}
+    for name, min_bytes in (("basis_transcoder.js", 10_000), ("basis_transcoder.wasm", 100_000)):
+        decoder_integrity[f"basis/{name}"] = _copy_required_file(
+            basis / name, public / "basis" / name, min_bytes=min_bytes
+        )
+    for name, min_bytes in (
+        ("draco_decoder.js", 10_000),
+        ("draco_decoder.wasm", 100_000),
+        ("draco_wasm_wrapper.js", 10_000),
+    ):
+        decoder_integrity[f"draco/{name}"] = _copy_required_file(
+            draco / name, public / "draco" / name, min_bytes=min_bytes
+        )
+
+    item_root = public / "items"
+    local_models = len(list(item_root.glob("*/model.glb"))) if item_root.is_dir() else 0
+    local_thumbnails = len(list(item_root.glob("*/thumbnail.*"))) if item_root.is_dir() else 0
+    if local_models == 0 or local_thumbnails == 0:
+        raise RuntimeError("catálogo local Aedifex não foi copiado para o host ARCZ")
+    return {
+        "upstream_public": "apps/editor/public",
+        "host_public": "apps/arcz-floorplanner/public",
+        "local_item_models": local_models,
+        "local_item_thumbnails": local_thumbnails,
+        "decoder_integrity": decoder_integrity,
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--allow-network", action="store_true")
@@ -153,6 +220,8 @@ def main() -> int:
         if not args.allow_network:
             install.append("--offline")
         evidence.append(run(install, FORK))
+
+    public_assets = prepare_local_public_assets()
 
     if not args.skip_package_tests:
         for command, cwd in package_quality_commands(bun):
@@ -195,8 +264,21 @@ def main() -> int:
         }
         for name in ("web-ifc.wasm", "web-ifc-mt.wasm")
     }
+    decoder_integrity = {
+        name: {
+            "sha256": sha256_file(entry_out.parent / "public" / name),
+            "bytes": (entry_out.parent / "public" / name).stat().st_size,
+        }
+        for name in (
+            "basis/basis_transcoder.js",
+            "basis/basis_transcoder.wasm",
+            "draco/draco_decoder.js",
+            "draco/draco_decoder.wasm",
+            "draco/draco_wasm_wrapper.js",
+        )
+    }
     manifest = {
-        "schema_version": 3,
+        "schema_version": 4,
         "upstream_commit": LOCK["commit"],
         "inventory_hash": inventory["inventory_hash"],
         "coverage_report_hash": coverage["report_hash"],
@@ -213,7 +295,9 @@ def main() -> int:
             "loopback_only": True,
         },
         "quality_commands": evidence,
+        "public_assets": public_assets,
         "wasm_integrity": wasm_integrity,
+        "decoder_integrity": decoder_integrity,
         "integrity": integrity,
     }
     atomic_write_json(DIST / "arcz-aedifex-build.json", manifest)
