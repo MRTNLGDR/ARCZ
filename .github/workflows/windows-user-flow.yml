@@ -83,6 +83,18 @@ jobs:
             throw 'Production Cycles worker did not create the expected PNG'
           }
 
+      - name: Install verified IfcOpenShell and prove real IFC roundtrip
+        shell: powershell
+        run: |
+          $env:ARCZ_NETWORK_MODE = 'import_assisted'
+          & '.\.venv\Scripts\python.exe' 'tools\install_ifcopenshell.py'
+          if ($LASTEXITCODE -ne 0) { throw "IfcOpenShell controlled install failed with $LASTEXITCODE" }
+          $env:ARCZ_NETWORK_MODE = 'offline_strict'
+          & '.\.venv\Scripts\python.exe' 'tools\smoke_ifcopenshell.py'
+          if ($LASTEXITCODE -ne 0) { throw "IfcOpenShell functional smoke failed with $LASTEXITCODE" }
+          if (-not (Test-Path 'vendor\ifcopenshell\manifest.json')) { throw 'IfcOpenShell vendor manifest absent' }
+          if (-not (Test-Path 'vendor\ifcopenshell\LICENSE')) { throw 'IfcOpenShell license evidence absent' }
+
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -92,4 +104,6 @@ jobs:
             .arcz/interactive-preflight.json
             .arcz/cycles-smoke/output/manifest.json
             .arcz/cycles-smoke/output/render/cycles-smoke.png
+            vendor/ifcopenshell/manifest.json
+            vendor/ifcopenshell/LICENSE
           if-no-files-found: warn
