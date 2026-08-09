@@ -8,6 +8,7 @@ test('Windows launcher refuses partial runtime and starts offline only', () => {
   const source = read('ABRIR_ARCZ.cmd');
   assert.match(source, /ARCZ_NETWORK_MODE=offline_strict/);
   assert.match(source, /ARCZ_BANCO=%CD%\\resources\\assets/);
+  assert.match(source, /ARCZ_SEM_NAVEGADOR=1/);
   assert.match(source, /runtime_preflight\.py --profile interactive/);
   assert.match(source, /\/api\/v2\/health/);
   assert.match(source, /PREPARAR_ARCZ\.cmd/);
