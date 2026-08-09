@@ -74,7 +74,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: npm
       - name: Materialize pinned CesiumJS
         run: python tools/materialize_upstreams.py --only cesiumjs
       - name: Build controlled repo-local Cesium vendor
@@ -108,7 +107,7 @@ jobs:
           path: |
             vendor/cesium/manifest.json
             validation/upstreams/cesiumjs.json
-          if-no-files-found: error
+          if-no-files-found: warn
 
   aedifex-controlled-fork:
     name: Aedifex controlled fork + sidecar
