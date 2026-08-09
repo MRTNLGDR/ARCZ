@@ -4,25 +4,39 @@ import { readFileSync } from 'node:fs';
 
 const read = path => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
 
-test('Windows launcher refuses partial runtime and starts offline only', () => {
-  const source = read('ABRIR_ARCZ.cmd');
-  assert.match(source, /ARCZ_NETWORK_MODE=offline_strict/);
-  assert.match(source, /ARCZ_BANCO=%CD%\\resources\\assets/);
-  assert.match(source, /ARCZ_SEM_NAVEGADOR=1/);
-  assert.match(source, /runtime_preflight\.py --profile interactive/);
-  assert.match(source, /\/api\/v2\/health/);
-  assert.match(source, /PREPARAR_ARCZ\.cmd/);
-  assert.doesNotMatch(source, /import_assisted/);
-  assert.doesNotMatch(source, /https:\/\/|http:\/\/(?!127\.0\.0\.1)/i);
+test('all Windows entrypoints converge on the single ARCZ.bat launcher', () => {
+  const root = read('ARCZ.bat');
+  const open = read('ABRIR_ARCZ.cmd');
+  const prepare = read('PREPARAR_ARCZ.cmd');
+  const photoreal = read('PREPARAR_FOTORREAL.cmd');
+  const ps = read('tools/windows/arcz-launch.ps1');
+
+  assert.match(root, /tools\\windows\\arcz-launch\.ps1/i);
+  assert.match(open, /call\s+"%~dp0ARCZ\.bat"/i);
+  assert.match(prepare, /call\s+"%~dp0ARCZ\.bat"\s+-ForceSetup/i);
+  assert.match(photoreal, /call\s+"%~dp0ARCZ\.bat"\s+-ForceSetup/i);
+  assert.match(ps, /tools\\windows\\arcz_launch\.py/i);
 });
 
-test('Windows preparation launcher is the explicit import-assisted boundary', () => {
-  const source = read('PREPARAR_ARCZ.cmd');
-  assert.match(source, /ARCZ_NETWORK_MODE=import_assisted/);
-  assert.match(source, /ARCZ_BANCO=%CD%\\resources\\assets/);
-  assert.match(source, /prepare_local_runtime\.py --interactive/);
-  assert.match(source, /ARCZ_NETWORK_MODE=offline_strict/);
-  assert.doesNotMatch(source, /curl|powershell.*Invoke-WebRequest/i);
+test('canonical Windows controller refuses partial runtime and opens offline only', () => {
+  const source = read('tools/windows/arcz_launch.py');
+  assert.match(source, /ARCZ_NETWORK_MODE["']\]\s*=\s*["']offline_strict/);
+  assert.match(source, /resources["']\s*\/\s*["']assets/);
+  assert.match(source, /runtime_preflight\.py/);
+  assert.match(source, /--profile["']?,?\s*["']interactive/);
+  assert.match(source, /\/api\/v2\/health/);
+  assert.match(source, /arcz_local\.py/);
+  assert.match(source, /127\.0\.0\.1:8123/);
+  assert.doesNotMatch(source, /https:\/\//i);
+});
+
+test('canonical Windows controller owns the explicit import-assisted setup boundary', () => {
+  const source = read('tools/windows/arcz_launch.py');
+  assert.match(source, /ARCZ_NETWORK_MODE["']\]\s*=\s*["']import_assisted/);
+  assert.match(source, /prepare_local_runtime\.py/);
+  assert.match(source, /--interactive/);
+  assert.match(source, /offline_strict/);
+  assert.match(source, /PREPARED_HEAD/);
 });
 
 test('runtime preparation materializes only pinned repo-local vendors', () => {
