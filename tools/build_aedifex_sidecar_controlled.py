@@ -3,15 +3,14 @@ from __future__ import annotations
 
 """ARCZ packaging guard for the Aedifex standalone build.
 
-Next.js standalone generated from a Bun workspace may contain symlinks whose
-targets live in the controlled fork's Bun store and may omit runtime packages
-required by Next itself. The base builder correctly refuses to ignore those
-gaps. This wrapper materializes them exclusively from the already-installed,
-frozen/offline-proven Bun store before the final vendor copy.
+Next.js standalone generated from this Bun workspace may omit a small number of
+runtime packages even though they are present in the frozen Bun store. We only
+materialize packages that a real standalone smoke has proven missing. We do NOT
+copy every Next dependency, and we never install/fetch anything at smoke time.
 
-Nothing is fetched here. A missing or ambiguous target is fatal. The final
-vendor tree cannot contain dangling/external symlinks or unresolved required
-runtime packages.
+The controlled fork lock has already been verified by a second frozen/offline
+install. A missing or ambiguous package in that store is fatal. The final vendor
+tree cannot contain dangling/external symlinks.
 """
 
 from pathlib import Path
@@ -27,6 +26,9 @@ sys.path.insert(0, str(ROOT))
 import tools.build_aedifex_sidecar as builder
 
 _ORIGINAL_COPYTREE = shutil.copytree
+# Each entry was observed missing by an actual Node standalone smoke after the
+# preceding packaging layer had already passed. Additions require the same proof.
+_REQUIRED_RUNTIME_PACKAGES = ("@swc/helpers", "@next/env")
 
 
 def _inside(path: Path, root: Path) -> bool:
@@ -55,8 +57,7 @@ def _fallback_targets(link: Path, standalone: Path) -> list[Path]:
     marker = ("node_modules", ".bun", "node_modules")
     for index in range(max(0, len(parts) - len(marker) + 1)):
         if tuple(parts[index:index + len(marker)]) == marker:
-            suffix = Path(*parts[index:])
-            values.insert(0, builder.FORK / suffix)
+            values.insert(0, builder.FORK / Path(*parts[index:]))
             break
     result: list[Path] = []
     for value in values:
@@ -65,32 +66,9 @@ def _fallback_targets(link: Path, standalone: Path) -> list[Path]:
     return result
 
 
-def _next_runtime_dependencies(standalone: Path) -> dict[str, str]:
-    """Return Next's mandatory runtime dependency map from the built artifact."""
-    manifest_path = standalone / "node_modules/next/package.json"
-    package = _read_package(manifest_path)
-    if not package or package.get("name") != "next":
-        raise RuntimeError(
-            f"standalone não contém next/package.json válido: {manifest_path}"
-        )
-    dependencies = package.get("dependencies")
-    if not isinstance(dependencies, dict):
-        raise RuntimeError("next/package.json não declara dependencies")
-    result: dict[str, str] = {}
-    for name, requirement in dependencies.items():
-        if isinstance(name, str) and isinstance(requirement, str) and name.strip() and requirement.strip():
-            result[name.strip()] = requirement.strip()
-    if not result:
-        raise RuntimeError("next/package.json retornou zero dependências runtime")
-    return dict(sorted(result.items()))
-
-
 def _declared_runtime_requirement(standalone: Path, package_name: str) -> str | None:
-    next_requirements = _next_runtime_dependencies(standalone)
-    if package_name in next_requirements:
-        return next_requirements[package_name]
-
     manifests = [
+        standalone / "node_modules/next/package.json",
         builder.FORK / "node_modules/next/package.json",
         builder.FORK / "apps/arcz-floorplanner/node_modules/next/package.json",
     ]
@@ -108,11 +86,9 @@ def _declared_runtime_requirement(standalone: Path, package_name: str) -> str | 
 
 
 def _bun_store_candidates(package_name: str) -> list[Path]:
-    """Locate package directories by package.json name inside Bun's frozen store."""
     store = builder.FORK / "node_modules/.bun"
     if not store.is_dir():
         return []
-
     package_parts = Path(*package_name.split("/"))
     pattern = str(Path("*") / "node_modules" / package_parts / "package.json")
     candidates: list[Path] = []
@@ -144,18 +120,20 @@ def _version_of(package_dir: Path) -> str | None:
 def _exact_requirement_version(requirement: str | None) -> str | None:
     if not requirement:
         return None
-    value = requirement.strip()
-    match = re.fullmatch(r"(?:npm:)?(\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?)", value)
+    match = re.fullmatch(
+        r"(?:npm:)?(\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?)",
+        requirement.strip(),
+    )
     return match.group(1) if match else None
 
 
 def _resolve_fork_package(package_name: str, standalone: Path) -> Path:
-    parts = package_name.split("/")
+    package_path = Path(*package_name.split("/"))
     direct = [
-        builder.FORK / "node_modules" / Path(*parts),
-        builder.FORK / "apps/arcz-floorplanner/node_modules" / Path(*parts),
+        builder.FORK / "node_modules" / package_path,
+        builder.FORK / "apps/arcz-floorplanner/node_modules" / package_path,
     ]
-    resolved_direct: list[Path] = []
+    direct_matches: list[Path] = []
     for candidate in direct:
         try:
             resolved = candidate.resolve(strict=True)
@@ -165,16 +143,14 @@ def _resolve_fork_package(package_name: str, standalone: Path) -> Path:
         if package and package.get("name") == package_name:
             if not _inside(resolved, builder.FORK):
                 raise RuntimeError(
-                    f"pacote runtime Aedifex escapou do fork controlado: {package_name} -> {resolved}"
+                    f"pacote runtime escapou do fork controlado: {package_name} -> {resolved}"
                 )
-            if resolved not in resolved_direct:
-                resolved_direct.append(resolved)
-    if len(resolved_direct) == 1:
-        return resolved_direct[0]
-    if len(resolved_direct) > 1:
-        versions = {_version_of(path) for path in resolved_direct}
-        if len(versions) == 1:
-            return sorted(resolved_direct, key=lambda path: path.as_posix())[0]
+            if resolved not in direct_matches:
+                direct_matches.append(resolved)
+    if len(direct_matches) == 1:
+        return direct_matches[0]
+    if len(direct_matches) > 1 and len({_version_of(path) for path in direct_matches}) == 1:
+        return sorted(direct_matches, key=lambda path: path.as_posix())[0]
 
     candidates = _bun_store_candidates(package_name)
     if not candidates:
@@ -187,14 +163,11 @@ def _resolve_fork_package(package_name: str, standalone: Path) -> Path:
     requirement = _declared_runtime_requirement(standalone, package_name)
     exact = _exact_requirement_version(requirement)
     if exact:
-        matches = [candidate for candidate in candidates if _version_of(candidate) == exact]
-        unique = sorted({path.resolve() for path in matches}, key=lambda path: path.as_posix())
+        exact_matches = [path for path in candidates if _version_of(path) == exact]
+        unique = sorted({path.resolve() for path in exact_matches}, key=lambda p: p.as_posix())
         if len(unique) == 1:
             return unique[0]
 
-    # If Bun materialized the same version in multiple dependency-key folders,
-    # the package contents are equivalent for Next's exact package version. We
-    # still reject multiple distinct versions instead of choosing by proximity.
     versions = {_version_of(candidate) for candidate in candidates}
     if len(versions) == 1 and None not in versions:
         return candidates[0]
@@ -204,21 +177,18 @@ def _resolve_fork_package(package_name: str, standalone: Path) -> Path:
         for candidate in candidates
     )
     raise RuntimeError(
-        "pacote runtime possui múltiplas versões no Bun store e não pode ser "
-        f"escolhido por aproximação: {package_name}; requirement={requirement!r}; candidates={inventory}"
+        "pacote runtime possui múltiplas versões no Bun store; seleção por "
+        f"aproximação proibida: {package_name}; requirement={requirement!r}; candidates={inventory}"
     )
 
 
 def materialize_required_packages(standalone: Path) -> list[dict[str, str]]:
     materialized: list[dict[str, str]] = []
-    requirements = _next_runtime_dependencies(standalone)
-    for package_name, requirement in requirements.items():
-        parts = package_name.split("/")
-        destination = standalone / "node_modules" / Path(*parts)
+    for package_name in _REQUIRED_RUNTIME_PACKAGES:
+        destination = standalone / "node_modules" / Path(*package_name.split("/"))
         existing = _read_package(destination / "package.json")
         if existing and existing.get("name") == package_name:
             continue
-
         source = _resolve_fork_package(package_name, standalone)
         if destination.exists() or destination.is_symlink():
             if destination.is_dir() and not destination.is_symlink():
@@ -229,13 +199,11 @@ def materialize_required_packages(standalone: Path) -> list[dict[str, str]]:
         _ORIGINAL_COPYTREE(source, destination, symlinks=False)
         copied = _read_package(destination / "package.json")
         if not copied or copied.get("name") != package_name:
-            raise RuntimeError(
-                f"materialização do pacote runtime falhou: {package_name}"
-            )
+            raise RuntimeError(f"materialização do pacote runtime falhou: {package_name}")
         materialized.append({
             "package": package_name,
             "version": str(copied.get("version") or "unknown"),
-            "requirement": requirement,
+            "requirement": _declared_runtime_requirement(standalone, package_name) or "transitive",
             "source": source.relative_to(builder.FORK).as_posix(),
             "destination": destination.relative_to(standalone).as_posix(),
         })
@@ -267,7 +235,6 @@ def materialize_dangling_links(standalone: Path) -> list[dict[str, str]]:
                 "Aedifex standalone contém symlink sem alvo materializável: "
                 f"{link.relative_to(standalone)} -> {raw_target}"
             )
-
         link.unlink()
         if source.is_dir():
             _ORIGINAL_COPYTREE(source, link, symlinks=False)
@@ -283,11 +250,10 @@ def materialize_dangling_links(standalone: Path) -> list[dict[str, str]]:
 
     remaining = []
     for link in standalone.rglob("*"):
-        if not link.is_symlink():
-            continue
-        resolved = link.resolve(strict=False)
-        if not resolved.exists() or not _inside(resolved, standalone):
-            remaining.append(f"{link.relative_to(standalone)} -> {os.readlink(link)}")
+        if link.is_symlink():
+            resolved = link.resolve(strict=False)
+            if not resolved.exists() or not _inside(resolved, standalone):
+                remaining.append(f"{link.relative_to(standalone)} -> {os.readlink(link)}")
     if remaining:
         raise RuntimeError(
             "standalone ainda possui symlink dangling/externo após materialização:\n"
@@ -309,10 +275,7 @@ def _guarded_copytree(src, dst, *args, **kwargs):
         packages = materialize_required_packages(source)
         print(f"[aedifex-standalone] materialized {len(repaired)} Bun link(s)")
         for item in repaired:
-            print(
-                "[aedifex-standalone] "
-                f"{item['path']} <= {item['materialized_from']}"
-            )
+            print(f"[aedifex-standalone] {item['path']} <= {item['materialized_from']}")
         for item in packages:
             print(
                 "[aedifex-standalone] runtime package "
