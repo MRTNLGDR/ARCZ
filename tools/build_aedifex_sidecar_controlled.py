@@ -10,8 +10,8 @@ host or were proven missing by a real standalone smoke. We never install/fetch
 anything at smoke time.
 
 The controlled fork lock has already been verified by a second frozen/offline
-install. A missing or ambiguous package in that store is fatal. The final vendor
-tree cannot contain dangling/external symlinks.
+install. A missing or ambiguous target is fatal. The final vendor tree cannot
+contain dangling/external symlinks.
 """
 
 from pathlib import Path
@@ -19,6 +19,7 @@ import json
 import os
 import re
 import shutil
+import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -27,11 +28,6 @@ sys.path.insert(0, str(ROOT))
 import tools.build_aedifex_sidecar as builder
 
 _ORIGINAL_COPYTREE = shutil.copytree
-# @swc/helpers and @next/env were observed missing by actual standalone smokes.
-# react/react-dom are explicit dependencies of the ARCZ floorplanner host and
-# Next's production server imports them before serving /api/health. scheduler is
-# a runtime dependency of react-dom. Every package is resolved only from the
-# already-frozen Bun store; nothing is fetched by this packager.
 _REQUIRED_RUNTIME_PACKAGES = (
     "@swc/helpers",
     "@next/env",
@@ -275,6 +271,40 @@ def materialize_dangling_links(standalone: Path) -> list[dict[str, str]]:
     return repaired
 
 
+def _utf8_run(args: list[str], cwd: Path, *, timeout: int = 1800) -> dict[str, object]:
+    """Windows-safe replacement for the base builder process capture.
+
+    Bun/Next output is UTF-8. Windows' default text codec may be CP1252 and can
+    crash the reader thread on otherwise valid build output. Decode explicitly
+    and replace only undecodable diagnostic bytes; process return codes remain
+    authoritative and are never masked.
+    """
+    completed = subprocess.run(
+        args,
+        cwd=cwd,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        capture_output=True,
+        timeout=timeout,
+        check=False,
+    )
+    stdout = completed.stdout or ""
+    stderr = completed.stderr or ""
+    record = {
+        "command": args,
+        "cwd": str(cwd),
+        "returncode": completed.returncode,
+        "stdout_tail": stdout[-12000:],
+        "stderr_tail": stderr[-12000:],
+    }
+    if completed.returncode:
+        raise RuntimeError(
+            f"{' '.join(args)}\nSTDOUT:\n{stdout}\nSTDERR:\n{stderr}"
+        )
+    return record
+
+
 def _guarded_copytree(src, dst, *args, **kwargs):
     source = Path(src)
     try:
@@ -299,12 +329,15 @@ def _guarded_copytree(src, dst, *args, **kwargs):
 
 
 def main() -> int:
-    original = builder.shutil.copytree
+    original_copytree = builder.shutil.copytree
+    original_run = builder.run
     builder.shutil.copytree = _guarded_copytree
+    builder.run = _utf8_run
     try:
         return builder.main()
     finally:
-        builder.shutil.copytree = original
+        builder.shutil.copytree = original_copytree
+        builder.run = original_run
 
 
 if __name__ == "__main__":
