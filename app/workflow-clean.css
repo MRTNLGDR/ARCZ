@@ -159,6 +159,29 @@
   padding-left: 22px;
 }
 
+.arcz-primary-shell-error {
+  position: absolute;
+  inset: 0;
+  z-index: 95;
+  display: grid;
+  place-content: center;
+  gap: 8px;
+  padding: 32px;
+  text-align: center;
+  background: #07090d;
+  color: #e8edf5;
+}
+.arcz-primary-shell-error strong {
+  color: #ff9da8;
+  font-size: 15px;
+}
+.arcz-primary-shell-error p {
+  max-width: 720px;
+  margin: 0 auto;
+  color: #9eacbd;
+  line-height: 1.5;
+}
+
 @media (max-width: 1100px) {
   .arcz-flow-context { display: none; }
   .arcz-fusion-nav button { min-width: 72px; padding-inline: 7px !important; }
