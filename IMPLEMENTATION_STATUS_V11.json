@@ -1,43 +1,44 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "product": "ARCZ",
   "repository_target": "MRTNLGDR/ARCZ",
-  "handoff_version": "11.1.0-world-foundation",
-  "generated_at": "2026-08-08T22:28:00Z",
-  "foundation": {
-    "source": "ARCZ_EARTH_AEDIFEX_GLOBAL_V10_1(1).zip",
-    "retained": true
+  "handoff_version": "11.1.0-executable-completion",
+  "generated_at": "2026-08-08T23:38:00Z",
+  "repository": {
+    "complete_source_on_main": true,
+    "import_commit": "5f5d83f9a489557058400e6be7dfe9e880a53bf4",
+    "completion_branch": "agent/arcz-100-done",
+    "completion_pr": 4
   },
-  "verified_in_session": {
+  "verified": {
     "python_pytest": "119 passed, 3 skipped",
-    "javascript_tests": "41 passed",
-    "plugin_catalog": "66 plugins / 253 capabilities / 0 errors",
+    "javascript_tests": "41 passed, 0 failed",
+    "source_contract_ci": "Python compile/tests, cancellation stress, JavaScript tests/syntax, Aedifex TypeScript overlay syntax, plugin catalog, conversion matrix and upstream lock dry-run passed on GitHub Actions",
+    "local_runtime_smoke": "HTTP UI returned 200 and /api/v2/health returned ok=true, api=2, network_mode=offline_strict with terrain/roads/buildings/houses/vegetation/tiles/materials/sheets/photoreal job kinds",
+    "plugin_catalog": "66 plugins / 253 capabilities / 0 catalog errors",
     "upstream_materializer_dry_run": "4 pinned sources resolved",
-    "handoff": "22 passed / 0 failed / 9 blocked (blocked gates remain explicit)"
+    "rust_toolchain": "GitHub Actions runner resolved rustc/cargo 1.97.1; old 1.82 pin was incompatible with current Edition-2024 dependencies"
   },
-  "blocked_in_session": [
-    "sandbox has no direct GitHub DNS, so git push and immutable upstream cloning cannot run from the container; publication uses the connected GitHub API",
-    "rustc/cargo/rustfmt are absent in this execution environment, so the new Rust crates still require compilation on a Rust-enabled runner",
-    "Cesium/Aedifex/Kepler/IfcOpenShell runtime builds remain unmaterialized in this sandbox",
-    "E2E address-to-lot-to-reconstruction-to-authoring-to-GLB/3D-Tiles has not yet run on target hardware"
+  "in_progress": [
+    "Rust workspace check/test/clippy/rustfmt on Rust 1.97.1 with Tauri Linux prerequisites",
+    "commit generated Cargo.lock and normalized rustfmt output after CI artifacts are produced"
   ],
-  "new_v11_components": [
-    "crates/arcz-plugin-sdk",
-    "crates/arcz-plugin-host",
-    "crates/arcz-agent",
-    "crates/arcz-world",
-    "plugins/catalog.json",
-    "upstreams/manifest.toml",
-    "tools/materialize_upstreams.py",
-    "ARCHITECTURE.md",
-    "docs/product/ARCZ_PRODUCT_SPEC.md",
-    "docs/architecture/ARCZ_V11_MASTER_PLAN.md",
-    "docs/architecture/WORLD_SCALE_ARCHITECTURE.md",
-    "docs/architecture/UPSTREAM_INTEGRATION.md",
-    "docs/architecture/PLUGIN_ARCHITECTURE.md",
-    "docs/geo/ADDRESS_TO_WORLD_PIPELINE.md",
-    "docs/ai/ARCZ_AGENT.md",
-    "docs/roadmap/MASTER_EXECUTION_PLAN.md"
+  "blocked_or_not_yet_verified": [
+    "materialized and build-tested Aedifex controlled fork/sidecar",
+    "materialized CesiumJS local vendor/globe/terrain/3D Tiles runtime",
+    "materialized Kepler.gl analytics adapter runtime",
+    "IfcOpenShell IFC worker runtime with Bonsai GPL boundary",
+    "Blender/Cycles target runtime",
+    "local AI/reconstruction model weights and provider tasks with hash/license verification",
+    "Windows Tauri/WebGPU end-to-end build and target-hardware smoke",
+    "full address-to-region-to-reconstruction-to-authoring-to-export end-to-end with real imported geographic datasets"
   ],
-  "claim_policy": "contract_ready or partial is not production-ready; parity requires upstream build + golden tests + E2E"
+  "plugin_status_policy": {
+    "implemented": "executable implementation exists but still participates in release gates",
+    "partial": "some executable path exists; missing capability or target validation remains",
+    "contract_ready": "typed contract/design exists; must not be described as production-ready",
+    "production_ready": "requires capability-specific deterministic validation or target-runtime evidence"
+  },
+  "completion_profiles": "docs/implementation/COMPLETION_GATES.md",
+  "claim_policy": "ARCZ may claim only the highest completion profile whose required gates are green; blocked, partial and contract_ready are never synonyms for done"
 }

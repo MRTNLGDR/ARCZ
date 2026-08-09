@@ -18,11 +18,18 @@ pub struct RegionRequest {
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
-pub struct GeoPoint { pub lat: f64, pub lon: f64 }
+pub struct GeoPoint {
+    pub lat: f64,
+    pub lon: f64,
+}
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct SourceFlags {
-    pub osm: bool, pub overture: bool, pub dem: bool, pub imagery: bool, pub street: bool,
+    pub osm: bool,
+    pub overture: bool,
+    pub dem: bool,
+    pub imagery: bool,
+    pub street: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -54,15 +61,20 @@ pub struct RegionContext {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TerrainContext {
-    pub min_m: Option<f64>, pub max_m: Option<f64>, pub mean_slope_deg: Option<f64>,
-    #[serde(default)] pub slope_classes: Map<String, Value>,
+    pub min_m: Option<f64>,
+    pub max_m: Option<f64>,
+    pub mean_slope_deg: Option<f64>,
+    #[serde(default)]
+    pub slope_classes: Map<String, Value>,
     pub confidence: f64,
     pub vertical_error_m: Option<f64>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EnvironmentContext {
-    pub biome: String, pub climate_profile: String, pub soil_profile: String,
+    pub biome: String,
+    pub climate_profile: String,
+    pub soil_profile: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -86,8 +98,12 @@ impl RegionRequest {
         if !(west.is_finite() && south.is_finite() && east.is_finite() && north.is_finite()) {
             return Err(RegionError::NonFinite);
         }
-        if west >= east || south >= north { return Err(RegionError::InvalidBbox); }
-        if !(-180.0..=180.0).contains(&self.focus.lon) || !(-85.051_128_779_806_6..=85.051_128_779_806_6).contains(&self.focus.lat) {
+        if west >= east || south >= north {
+            return Err(RegionError::InvalidBbox);
+        }
+        if !(-180.0..=180.0).contains(&self.focus.lon)
+            || !(-85.051_128_779_806_6..=85.051_128_779_806_6).contains(&self.focus.lat)
+        {
             return Err(RegionError::InvalidFocus);
         }
         if !self.requested_radius_m.is_finite() || self.requested_radius_m <= 0.0 {
@@ -97,13 +113,24 @@ impl RegionRequest {
     }
 }
 
-pub fn compose_profiles(layers: &[Value], user_override: Option<&Value>) -> Result<ComposedProfile, RegionError> {
-    if layers.is_empty() { return Err(RegionError::NoProfiles); }
+pub fn compose_profiles(
+    layers: &[Value],
+    user_override: Option<&Value>,
+) -> Result<ComposedProfile, RegionError> {
+    if layers.is_empty() {
+        return Err(RegionError::NoProfiles);
+    }
     let mut result = Value::Object(Map::new());
     let mut applied = Vec::new();
     for layer in layers {
-        let id = layer.get("id").and_then(Value::as_str).ok_or(RegionError::ProfileIdentity)?;
-        let version = layer.get("version").and_then(Value::as_str).ok_or(RegionError::ProfileIdentity)?;
+        let id = layer
+            .get("id")
+            .and_then(Value::as_str)
+            .ok_or(RegionError::ProfileIdentity)?;
+        let version = layer
+            .get("version")
+            .and_then(Value::as_str)
+            .ok_or(RegionError::ProfileIdentity)?;
         deep_merge(&mut result, layer.clone());
         applied.push(format!("{id}@{version}"));
     }
@@ -111,11 +138,20 @@ pub fn compose_profiles(layers: &[Value], user_override: Option<&Value>) -> Resu
         deep_merge(&mut result, value.clone());
         applied.push("user_override".to_owned());
     }
-    for pointer in ["/architecture/building_mix", "/roofs/types", "/roofs/materials", "/facades/materials"] {
+    for pointer in [
+        "/architecture/building_mix",
+        "/roofs/types",
+        "/roofs/materials",
+        "/facades/materials",
+    ] {
         normalize_distribution(&mut result, pointer)?;
     }
     let canonical = canonical_json(&result);
-    Ok(ComposedProfile { profile: result, applied, profile_hash: sha256_hex(canonical) })
+    Ok(ComposedProfile {
+        profile: result,
+        applied,
+        profile_hash: sha256_hex(canonical),
+    })
 }
 
 fn deep_merge(target: &mut Value, layer: Value) {
@@ -124,7 +160,9 @@ fn deep_merge(target: &mut Value, layer: Value) {
             for (key, value) in next {
                 match base.get_mut(&key) {
                     Some(existing) => deep_merge(existing, value),
-                    None => { base.insert(key, value); }
+                    None => {
+                        base.insert(key, value);
+                    }
                 }
             }
         }
@@ -133,16 +171,28 @@ fn deep_merge(target: &mut Value, layer: Value) {
 }
 
 fn normalize_distribution(root: &mut Value, pointer: &str) -> Result<(), RegionError> {
-    let Some(value) = root.pointer_mut(pointer) else { return Err(RegionError::MissingDistribution(pointer.to_owned())); };
-    let object = value.as_object_mut().ok_or_else(|| RegionError::InvalidDistribution(pointer.to_owned()))?;
+    let Some(value) = root.pointer_mut(pointer) else {
+        return Err(RegionError::MissingDistribution(pointer.to_owned()));
+    };
+    let object = value
+        .as_object_mut()
+        .ok_or_else(|| RegionError::InvalidDistribution(pointer.to_owned()))?;
     let mut total = 0.0;
     for value in object.values() {
-        let weight = value.as_f64().ok_or_else(|| RegionError::InvalidDistribution(pointer.to_owned()))?;
-        if !weight.is_finite() || weight < 0.0 { return Err(RegionError::InvalidDistribution(pointer.to_owned())); }
+        let weight = value
+            .as_f64()
+            .ok_or_else(|| RegionError::InvalidDistribution(pointer.to_owned()))?;
+        if !weight.is_finite() || weight < 0.0 {
+            return Err(RegionError::InvalidDistribution(pointer.to_owned()));
+        }
         total += weight;
     }
-    if total <= 0.0 { return Err(RegionError::InvalidDistribution(pointer.to_owned())); }
-    for value in object.values_mut() { *value = Value::from(value.as_f64().unwrap_or(0.0) / total); }
+    if total <= 0.0 {
+        return Err(RegionError::InvalidDistribution(pointer.to_owned()));
+    }
+    for value in object.values_mut() {
+        *value = Value::from(value.as_f64().unwrap_or(0.0) / total);
+    }
     Ok(())
 }
 
@@ -150,9 +200,12 @@ pub fn canonical_json(value: &Value) -> Vec<u8> {
     fn sorted(value: &Value) -> Value {
         match value {
             Value::Object(map) => {
-                let mut keys: Vec<_> = map.keys().collect(); keys.sort();
+                let mut keys: Vec<_> = map.keys().collect();
+                keys.sort();
                 let mut output = Map::new();
-                for key in keys { output.insert(key.clone(), sorted(&map[key])); }
+                for key in keys {
+                    output.insert(key.clone(), sorted(&map[key]));
+                }
                 Value::Object(output)
             }
             Value::Array(values) => Value::Array(values.iter().map(sorted).collect()),
@@ -189,6 +242,13 @@ mod tests {
     fn normaliza_pesos() {
         let profile = serde_json::json!({"id":"x","version":"1","architecture":{"building_mix":{"a":2,"b":2}},"roofs":{"types":{"flat":1},"materials":{"tile":1}},"facades":{"materials":{"paint":1}}});
         let composed = compose_profiles(&[profile], None).unwrap();
-        assert_eq!(composed.profile.pointer("/architecture/building_mix/a").unwrap().as_f64(), Some(0.5));
+        assert_eq!(
+            composed
+                .profile
+                .pointer("/architecture/building_mix/a")
+                .unwrap()
+                .as_f64(),
+            Some(0.5)
+        );
     }
 }

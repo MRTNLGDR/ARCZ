@@ -245,8 +245,12 @@ impl CadDocument {
         }
         let deleted_set: BTreeSet<&str> = deleted.iter().map(String::as_str).collect();
         let mut staged = self.clone();
-        staged.nodes.retain(|node_id, _| !deleted_set.contains(node_id.as_str()));
-        staged.root_node_ids.retain(|root| !deleted_set.contains(root.as_str()));
+        staged
+            .nodes
+            .retain(|node_id, _| !deleted_set.contains(node_id.as_str()));
+        staged
+            .root_node_ids
+            .retain(|root| !deleted_set.contains(root.as_str()));
         staged.validate()?;
         staged.revision = self.revision.saturating_add(1);
         *self = staged;
@@ -286,7 +290,10 @@ impl CadDocument {
             .into_iter()
             .chain(wall_ids.iter().cloned())
             .collect::<Vec<_>>();
-        if let Some(duplicate) = all_ids.iter().find(|id| self.nodes.contains_key(id.as_str())) {
+        if let Some(duplicate) = all_ids
+            .iter()
+            .find(|id| self.nodes.contains_key(id.as_str()))
+        {
             return Err(CadError::DuplicateNode(duplicate.clone()));
         }
         let mut staged = self.clone();
@@ -366,8 +373,16 @@ pub struct ValidationSummary {
 }
 
 fn validate_transform(node: &CadNode) -> Result<(), CadError> {
-    if node.transform.position.iter().any(|value| !value.is_finite())
-        || node.transform.rotation.iter().any(|value| !value.is_finite())
+    if node
+        .transform
+        .position
+        .iter()
+        .any(|value| !value.is_finite())
+        || node
+            .transform
+            .rotation
+            .iter()
+            .any(|value| !value.is_finite())
         || node.transform.scale.iter().any(|value| !value.is_finite())
     {
         return Err(CadError::NonFinite(node.id.clone()));
@@ -375,7 +390,12 @@ fn validate_transform(node: &CadNode) -> Result<(), CadError> {
     if !matches!(node.transform.rotation.len(), 3 | 4) {
         return Err(CadError::RotationLength(node.id.clone()));
     }
-    if node.transform.scale.iter().any(|value| value.abs() < 1.0e-12) {
+    if node
+        .transform
+        .scale
+        .iter()
+        .any(|value| value.abs() < 1.0e-12)
+    {
         return Err(CadError::ZeroScale(node.id.clone()));
     }
     Ok(())
@@ -410,7 +430,10 @@ fn polygon(value: Option<&Value>, field: &str) -> Result<Vec<Point2>, CadError> 
 }
 
 fn positive(properties: &Map<String, Value>, field: &str, default: f64) -> Result<f64, CadError> {
-    let value = properties.get(field).and_then(Value::as_f64).unwrap_or(default);
+    let value = properties
+        .get(field)
+        .and_then(Value::as_f64)
+        .unwrap_or(default);
     if !value.is_finite() || value <= 0.0 {
         return Err(CadError::NonPositiveDimension);
     }
@@ -447,7 +470,11 @@ fn validate_node_geometry(
                     expected: "wall".into(),
                 });
             }
-            let t = node.properties.get("t").and_then(Value::as_f64).unwrap_or(0.5);
+            let t = node
+                .properties
+                .get("t")
+                .and_then(Value::as_f64)
+                .unwrap_or(0.5);
             if !(0.0..=1.0).contains(&t) {
                 return Err(CadError::OpeningParameter(node.id.clone()));
             }
@@ -466,7 +493,9 @@ fn validate_node_geometry(
             positive(&node.properties, "height", 3.0)?;
         }
         CadNodeKind::Extension(name) => {
-            warnings.push(format!("extension node preserved without native validator: {name}"));
+            warnings.push(format!(
+                "extension node preserved without native validator: {name}"
+            ));
         }
         _ => {}
     }
@@ -480,7 +509,9 @@ fn validate_ancestry(id: &str, nodes: &BTreeMap<NodeId, CadNode>) -> Result<(), 
         if !visited.insert(node_id.to_string()) {
             return Err(CadError::ParentCycle(id.to_string()));
         }
-        current = nodes.get(node_id).and_then(|node| node.parent_id.as_deref());
+        current = nodes
+            .get(node_id)
+            .and_then(|node| node.parent_id.as_deref());
     }
     Ok(())
 }
@@ -570,9 +601,13 @@ mod tests {
             id: "doc".into(),
             name: "Teste".into(),
             revision: 0,
-            nodes: [("site".into(), site), ("building".into(), building), ("level".into(), level)]
-                .into_iter()
-                .collect(),
+            nodes: [
+                ("site".into(), site),
+                ("building".into(), building),
+                ("level".into(), level),
+            ]
+            .into_iter()
+            .collect(),
             root_node_ids: vec!["site".into()],
             materials: BTreeMap::new(),
             metadata: Map::new(),
@@ -617,7 +652,10 @@ mod tests {
     #[test]
     fn extension_kind_serializes_as_plain_discriminator() {
         let kind = CadNodeKind::Extension("community:facade".into());
-        assert_eq!(serde_json::to_value(&kind).unwrap(), Value::from("community:facade"));
+        assert_eq!(
+            serde_json::to_value(&kind).unwrap(),
+            Value::from("community:facade")
+        );
         assert_eq!(
             serde_json::from_value::<CadNodeKind>(Value::from("community:facade")).unwrap(),
             kind
@@ -671,5 +709,4 @@ mod tests {
         assert!(matches!(result, Err(CadError::DuplicateNode(_))));
         assert_eq!(document, before);
     }
-
 }

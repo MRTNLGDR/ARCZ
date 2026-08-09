@@ -68,8 +68,19 @@ pub fn import_scene(
         let mut properties = Map::new();
         for (field, value) in native {
             if ![
-                "id", "type", "kind", "parentId", "parent_id", "name", "label", "visible",
-                "locked", "position", "rotation", "scale", "transform",
+                "id",
+                "type",
+                "kind",
+                "parentId",
+                "parent_id",
+                "name",
+                "label",
+                "visible",
+                "locked",
+                "position",
+                "rotation",
+                "scale",
+                "transform",
             ]
             .contains(&field.as_str())
             {
@@ -88,8 +99,14 @@ pub fn import_scene(
                     .and_then(Value::as_str)
                     .unwrap_or(kind_text)
                     .to_string(),
-                visible: native.get("visible").and_then(Value::as_bool).unwrap_or(true),
-                locked: native.get("locked").and_then(Value::as_bool).unwrap_or(false),
+                visible: native
+                    .get("visible")
+                    .and_then(Value::as_bool)
+                    .unwrap_or(true),
+                locked: native
+                    .get("locked")
+                    .and_then(Value::as_bool)
+                    .unwrap_or(false),
                 transform: Transform {
                     position,
                     rotation,
@@ -196,8 +213,14 @@ pub fn export_scene(document: &CadDocument) -> Result<Value, AedifexError> {
         native.insert("name".into(), Value::from(node.name.clone()));
         native.insert("visible".into(), Value::from(node.visible));
         native.insert("locked".into(), Value::from(node.locked));
-        native.insert("position".into(), serde_json::to_value(node.transform.position)?);
-        native.insert("rotation".into(), serde_json::to_value(&node.transform.rotation)?);
+        native.insert(
+            "position".into(),
+            serde_json::to_value(node.transform.position)?,
+        );
+        native.insert(
+            "rotation".into(),
+            serde_json::to_value(&node.transform.rotation)?,
+        );
         native.insert("scale".into(), serde_json::to_value(node.transform.scale)?);
         for (key, value) in &node.properties {
             native.insert(key.clone(), value.clone());

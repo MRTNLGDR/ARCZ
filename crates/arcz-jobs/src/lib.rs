@@ -101,7 +101,10 @@ mod tests {
         assert_eq!(queue.jobs.get("job-1").unwrap().status, JobStatus::Running);
 
         queue.update_progress("job-1", 100);
-        assert_eq!(queue.jobs.get("job-1").unwrap().status, JobStatus::Completed);
+        assert_eq!(
+            queue.jobs.get("job-1").unwrap().status,
+            JobStatus::Completed
+        );
     }
 
     #[test]

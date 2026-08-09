@@ -5,8 +5,8 @@
 //! ao visualizador oficial embutido (iframe/embed). É proibida qualquer raspagem, texturização
 //! ou reconstrução 3D a partir do Google Street View.
 
+use crate::cena::{Georeference64, NodeConfidence, NodeType, SceneNode};
 use std::path::{Path, PathBuf};
-use crate::cena::{SceneNode, NodeType, NodeConfidence, Georeference64};
 
 #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
 pub enum PanoramaProvider {
@@ -70,14 +70,21 @@ impl StreetViewWorker {
             // Garante conformidade com a regra do Google Street View
             if item.provider == PanoramaProvider::GoogleStreetViewEmbedOnly {
                 assert!(item.image_url.is_none(), "VIOLAÇÃO DE POLÍTICA: Raspagem/download de imagem do Google Street View é estritamente proibido!");
-                assert!(item.embed_url.is_some(), "Google Street View exige um URL de visualizador oficial embutido");
+                assert!(
+                    item.embed_url.is_some(),
+                    "Google Street View exige um URL de visualizador oficial embutido"
+                );
             }
 
-            let node_id = format!("pano_{}_{}", match item.provider {
-                PanoramaProvider::Panoramax => "panoramax",
-                PanoramaProvider::Mapillary => "mapillary",
-                PanoramaProvider::GoogleStreetViewEmbedOnly => "gsv",
-            }, item.id);
+            let node_id = format!(
+                "pano_{}_{}",
+                match item.provider {
+                    PanoramaProvider::Panoramax => "panoramax",
+                    PanoramaProvider::Mapillary => "mapillary",
+                    PanoramaProvider::GoogleStreetViewEmbedOnly => "gsv",
+                },
+                item.id
+            );
 
             let nome = format!("Panorama 360° #{}", item.id);
 
@@ -99,7 +106,10 @@ impl StreetViewWorker {
             processed_items.push(item);
         }
 
-        QueryPanoramaResult { nodes, items: processed_items }
+        QueryPanoramaResult {
+            nodes,
+            items: processed_items,
+        }
     }
 
     /// Gera o URL do visualizador oficial do Google Street View (sem raspagem de imagem).

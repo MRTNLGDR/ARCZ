@@ -86,10 +86,10 @@ impl NodeType {
 /// Matriz de cores e niveis de confianca da reconstrucao (GREEN / BLUE / YELLOW / RED).
 #[derive(Debug, Clone, Copy, serde::Serialize, serde::Deserialize, PartialEq)]
 pub enum NodeConfidence {
-    Observed,       // Green - 1.0
-    GisDerived,     // Blue - 0.8
-    Reconstructed,  // Yellow - 0.6
-    Inferred,       // Red - 0.3
+    Observed,      // Green - 1.0
+    GisDerived,    // Blue - 0.8
+    Reconstructed, // Yellow - 0.6
+    Inferred,      // Red - 0.3
 }
 
 impl NodeConfidence {
@@ -145,9 +145,22 @@ impl Default for Transform64 {
 impl Transform64 {
     pub fn to_renderer_f32(&self) -> ([f32; 3], [f32; 4], [f32; 3]) {
         (
-            [self.position[0] as f32, self.position[1] as f32, self.position[2] as f32],
-            [self.rotation[0] as f32, self.rotation[1] as f32, self.rotation[2] as f32, self.rotation[3] as f32],
-            [self.scale[0] as f32, self.scale[1] as f32, self.scale[2] as f32],
+            [
+                self.position[0] as f32,
+                self.position[1] as f32,
+                self.position[2] as f32,
+            ],
+            [
+                self.rotation[0] as f32,
+                self.rotation[1] as f32,
+                self.rotation[2] as f32,
+                self.rotation[3] as f32,
+            ],
+            [
+                self.scale[0] as f32,
+                self.scale[1] as f32,
+                self.scale[2] as f32,
+            ],
         )
     }
 }
@@ -310,8 +323,14 @@ impl OutlinerService {
     }
 
     /// Valida reparentamento sem criar ciclo na hierarquia (retorna true se valido).
-    pub fn validar_reparentamento(node_id: &str, novo_pai_id: Option<&str>, nodes: &[SceneNode]) -> bool {
-        let Some(novo_pai) = novo_pai_id else { return true };
+    pub fn validar_reparentamento(
+        node_id: &str,
+        novo_pai_id: Option<&str>,
+        nodes: &[SceneNode],
+    ) -> bool {
+        let Some(novo_pai) = novo_pai_id else {
+            return true;
+        };
         if node_id == novo_pai {
             return false;
         }
@@ -321,7 +340,10 @@ impl OutlinerService {
             if pid == node_id {
                 return false; // Ciclo detectado!
             }
-            atual = nodes.iter().find(|n| n.id == pid).and_then(|n| n.parent_id.clone());
+            atual = nodes
+                .iter()
+                .find(|n| n.id == pid)
+                .and_then(|n| n.parent_id.clone());
         }
         true
     }
@@ -552,7 +574,11 @@ impl CommandBus {
     }
 
     /// Finaliza o arraste do gizmo e compromete UMA ÚNICA transação no histórico.
-    pub fn finalizar_arraste_comprometer(&mut self, editor: &mut Editor, placement_final: Placement) {
+    pub fn finalizar_arraste_comprometer(
+        &mut self,
+        editor: &mut Editor,
+        placement_final: Placement,
+    ) {
         if let Some((id, placement_inicial)) = self.preview_transform.take() {
             if placement_inicial != placement_final {
                 let cmd = Comando::Mover {
@@ -617,10 +643,7 @@ pub enum Comando {
         pai_novo: Option<NodeId>,
     },
     /// Visibilidade do no.
-    VisibilidadeNode {
-        id: NodeId,
-        visivel: bool,
-    },
+    VisibilidadeNode { id: NodeId, visivel: bool },
     /// Alteracao de materiais.
     MaterialNode {
         id: NodeId,
@@ -654,7 +677,13 @@ impl Comando {
                     "depois": { "leste": depois.offset_leste_m, "norte": depois.offset_norte_m, "escala": depois.escala }
                 })
             }
-            Comando::Adicionar { id, nome, caminho, placement, visivel } => {
+            Comando::Adicionar {
+                id,
+                nome,
+                caminho,
+                placement,
+                visivel,
+            } => {
                 serde_json::json!({
                     "id": id, "nome": nome, "caminho": caminho,
                     "placement": { "leste": placement.offset_leste_m, "norte": placement.offset_norte_m, "escala": placement.escala },
@@ -672,13 +701,21 @@ impl Comando {
             Comando::RenomearNode { id, antes, depois } => {
                 serde_json::json!({ "id": id, "antes": antes, "depois": depois })
             }
-            Comando::ReagruparNode { id, pai_anterior, pai_novo } => {
+            Comando::ReagruparNode {
+                id,
+                pai_anterior,
+                pai_novo,
+            } => {
                 serde_json::json!({ "id": id, "pai_anterior": pai_anterior, "pai_novo": pai_novo })
             }
             Comando::VisibilidadeNode { id, visivel } => {
                 serde_json::json!({ "id": id, "visivel": visivel })
             }
-            Comando::MaterialNode { id, materiais_anteriores, materiais_novos } => {
+            Comando::MaterialNode {
+                id,
+                materiais_anteriores,
+                materiais_novos,
+            } => {
                 serde_json::json!({ "id": id, "materiais_anteriores": materiais_anteriores, "materiais_novos": materiais_novos })
             }
         }
@@ -792,7 +829,9 @@ impl Comando {
                     }
                 }
             }
-            Comando::ReagruparNode { id, pai_anterior, .. } => {
+            Comando::ReagruparNode {
+                id, pai_anterior, ..
+            } => {
                 if let Ok(num_id) = id.parse::<u32>() {
                     let pai_num = pai_anterior.as_ref().and_then(|p| p.parse::<u32>().ok());
                     if let Some(o) = editor.get_mut(num_id) {
@@ -1659,10 +1698,26 @@ mod tests {
     }
 
     fn objeto_em(id: ObjetoId, min: [f32; 3], max: [f32; 3]) -> Objeto {
-        let v0 = arcz_model::ModelVertex { position: [min[0], min[1], min[2]], normal: [0.0, 0.0, 1.0], uv: [0.0, 0.0] };
-        let v1 = arcz_model::ModelVertex { position: [max[0], min[1], min[2]], normal: [0.0, 0.0, 1.0], uv: [1.0, 0.0] };
-        let v2 = arcz_model::ModelVertex { position: [max[0], max[1], max[2]], normal: [0.0, 0.0, 1.0], uv: [1.0, 1.0] };
-        let v3 = arcz_model::ModelVertex { position: [min[0], max[1], max[2]], normal: [0.0, 0.0, 1.0], uv: [0.0, 1.0] };
+        let v0 = arcz_model::ModelVertex {
+            position: [min[0], min[1], min[2]],
+            normal: [0.0, 0.0, 1.0],
+            uv: [0.0, 0.0],
+        };
+        let v1 = arcz_model::ModelVertex {
+            position: [max[0], min[1], min[2]],
+            normal: [0.0, 0.0, 1.0],
+            uv: [1.0, 0.0],
+        };
+        let v2 = arcz_model::ModelVertex {
+            position: [max[0], max[1], max[2]],
+            normal: [0.0, 0.0, 1.0],
+            uv: [1.0, 1.0],
+        };
+        let v3 = arcz_model::ModelVertex {
+            position: [min[0], max[1], max[2]],
+            normal: [0.0, 0.0, 1.0],
+            uv: [0.0, 1.0],
+        };
         Objeto {
             id,
             nome: format!("obj{id}"),
@@ -1685,13 +1740,11 @@ mod tests {
             max_enu: max,
             matriz: [
                 [1.0, 0.0, 0.0, 0.0],
-
                 [0.0, 1.0, 0.0, 0.0],
                 [0.0, 0.0, 1.0, 0.0],
                 [0.0, 0.0, 0.0, 1.0],
             ],
         }
-
     }
 
     #[test]
@@ -2273,9 +2326,15 @@ mod tests {
         assert_eq!(arvore[0].children[0].confidence_color, "BLUE");
 
         // Reparentamento seguro (sem ciclos)
-        assert!(OutlinerService::validar_reparentamento("filho_1", None, &nodes));
+        assert!(OutlinerService::validar_reparentamento(
+            "filho_1", None, &nodes
+        ));
         // Reparentamento invalido (tentar tornar o pai filho de seu proprio filho -> ciclo)
-        assert!(!OutlinerService::validar_reparentamento("pai_1", Some("filho_1"), &nodes));
+        assert!(!OutlinerService::validar_reparentamento(
+            "pai_1",
+            Some("filho_1"),
+            &nodes
+        ));
     }
 
     #[test]
@@ -2487,7 +2546,12 @@ mod tests_picking_preciso {
         let ida = aplicar(m, p);
         let volta = aplicar(inv, ida);
         for k in 0..3 {
-            assert!((volta[k] - p[k]).abs() < 1e-4, "eixo {k}: {} vs {}", volta[k], p[k]);
+            assert!(
+                (volta[k] - p[k]).abs() < 1e-4,
+                "eixo {k}: {} vs {}",
+                volta[k],
+                p[k]
+            );
         }
     }
 

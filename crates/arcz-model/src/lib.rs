@@ -703,7 +703,10 @@ fn importar_ignorando_extensao(
     let mut json: serde_json::Value = serde_json::from_slice(&glb.json)
         .map_err(|e| ModelError::Formato(format!("JSON do GLB invalido: {e}")))?;
 
-    if let Some(req) = json.get_mut("extensionsRequired").and_then(|v| v.as_array_mut()) {
+    if let Some(req) = json
+        .get_mut("extensionsRequired")
+        .and_then(|v| v.as_array_mut())
+    {
         req.retain(|v| {
             v.as_str()
                 .map(|s| !EXTENSOES_SO_DE_MATERIAL.contains(&s))

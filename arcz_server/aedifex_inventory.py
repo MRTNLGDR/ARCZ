@@ -27,6 +27,10 @@ TEST_RE = re.compile(r"\.(?:test|spec)\.[^.]+$", re.I)
 URL_RE = re.compile(r"https?://[^\s'\"`<>)}]+", re.I)
 ENV_RE = re.compile(r"(?:process\.env|Bun\.env)(?:\.([A-Z][A-Z0-9_]*)|\[['\"]([A-Z][A-Z0-9_]*)['\"]\])")
 KIND_RE = re.compile(r"\bkind\s*:\s*['\"]([a-z][a-z0-9_.:-]*)['\"]", re.I)
+NODE_DEFINITION_KIND_RE = re.compile(
+    r"\bexport\s+const\s+[A-Za-z0-9_]+Definition\s*:\s*NodeDefinition(?:<[^{}]+>)?\s*=\s*\{\s*kind\s*:\s*['\"]([a-z][a-z0-9_.:-]*)['\"]",
+    re.I | re.S,
+)
 TOOL_NAME_PATTERNS = (
     re.compile(r"\b(?:name|toolName)\s*:\s*['\"]([a-z][a-z0-9_.:-]*)['\"]", re.I),
     re.compile(r"\bregisterTool\s*\(\s*['\"]([a-z][a-z0-9_.:-]*)['\"]", re.I),
@@ -215,8 +219,11 @@ def inventory_upstream(root: Path, *, expected_commit: str | None = None) -> dic
             first = tail.split("/", 1)[0].rsplit(".", 1)[0]
             if first and first not in NODE_DIRECTORY_EXCLUDES:
                 node_kinds.append({"id": first, "source": rel, "discovered_by": "directory"})
-            for kind in sorted(set(KIND_RE.findall(text))):
-                node_kinds.append({"id": kind, "source": rel, "discovered_by": "declaration"})
+            if path.name == "definition.ts":
+                for kind in sorted(set(NODE_DEFINITION_KIND_RE.findall(text))):
+                    node_kinds.append(
+                        {"id": kind, "source": rel, "discovered_by": "node-definition"}
+                    )
 
         if rel.startswith("packages/mcp/src/tools/") and not is_test:
             for tool_id in sorted(_tool_ids(rel, path, text)):

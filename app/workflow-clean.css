@@ -1,0 +1,243 @@
+/* ARCZ clean authoring skin.
+   No cinematic splash, decorative glow, sparkle, animated orbit or fake status.
+   This file only reorganizes presentation; capability truth still comes from runtime APIs. */
+
+.arcz-earth-intro,
+.arcz-earth-intro * { display: none !important; animation: none !important; }
+
+#app_shell,
+.arcz-fusion-workspace,
+.arcz-floorplanner-host,
+.arcz-render-workspace,
+.arcz-walk-workspace,
+.arcz-mode-state {
+  background: #07090d !important;
+  background-image: none !important;
+}
+
+#topbar,
+.arcz-fusion-nav,
+.arcz-panel-dock__rail,
+.arcz-panel-dock__panel,
+.arcz-floorplanner-toolbar,
+.arcz-render-workspace > .arcz-mode-heading {
+  box-shadow: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+}
+
+.arcz-fusion-nav {
+  border-radius: 6px !important;
+  background: #0d1117 !important;
+  padding: 2px !important;
+  gap: 2px !important;
+}
+.arcz-fusion-nav button {
+  min-width: 90px;
+  border-radius: 4px !important;
+  font-size: 10px !important;
+  font-weight: 600;
+}
+.arcz-fusion-nav button[aria-pressed="true"] {
+  background: #172131 !important;
+  color: #f3f6fb !important;
+  box-shadow: inset 0 0 0 1px #32445d !important;
+}
+
+.arcz-flow-context {
+  min-width: 0;
+  max-width: 430px;
+  display: grid;
+  gap: 1px;
+  padding: 0 10px;
+  border-left: 1px solid var(--line-hairline);
+}
+.arcz-flow-context strong {
+  color: var(--text-primary);
+  font-size: 9.5px;
+  line-height: 1.2;
+}
+.arcz-flow-context span {
+  color: var(--text-muted);
+  font-size: 8.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.arcz-mode-heading {
+  align-items: center !important;
+  padding: 12px 16px !important;
+  background: #0b0f15 !important;
+}
+.arcz-mode-heading h2 { font-size: 14px !important; }
+.arcz-mode-heading p { max-width: 820px; line-height: 1.4; }
+
+.arcz-render-grid {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
+}
+.arcz-render-workspace .arcz-input,
+.arcz-render-workspace .arcz-select,
+.arcz-render-workspace .arcz-textarea {
+  border-radius: 5px !important;
+  background: #0b1017 !important;
+  box-shadow: none !important;
+}
+.arcz-button,
+.arcz-panel-dock button {
+  border-radius: 5px !important;
+  box-shadow: none !important;
+}
+.arcz-button--primary {
+  background: #1d4f91 !important;
+  border-color: #3569ac !important;
+}
+
+/* Diagnóstico operacional: sem percentuais inventados de capacidade. Cada linha
+   vem de endpoints locais e mostra somente PRONTO/BLOQUEADO. */
+.arcz-runtime-truth {
+  display: grid;
+  gap: 6px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #27303b;
+}
+.arcz-runtime-truth h3 { margin: 0 0 3px; }
+.arcz-runtime-row {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: 8px;
+  align-items: start;
+  padding: 8px;
+  border: 1px solid #27303b;
+  border-radius: 5px;
+  background: #0b1016;
+}
+.arcz-runtime-state {
+  display: inline-grid;
+  place-items: center;
+  min-height: 22px;
+  padding: 2px 5px;
+  border-radius: 3px;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: .06em;
+}
+.arcz-runtime-row.is-ready .arcz-runtime-state {
+  color: #bde8c5;
+  background: #122719;
+  border: 1px solid #285d36;
+}
+.arcz-runtime-row.is-blocked .arcz-runtime-state {
+  color: #ffc2c7;
+  background: #2d1519;
+  border: 1px solid #70303a;
+}
+.arcz-runtime-copy {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+.arcz-runtime-copy strong {
+  color: #e7edf5;
+  font-size: 10px;
+}
+.arcz-runtime-copy span {
+  color: #8e9bae;
+  font-size: 9px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+/* O mapa é a etapa principal. Menu/trilha legados ficam visualmente subordinados,
+   sem competir com o fluxo 1→4 do topo. As funções reais continuam acessíveis. */
+.fusion-mode-globo #viewport { background: #02050a; }
+.fusion-mode-globo #menu,
+.fusion-mode-globo #trilha {
+  box-shadow: none !important;
+  filter: none !important;
+  background-image: none !important;
+}
+.fusion-mode-globo #menu { max-width: 226px; }
+.fusion-mode-globo #trilha { max-width: 310px; }
+.fusion-mode-globo .grupo-menu {
+  opacity: .65;
+  letter-spacing: .08em !important;
+}
+
+/* Fail-closed de dependência local. Uma falta de vendor nunca vira globo branco. */
+.arcz-boot-blocked {
+  min-height: 100vh;
+  display: grid !important;
+  grid-template: 1fr / 1fr !important;
+  background: #07090d;
+}
+.arcz-boot-blocker {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px;
+}
+.arcz-boot-blocker__card {
+  width: min(760px, 100%);
+  border: 1px solid #2a3442;
+  border-radius: 8px;
+  background: #0d1219;
+  padding: 28px;
+  color: #e7edf5;
+}
+.arcz-boot-blocker__card > strong {
+  display: block;
+  color: #ffbc75;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+.arcz-boot-blocker__card h1 {
+  margin: 8px 0 10px;
+  font-size: 24px;
+}
+.arcz-boot-blocker__card p,
+.arcz-boot-blocker__card li {
+  color: #a8b4c4;
+  line-height: 1.55;
+}
+.arcz-boot-blocker__card code {
+  color: #d8e8ff;
+  background: #090d13;
+  border: 1px solid #263242;
+  border-radius: 4px;
+  padding: 2px 5px;
+}
+.arcz-boot-blocker__card ol {
+  display: grid;
+  gap: 10px;
+  padding-left: 22px;
+}
+
+.arcz-primary-shell-error {
+  position: absolute;
+  inset: 0;
+  z-index: 95;
+  display: grid;
+  place-content: center;
+  gap: 8px;
+  padding: 32px;
+  text-align: center;
+  background: #07090d;
+  color: #e8edf5;
+}
+.arcz-primary-shell-error strong {
+  color: #ff9da8;
+  font-size: 15px;
+}
+.arcz-primary-shell-error p {
+  max-width: 720px;
+  margin: 0 auto;
+  color: #9eacbd;
+  line-height: 1.5;
+}
+
+@media (max-width: 1100px) {
+  .arcz-flow-context { display: none; }
+  .arcz-fusion-nav button { min-width: 72px; padding-inline: 7px !important; }
+}

@@ -12,7 +12,17 @@ use thiserror::Error;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
-pub enum ScopeKind { Object, Parcel, Block, Neighborhood, City, State, Country, Continent, Planet }
+pub enum ScopeKind {
+    Object,
+    Parcel,
+    Block,
+    Neighborhood,
+    City,
+    State,
+    Country,
+    Continent,
+    Planet,
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct ReferenceAsset {
@@ -48,7 +58,12 @@ pub struct PlannedAction {
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
-pub enum ActionRisk { ReadOnly, ReversibleEdit, DestructiveEdit, ExternalEffect }
+pub enum ActionRisk {
+    ReadOnly,
+    ReversibleEdit,
+    DestructiveEdit,
+    ExternalEffect,
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct ActionPlan {
@@ -73,14 +88,20 @@ pub fn validate_plan(plan: &ActionPlan) -> Result<(), AgentPlanError> {
         {
             return Err(AgentPlanError::RevisionOrProjectMismatch(action.id.clone()));
         }
-        if !matches!(action.risk, ActionRisk::ReadOnly) && !action.request.dry_run && !action.requires_approval {
+        if !matches!(action.risk, ActionRisk::ReadOnly)
+            && !action.request.dry_run
+            && !action.requires_approval
+        {
             return Err(AgentPlanError::UnsafeMutation(action.id.clone()));
         }
     }
     for action in &plan.actions {
         for dependency in &action.depends_on {
             if !ids.contains(dependency) || dependency == &action.id {
-                return Err(AgentPlanError::InvalidDependency { action: action.id.clone(), dependency: dependency.clone() });
+                return Err(AgentPlanError::InvalidDependency {
+                    action: action.id.clone(),
+                    dependency: dependency.clone(),
+                });
             }
         }
     }

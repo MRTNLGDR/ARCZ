@@ -1,0 +1,68 @@
+name: ARCZ IFC Validation
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: arcz-ifc-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ifcopenshell-roundtrip:
+    name: Verified source/license + wheel → ARCZ export → reopen → geometry
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      ARCZ_NETWORK_MODE: import_assisted
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Create the same repo-local virtualenv required by ARCZ.bat
+        shell: bash
+        run: |
+          python -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip
+          .venv/bin/python -m pip install -r requirements.txt
+      - name: Materialize exact immutable IfcOpenShell source and legal evidence
+        run: .venv/bin/python tools/materialize_upstreams.py --only ifcopenshell-bonsai
+      - name: Install exact verified IfcOpenShell wheel
+        run: .venv/bin/python tools/install_ifcopenshell.py
+      - name: Prove fast offline integrity
+        env:
+          ARCZ_NETWORK_MODE: offline_strict
+        run: .venv/bin/python tools/ifc_preflight.py
+      - name: Export ARCZ semantic scene and reopen real IFC geometry
+        env:
+          ARCZ_NETWORK_MODE: offline_strict
+        run: .venv/bin/python tools/smoke_ifcopenshell.py
+      - name: Prove installer is blocked during normal runtime
+        env:
+          ARCZ_NETWORK_MODE: offline_strict
+        shell: bash
+        run: |
+          set +e
+          .venv/bin/python tools/install_ifcopenshell.py
+          rc=$?
+          set -e
+          if [ "$rc" -eq 0 ]; then
+            echo 'IfcOpenShell installer incorrectly allowed network-capable setup in offline_strict'
+            exit 1
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ifcopenshell-runtime-evidence
+          path: |
+            validation/upstreams/ifcopenshell-bonsai.json
+            vendor/ifcopenshell/manifest.json
+            vendor/ifcopenshell/LICENSE.GPL-3.0
+            vendor/ifcopenshell/LICENSE.LGPL-3.0
+          if-no-files-found: warn

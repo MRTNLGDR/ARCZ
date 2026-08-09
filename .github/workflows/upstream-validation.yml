@@ -1,0 +1,182 @@
+name: ARCZ Upstream Validation
+
+# Every third-party checkout is pinned, clean and legally evidenced from Git objects.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'upstreams/**'
+      - 'integrations/aedifex/**'
+      - 'arcz_server/aedifex_inventory.py'
+      - 'arcz_server/aedifex_catalog_localizer.py'
+      - 'tools/materialize_upstreams.py'
+      - 'tools/vendor_aedifex.py'
+      - 'tools/vendor_aedifex_controlled.py'
+      - 'tools/build_aedifex_sidecar.py'
+      - 'tools/build_aedifex_sidecar_controlled.py'
+      - 'tools/smoke_aedifex_sidecar.py'
+      - 'tools/vendor_cesium.py'
+      - '.github/workflows/upstream-validation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  ARCZ_UPSTREAM_PROBE_GENERATION: '6'
+
+jobs:
+  immutable-pins:
+    name: Pin ${{ matrix.source }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        source: [aedifex, cesiumjs, kepler-gl, ifcopenshell-bonsai]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Materialize exact upstream commit
+        run: python tools/materialize_upstreams.py --only '${{ matrix.source }}'
+      - name: Prove upstream checkout remains clean
+        shell: bash
+        run: |
+          set -euo pipefail
+          source_path=$(python - '${{ matrix.source }}' <<'PY'
+          import sys,tomllib
+          from pathlib import Path
+          wanted=sys.argv[1]
+          manifest=tomllib.loads(Path('upstreams/manifest.toml').read_text())
+          print(next(s['path'] for s in manifest['source'] if s['id']==wanted))
+          PY
+          )
+          test -z "$(git -C "$source_path" status --porcelain)"
+          test -s "validation/upstreams/${{ matrix.source }}.json"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: upstream-evidence-${{ matrix.source }}
+          path: validation/upstreams/${{ matrix.source }}.json
+          if-no-files-found: error
+
+  cesium-runtime-vendor:
+    name: CesiumJS pinned source → local vendor runtime
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      ARCZ_NETWORK_MODE: import_assisted
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Materialize pinned CesiumJS
+        run: python tools/materialize_upstreams.py --only cesiumjs
+      - name: Build controlled repo-local Cesium vendor
+        run: python tools/vendor_cesium.py --from-pinned-source --allow-network --force
+      - name: Verify browser runtime integrity and immutable source
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s vendor/cesium/Cesium/Cesium.js
+          test -s vendor/cesium/Cesium/Widgets/widgets.css
+          test -s vendor/cesium/Cesium/Assets/Textures/NaturalEarthII/tilemapresource.xml
+          test -s vendor/cesium/resolved-package-lock.json
+          test -s vendor/cesium/manifest.json
+          test -z "$(git -C upstreams/sources/cesium status --porcelain)"
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          manifest=json.loads(Path('vendor/cesium/manifest.json').read_text())
+          assert manifest['schema_version'] == 2
+          assert manifest['dependency'] == 'CesiumJS'
+          assert manifest['version'] == '1.144.0'
+          assert manifest['runtime_network_required'] is False
+          assert manifest['upstream_commit'] == '6d5d8b1f0725b6f831b336463f4b11c98023427b'
+          assert manifest['resolved_lockfile']['verified_frozen_offline'] is True
+          assert len(manifest['resolved_lockfile']['sha256']) == 64
+          files={item['path']:item for item in manifest['files']}
+          for required in ['Cesium.js','Widgets/widgets.css','Assets/Textures/NaturalEarthII/tilemapresource.xml']:
+              assert required in files and files[required]['bytes'] > 0 and len(files[required]['sha256']) == 64
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cesium-local-vendor-evidence
+          path: |
+            vendor/cesium/manifest.json
+            vendor/cesium/resolved-package-lock.json
+            validation/upstreams/cesiumjs.json
+          if-no-files-found: warn
+
+  aedifex-controlled-fork:
+    name: Aedifex controlled fork + sidecar
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      ARCZ_NETWORK_MODE: import_assisted
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Install ARCZ audit dependencies
+        run: python -m pip install -r requirements-dev.txt
+      - name: Run ARCZ regression tests
+        run: python -m pytest -q tests_python/test_aedifex_inventory_node_kinds.py tests_python/test_aedifex_catalog_localizer.py
+      - name: Materialize pinned Aedifex
+        run: python tools/materialize_upstreams.py --only aedifex
+      - name: Audit upstream and create provenance-safe ARCZ fork
+        run: python tools/vendor_aedifex_controlled.py --source upstreams/sources/aedifex
+      - name: Build and test self-contained local sidecar
+        run: python tools/build_aedifex_sidecar_controlled.py --allow-network
+      - name: Smoke standalone runtime and authenticated MCP catalog
+        run: python tools/smoke_aedifex_sidecar.py
+      - name: Verify build manifest, localization and upstream cleanliness
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s vendor/aedifex-floorplanner/arcz-aedifex-build.json
+          test -s integrations/aedifex/generated/LOCALIZATION_REPORT.json
+          test -z "$(git -C upstreams/sources/aedifex status --porcelain)"
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report=json.loads(Path('integrations/aedifex/generated/CONVERSION_COVERAGE_REPORT.json').read_text())
+          localization=json.loads(Path('integrations/aedifex/generated/LOCALIZATION_REPORT.json').read_text())
+          build=json.loads(Path('vendor/aedifex-floorplanner/arcz-aedifex-build.json').read_text())
+          assert report['ready'] is True and not report['blockers']
+          assert localization['remaining_forbidden'] == []
+          assert localization['catalog']['excluded_remote_only_count'] == 10
+          assert localization['catalog']['rewritten'] > 0
+          assert localization['source_rewrites']['openai_sdk_type_coupling_removed'] == 1
+          assert build['upstream_commit'] == '5319368bae16500ca5267f6f8d68b36c9586d5bb'
+          assert build['integrity']['file_count'] > 0
+          assert build['resolved_lockfile']['verified_frozen_offline'] is True
+          assert build['wasm_integrity']['web-ifc.wasm']['bytes'] > 100000
+          assert build['wasm_integrity']['web-ifc-mt.wasm']['bytes'] > 100000
+          assert build['decoder_integrity']['basis/basis_transcoder.wasm']['bytes'] > 100000
+          assert build['decoder_integrity']['draco/draco_decoder.wasm']['bytes'] > 100000
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: aedifex-validation
+          path: |
+            validation/aedifex/
+            integrations/aedifex/generated/
+            opensources/integrations/aedifex-materialization.json
+            vendor/aedifex-floorplanner/arcz-aedifex-build.json
+          if-no-files-found: warn

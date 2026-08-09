@@ -23,6 +23,8 @@ log.workspace = true
 env_logger.workspace = true
 bytemuck.workspace = true
 image.workspace = true
+gltf.workspace = true
+sha2.workspace = true
 
 tiny_http.workspace = true
 serde.workspace = true

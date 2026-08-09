@@ -93,9 +93,18 @@ pub fn compute_quantities(document: &CadDocument) -> Result<QuantityReport, BimE
     }
 
     let totals = [
-        ("floor_area_m2".to_string(), rooms.iter().map(|item| item.area_m2).sum()),
-        ("wall_net_area_m2".to_string(), walls.iter().map(|item| item.net_area_m2).sum()),
-        ("wall_volume_m3".to_string(), walls.iter().map(|item| item.volume_m3).sum()),
+        (
+            "floor_area_m2".to_string(),
+            rooms.iter().map(|item| item.area_m2).sum(),
+        ),
+        (
+            "wall_net_area_m2".to_string(),
+            walls.iter().map(|item| item.net_area_m2).sum(),
+        ),
+        (
+            "wall_volume_m3".to_string(),
+            walls.iter().map(|item| item.volume_m3).sum(),
+        ),
     ]
     .into_iter()
     .collect();
@@ -123,23 +132,31 @@ pub fn estimate_costs(
             CostUnit::SquareMeterWall => (
                 report.walls.iter().map(|item| item.net_area_m2).sum(),
                 "Área líquida de paredes".to_string(),
-                report.walls.iter().map(|item| item.node_id.clone()).collect(),
+                report
+                    .walls
+                    .iter()
+                    .map(|item| item.node_id.clone())
+                    .collect(),
             ),
             CostUnit::CubicMeterWall => (
                 report.walls.iter().map(|item| item.volume_m3).sum(),
                 "Volume de paredes".to_string(),
-                report.walls.iter().map(|item| item.node_id.clone()).collect(),
+                report
+                    .walls
+                    .iter()
+                    .map(|item| item.node_id.clone())
+                    .collect(),
             ),
             CostUnit::SquareMeterFloor => (
                 report.rooms.iter().map(|item| item.area_m2).sum(),
                 "Área de piso".to_string(),
-                report.rooms.iter().map(|item| item.node_id.clone()).collect(),
+                report
+                    .rooms
+                    .iter()
+                    .map(|item| item.node_id.clone())
+                    .collect(),
             ),
-            CostUnit::Unit => (
-                1.0,
-                "Item unitário".to_string(),
-                Vec::new(),
-            ),
+            CostUnit::Unit => (1.0, "Item unitário".to_string(), Vec::new()),
         };
         items.push(CostItem {
             code: rule.code.clone(),
@@ -248,7 +265,11 @@ fn points_from_single(node: &CadNode, field: &str) -> Result<Point2, BimError> {
 }
 
 fn number(node: &CadNode, field: &str, default: f64) -> Result<f64, BimError> {
-    let value = node.properties.get(field).and_then(Value::as_f64).unwrap_or(default);
+    let value = node
+        .properties
+        .get(field)
+        .and_then(Value::as_f64)
+        .unwrap_or(default);
     if !value.is_finite() || value <= 0.0 {
         return Err(BimError::InvalidQuantity {
             node: node.id.clone(),

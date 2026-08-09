@@ -4,10 +4,10 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 pub enum LicenseType {
-    ODbL,        // OpenStreetMap
-    CC0,         // PolyHaven / Kenney
-    CcBy40,      // Creative Commons Attribution 4.0
-    Apache20,    // CesiumJS / MapAnything
+    ODbL,     // OpenStreetMap
+    CC0,      // PolyHaven / Kenney
+    CcBy40,   // Creative Commons Attribution 4.0
+    Apache20, // CesiumJS / MapAnything
     MIT,
     Proprietary,
     Unknown,
@@ -45,7 +45,11 @@ impl ExternalSourceRecord {
     pub fn is_commercially_safe(&self) -> bool {
         matches!(
             self.license,
-            LicenseType::ODbL | LicenseType::CC0 | LicenseType::CcBy40 | LicenseType::Apache20 | LicenseType::MIT
+            LicenseType::ODbL
+                | LicenseType::CC0
+                | LicenseType::CcBy40
+                | LicenseType::Apache20
+                | LicenseType::MIT
         )
     }
 }
@@ -56,10 +60,12 @@ mod tests {
 
     #[test]
     fn test_provenance_commercial_safety() {
-        let osm_source = ExternalSourceRecord::new("osm-1", "OpenStreetMap", LicenseType::ODbL, "a1b2c3d4");
+        let osm_source =
+            ExternalSourceRecord::new("osm-1", "OpenStreetMap", LicenseType::ODbL, "a1b2c3d4");
         assert!(osm_source.is_commercially_safe());
 
-        let unknown_source = ExternalSourceRecord::new("unk-1", "ThirdParty", LicenseType::Proprietary, "12345678");
+        let unknown_source =
+            ExternalSourceRecord::new("unk-1", "ThirdParty", LicenseType::Proprietary, "12345678");
         assert!(!unknown_source.is_commercially_safe());
     }
 }

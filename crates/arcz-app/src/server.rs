@@ -257,7 +257,8 @@ impl Estado {
         if self.dem_globo.is_none() {
             let bbox = self.cfg.bbox().ok();
             self.dem_globo = Some(bbox.and_then(|bbox| {
-                let cache = arcz_terrain::TileCache::new(arcz_terrain::TileCache::default_root()).ok()?;
+                let cache =
+                    arcz_terrain::TileCache::new(arcz_terrain::TileCache::default_root()).ok()?;
                 let fonte = self.cfg.dem;
                 let zoom = self.cfg.zoom_dem;
                 match self.rt.block_on(arcz_terrain::mosaic::fetch_height_mosaic(
@@ -512,7 +513,11 @@ pub fn servir(
 
         let resultado = match (post, rota) {
             (false, "/" | "/index.html") => Ok(pagina()),
-            (false, "/cesium" | "/cesium/index.html") => Ok(Response::from_string(pagina_cesium()).with_header(Header::from_bytes(&b"Content-Type"[..], &b"text/html; charset=utf-8"[..]).unwrap())),
+            (false, "/cesium" | "/cesium/index.html") => Ok(Response::from_string(pagina_cesium())
+                .with_header(
+                    Header::from_bytes(&b"Content-Type"[..], &b"text/html; charset=utf-8"[..])
+                        .unwrap(),
+                )),
             (false, "/estado.json") => Ok(json(estado_json(&estado))),
             (false, "/cameras") => Ok(json(ler_cameras())),
             (true, "/cameras") => match gravar_cameras(&corpo) {
@@ -561,7 +566,9 @@ pub fn servir(
                     &crate::viewport::camera_inicial(&estado.scene, estado.editor.as_ref()),
                     &estado.scene.placement,
                 );
-                let p = padroes.aplicar_query(query).placement(&estado.scene.placement);
+                let p = padroes
+                    .aplicar_query(query)
+                    .placement(&estado.scene.placement);
                 estado.scene.placement = p;
                 autossalvar(&estado, &p);
 
@@ -722,17 +729,22 @@ pub fn servir(
                 let ed = estado.editor.get_or_insert_with(Editor::default);
                 ed.sincronizar_nodes();
                 let arvore = crate::cena::OutlinerService::construir_arvore(&ed.nodes);
-                Ok(json(serde_json::to_string(&arvore).unwrap_or_else(|_| "[]".into())))
+                Ok(json(
+                    serde_json::to_string(&arvore).unwrap_or_else(|_| "[]".into()),
+                ))
             }
             (false, "/inspector") => {
                 let ed = estado.editor.get_or_insert_with(Editor::default);
                 ed.sincronizar_nodes();
                 let node_id = valor_de(query, "id");
-                let node = node_id.and_then(|id| ed.nodes.iter().find(|n| n.id == id))
+                let node = node_id
+                    .and_then(|id| ed.nodes.iter().find(|n| n.id == id))
                     .or_else(|| ed.nodes.first());
                 if let Some(n) = node {
                     let payload = crate::cena::InspectorService::extrair_payload(n);
-                    Ok(json(serde_json::to_string(&payload).unwrap_or_else(|_| "{}".into())))
+                    Ok(json(
+                        serde_json::to_string(&payload).unwrap_or_else(|_| "{}".into()),
+                    ))
                 } else {
                     Err("nenhum no selecionado ou disponivel na cena".into())
                 }
@@ -740,12 +752,19 @@ pub fn servir(
             (true, "/inspector") => {
                 let ed = estado.editor.get_or_insert_with(Editor::default);
                 ed.sincronizar_nodes();
-                if let Ok(novo_payload) = serde_json::from_str::<crate::cena::InspectorPayload>(&corpo) {
+                if let Ok(novo_payload) =
+                    serde_json::from_str::<crate::cena::InspectorPayload>(&corpo)
+                {
                     let id = novo_payload.id.clone();
                     if let Some(pos) = ed.nodes.iter().position(|n| n.id == id) {
                         let mut node = ed.nodes[pos].clone();
                         let mut bus = std::mem::take(&mut ed.bus);
-                        crate::cena::InspectorService::aplicar_edicao(&mut bus, ed, &mut node, novo_payload);
+                        crate::cena::InspectorService::aplicar_edicao(
+                            &mut bus,
+                            ed,
+                            &mut node,
+                            novo_payload,
+                        );
                         ed.nodes[pos] = node;
                         ed.bus = bus;
                         Ok(json("{\"ok\":true}".into()))
@@ -786,25 +805,32 @@ pub fn servir(
                                 ed.nodes.push(n.clone());
                             }
                         }
-                        Ok(json(serde_json::to_string(&res).unwrap_or_else(|_| "{}".into())))
+                        Ok(json(
+                            serde_json::to_string(&res).unwrap_or_else(|_| "{}".into()),
+                        ))
                     }
                     Err(e) => Err(format!("falha no ingest GIS: {e:#}")),
                 }
             }
             (true, "/reconstruct/ingest") => {
                 let ed = estado.editor.get_or_insert_with(Editor::default);
-                let req: crate::reconstruct_worker::IngestRealityAssetRequest = serde_json::from_str(&corpo)
-                    .unwrap_or_else(|_| crate::reconstruct_worker::IngestRealityAssetRequest {
-                        file_path: "cache/scan.ply".into(),
-                        name: "Digitalizacao de Campo".into(),
-                        asset_kind: crate::reconstruct_worker::RealityAssetKind::PointCloud,
-                        georeference: None,
+                let req: crate::reconstruct_worker::IngestRealityAssetRequest =
+                    serde_json::from_str(&corpo).unwrap_or_else(|_| {
+                        crate::reconstruct_worker::IngestRealityAssetRequest {
+                            file_path: "cache/scan.ply".into(),
+                            name: "Digitalizacao de Campo".into(),
+                            asset_kind: crate::reconstruct_worker::RealityAssetKind::PointCloud,
+                            georeference: None,
+                        }
                     });
-                let worker = crate::reconstruct_worker::ReconstructWorker::novo("cache/reconstruct");
+                let worker =
+                    crate::reconstruct_worker::ReconstructWorker::novo("cache/reconstruct");
                 match worker.processar_asset(req) {
                     Ok(res) => {
                         ed.nodes.push(res.node.clone());
-                        Ok(json(serde_json::to_string(&res).unwrap_or_else(|_| "{}".into())))
+                        Ok(json(
+                            serde_json::to_string(&res).unwrap_or_else(|_| "{}".into()),
+                        ))
                     }
                     Err(e) => Err(format!("falha na reconstrucao: {e:#}")),
                 }
@@ -831,7 +857,9 @@ pub fn servir(
                 for n in &res.nodes {
                     ed.nodes.push(n.clone());
                 }
-                Ok(json(serde_json::to_string(&res).unwrap_or_else(|_| "{}".into())))
+                Ok(json(
+                    serde_json::to_string(&res).unwrap_or_else(|_| "{}".into()),
+                ))
             }
             (true, "/cad/ingest") => {
                 let ed = estado.editor.get_or_insert_with(Editor::default);
@@ -848,28 +876,34 @@ pub fn servir(
                         for n in &res.nodes {
                             ed.nodes.push(n.clone());
                         }
-                        Ok(json(serde_json::to_string(&res).unwrap_or_else(|_| "{}".into())))
+                        Ok(json(
+                            serde_json::to_string(&res).unwrap_or_else(|_| "{}".into()),
+                        ))
                     }
                     Err(e) => Err(format!("falha ao ingestar CAD: {e:#}")),
                 }
             }
             (true, "/archviz/instantiate") => {
                 let ed = estado.editor.get_or_insert_with(Editor::default);
-                let req: crate::archviz_worker::InstantiateAssetRequest = serde_json::from_str(&corpo)
-                    .unwrap_or_else(|_| crate::archviz_worker::InstantiateAssetRequest {
-                        asset_id: "cadeira_eames".into(),
-                        name: "Cadeira Eames Archviz".into(),
-                        category: crate::archviz_worker::ArchvizCategory::Furniture,
-                        position: [0.0, 0.0, 0.0],
-                        rotation_euler: [0.0, 0.0, 0.0],
-                        scale: [1.0, 1.0, 1.0],
-                        material_overrides: vec!["couro_preto".into()],
+                let req: crate::archviz_worker::InstantiateAssetRequest =
+                    serde_json::from_str(&corpo).unwrap_or_else(|_| {
+                        crate::archviz_worker::InstantiateAssetRequest {
+                            asset_id: "cadeira_eames".into(),
+                            name: "Cadeira Eames Archviz".into(),
+                            category: crate::archviz_worker::ArchvizCategory::Furniture,
+                            position: [0.0, 0.0, 0.0],
+                            rotation_euler: [0.0, 0.0, 0.0],
+                            scale: [1.0, 1.0, 1.0],
+                            material_overrides: vec!["couro_preto".into()],
+                        }
                     });
                 let worker = crate::archviz_worker::ArchvizWorker::novo();
                 match worker.instanciar_asset(req) {
                     Ok(res) => {
                         ed.nodes.push(res.node.clone());
-                        Ok(json(serde_json::to_string(&res).unwrap_or_else(|_| "{}".into())))
+                        Ok(json(
+                            serde_json::to_string(&res).unwrap_or_else(|_| "{}".into()),
+                        ))
                     }
                     Err(e) => Err(format!("falha ao instanciar asset archviz: {e:#}")),
                 }
@@ -910,7 +944,9 @@ pub fn servir(
                     ca.cmp(cb)
                         .then_with(|| a["nome"].as_str().cmp(&b["nome"].as_str()))
                 });
-                Ok(json(serde_json::to_string(&saida).unwrap_or_else(|_| "[]".into())))
+                Ok(json(
+                    serde_json::to_string(&saida).unwrap_or_else(|_| "[]".into()),
+                ))
             }
 
             // Solta uma peca da biblioteca na cena, na posicao do cursor.
@@ -1009,21 +1045,38 @@ pub fn servir(
                         }
                     }
                 }
-                Ok(json(serde_json::to_string(&lista).unwrap_or_else(|_| "[]".into())))
+                Ok(json(
+                    serde_json::to_string(&lista).unwrap_or_else(|_| "[]".into()),
+                ))
             }
             (true, "/upload") => {
                 let _ = std::fs::create_dir_all("cache");
-                let filename = valor_de(query, "nome").unwrap_or("modelo_uploaded.obj").to_string();
+                let filename = valor_de(query, "nome")
+                    .unwrap_or("modelo_uploaded.obj")
+                    .to_string();
                 let dest = std::path::Path::new("cache").join(&filename);
                 match std::fs::write(&dest, corpo.as_bytes()) {
                     Ok(()) => {
                         let ed = estado.editor.get_or_insert_with(Editor::default);
-                        let node_id = format!("uploaded_{}", std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap_or_default().as_secs());
-                        let mut node = crate::cena::SceneNode::novo(node_id, filename.clone(), crate::cena::NodeType::Building);
+                        let node_id = format!(
+                            "uploaded_{}",
+                            std::time::SystemTime::now()
+                                .duration_since(std::time::UNIX_EPOCH)
+                                .unwrap_or_default()
+                                .as_secs()
+                        );
+                        let mut node = crate::cena::SceneNode::novo(
+                            node_id,
+                            filename.clone(),
+                            crate::cena::NodeType::Building,
+                        );
                         node.confidence = crate::cena::NodeConfidence::Observed;
                         node.asset_ref = Some(dest.to_string_lossy().to_string());
                         ed.nodes.push(node);
-                        Ok(json(format!("{{\"ok\":true,\"arquivo\":\"{}\"}}", filename)))
+                        Ok(json(format!(
+                            "{{\"ok\":true,\"arquivo\":\"{}\"}}",
+                            filename
+                        )))
                     }
                     Err(e) => Err(format!("erro ao gravar arquivo upload: {e:#}")),
                 }
@@ -1033,7 +1086,12 @@ pub fn servir(
                 let center = estado.scene.bbox.center();
                 let req: crate::raw_gis_worker::IngestRawGisRequest = serde_json::from_str(&corpo)
                     .unwrap_or(crate::raw_gis_worker::IngestRawGisRequest {
-                        bbox_latlon: [center.lat_deg - 0.01, center.lon_deg - 0.01, center.lat_deg + 0.01, center.lon_deg + 0.01],
+                        bbox_latlon: [
+                            center.lat_deg - 0.01,
+                            center.lon_deg - 0.01,
+                            center.lat_deg + 0.01,
+                            center.lon_deg + 0.01,
+                        ],
                         zoom: 15,
                         tile_kind: crate::raw_gis_worker::GisTileKind::SatelliteImagery,
                     });
@@ -1043,7 +1101,9 @@ pub fn servir(
                         for n in &res.nodes {
                             ed.nodes.push(n.clone());
                         }
-                        Ok(json(serde_json::to_string(&res).unwrap_or_else(|_| "{}".into())))
+                        Ok(json(
+                            serde_json::to_string(&res).unwrap_or_else(|_| "{}".into()),
+                        ))
                     }
                     Err(e) => Err(format!("falha ao ingestar tiles raw GIS: {e:#}")),
                 }
@@ -1051,8 +1111,16 @@ pub fn servir(
             (true, "/sync/offline") => {
                 let ed = estado.editor.get_or_insert_with(Editor::default);
                 let c = estado.scene.bbox.center();
-                let worker = crate::offline_sync_worker::OfflineGisSyncWorker::novo("cache/gis_offline", crate::offline_sync_worker::AutoSyncConfig::default());
-                match worker.executar_sincronizacao([c.lat_deg - 0.01, c.lon_deg - 0.01, c.lat_deg + 0.01, c.lon_deg + 0.01]) {
+                let worker = crate::offline_sync_worker::OfflineGisSyncWorker::novo(
+                    "cache/gis_offline",
+                    crate::offline_sync_worker::AutoSyncConfig::default(),
+                );
+                match worker.executar_sincronizacao([
+                    c.lat_deg - 0.01,
+                    c.lon_deg - 0.01,
+                    c.lat_deg + 0.01,
+                    c.lon_deg + 0.01,
+                ]) {
                     Ok(report) => {
                         let nos = worker.gerar_nos_cena(c.lat_deg, c.lon_deg);
                         for n in nos {
@@ -1060,7 +1128,9 @@ pub fn servir(
                                 ed.nodes.push(n);
                             }
                         }
-                        Ok(json(serde_json::to_string(&report).unwrap_or_else(|_| "{}".into())))
+                        Ok(json(
+                            serde_json::to_string(&report).unwrap_or_else(|_| "{}".into()),
+                        ))
                     }
                     Err(e) => Err(format!("falha na sincronizacao offline: {e:#}")),
                 }
@@ -1241,7 +1311,10 @@ pub fn servir(
                         let b = arcz_terrain::quantized::bounds_do_tile(z, x, y);
                         let dem = estado.dem_do_globo().filter(|d| {
                             let c = d.bounds();
-                            b.west < c.east && b.east > c.west && b.south < c.north && b.north > c.south
+                            b.west < c.east
+                                && b.east > c.west
+                                && b.south < c.north
+                                && b.north > c.south
                         });
                         let bytes = arcz_terrain::quantized::codificar(z, x, y, dem);
                         Ok(Response::from_data(bytes)
@@ -1287,10 +1360,11 @@ pub fn servir(
             // data.js = a referencia da UI + um bootstrap que troca o mock pelo
             // que o servidor sabe de verdade. A UI nao precisa saber a diferenca;
             // o que nao existe de verdade fica visivelmente vazio, nao inventado.
-            (false, "/earth/data.js") => {
-                Ok(script(&format!("{UI_DATA}
-{}", BOOTSTRAP_VIVO)))
-            }
+            (false, "/earth/data.js") => Ok(script(&format!(
+                "{UI_DATA}
+{}",
+                BOOTSTRAP_VIVO
+            ))),
             (false, "/earth/styles.css") => Ok(estilo(UI_CSS)),
 
             // ---- dispatcher do contrato de comandos --------------------------
@@ -1304,7 +1378,9 @@ pub fn servir(
                     biblioteca: &estado.cfg.biblioteca_raiz,
                 };
                 let r = crate::comandos::executar(nome, &params, &ctx);
-                Ok(json(serde_json::to_string(&r).unwrap_or_else(|_| "{}".into())))
+                Ok(json(
+                    serde_json::to_string(&r).unwrap_or_else(|_| "{}".into()),
+                ))
             }
             (false, "/cmd") => {
                 let ctx = crate::comandos::Contexto {
@@ -1312,14 +1388,19 @@ pub fn servir(
                     editor: estado.editor.as_ref(),
                     biblioteca: &estado.cfg.biblioteca_raiz,
                 };
-                let r = crate::comandos::executar("capability.list", &serde_json::Value::Null, &ctx);
-                Ok(json(serde_json::to_string(&r).unwrap_or_else(|_| "{}".into())))
+                let r =
+                    crate::comandos::executar("capability.list", &serde_json::Value::Null, &ctx);
+                Ok(json(
+                    serde_json::to_string(&r).unwrap_or_else(|_| "{}".into()),
+                ))
             }
 
             (false, "/earth/scene") => {
                 let mut engine = arcz_earth::ArczEarthEngine::novo("cache/earth");
                 let scene = engine.inicializar_globo_offline();
-                Ok(json(serde_json::to_string(&scene).unwrap_or_else(|_| "{}".into())))
+                Ok(json(
+                    serde_json::to_string(&scene).unwrap_or_else(|_| "{}".into()),
+                ))
             }
             (false, "/earth/take") => {
                 let engine = arcz_earth::ArczEarthEngine::novo("cache/earth");
@@ -1329,7 +1410,9 @@ pub fn servir(
                     latitude: c.lat_deg,
                     height: 1500.0,
                 });
-                Ok(json(serde_json::to_string(&bands).unwrap_or_else(|_| "[]".into())))
+                Ok(json(
+                    serde_json::to_string(&bands).unwrap_or_else(|_| "[]".into()),
+                ))
             }
             _ => Err("rota desconhecida".to_string()),
         };
@@ -1562,7 +1645,12 @@ fn renderizar_com(estado: &mut Estado, p: &Params, formato: Formato) -> anyhow::
                 .caixa_modelo
                 .map(|(min, _)| min[1])
                 .unwrap_or(estado.scene.solo_modelo_m as f32);
-            [base + altura, 1.0, estado.cfg.estilo.codigo(), estado.cfg.corte_linha_m.max(0.001)]
+            [
+                base + altura,
+                1.0,
+                estado.cfg.estilo.codigo(),
+                estado.cfg.corte_linha_m.max(0.001),
+            ]
         }
         None => estado.cfg.vista(),
     };
@@ -1679,8 +1767,9 @@ fn renderizar_com(estado: &mut Estado, p: &Params, formato: Formato) -> anyhow::
                 crate::gpu::Camadas::SO_PROJETO,
             )?;
             let mut png = Vec::new();
-            let img = image::RgbaImage::from_raw(p.largura, p.altura, rgba)
-                .ok_or_else(|| anyhow::anyhow!("buffer RGBA nao bate com {}x{}", p.largura, p.altura))?;
+            let img = image::RgbaImage::from_raw(p.largura, p.altura, rgba).ok_or_else(|| {
+                anyhow::anyhow!("buffer RGBA nao bate com {}x{}", p.largura, p.altura)
+            })?;
             image::DynamicImage::ImageRgba8(img)
                 .write_to(&mut Cursor::new(&mut png), image::ImageFormat::Png)?;
             Ok(png)
@@ -1839,9 +1928,7 @@ fn servir_imagery(
     Some(
         Response::from_data(bytes)
             .with_header(Header::from_bytes(&b"Content-Type"[..], tipo).unwrap())
-            .with_header(
-                Header::from_bytes(&b"Cache-Control"[..], &b"max-age=86400"[..]).unwrap(),
-            ),
+            .with_header(Header::from_bytes(&b"Cache-Control"[..], &b"max-age=86400"[..]).unwrap()),
     )
 }
 

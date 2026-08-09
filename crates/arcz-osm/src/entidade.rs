@@ -42,16 +42,17 @@ impl ClasseEdificio {
     /// Deduz a classe a partir do valor da tag `building`.
     pub fn da_tag(valor: &str) -> Self {
         match valor {
-            "house" | "detached" | "residential" | "bungalow" | "terrace" | "semidetached_house"
-            | "hut" | "cabin" => Self::Residencial,
+            "house" | "detached" | "residential" | "bungalow" | "terrace"
+            | "semidetached_house" | "hut" | "cabin" => Self::Residencial,
             "apartments" | "dormitory" | "hotel" | "residential_tower" => Self::Apartamentos,
-            "commercial" | "retail" | "supermarket" | "shop" | "office" | "kiosk" | "restaurant" => {
-                Self::Comercial
-            }
+            "commercial" | "retail" | "supermarket" | "shop" | "office" | "kiosk"
+            | "restaurant" => Self::Comercial,
             "industrial" | "warehouse" | "factory" | "hangar" => Self::Industrial,
             "school" | "hospital" | "university" | "civic" | "public" | "government"
             | "college" | "kindergarten" => Self::Publico,
-            "church" | "cathedral" | "chapel" | "mosque" | "temple" | "synagogue" => Self::Religioso,
+            "church" | "cathedral" | "chapel" | "mosque" | "temple" | "synagogue" => {
+                Self::Religioso
+            }
             "garage" | "garages" | "carport" | "shed" | "roof" => Self::Garagem,
             _ => Self::Outro,
         }
@@ -520,7 +521,10 @@ mod tests {
 
     #[test]
     fn largura_da_via_prefere_width_depois_lanes() {
-        assert_eq!(largura_da_via(&tags(&[("width", "9")]), ClasseVia::Local), 9.0);
+        assert_eq!(
+            largura_da_via(&tags(&[("width", "9")]), ClasseVia::Local),
+            9.0
+        );
         let w = largura_da_via(&tags(&[("lanes", "2")]), ClasseVia::Local);
         assert_eq!(w, 6.4);
         // Rodovia ganha acostamento.
@@ -570,6 +574,10 @@ mod tests {
             ],
             ..Default::default()
         };
-        assert!(e.resumo().contains("2 predios (1 com altura do OSM)"), "{}", e.resumo());
+        assert!(
+            e.resumo().contains("2 predios (1 com altura do OSM)"),
+            "{}",
+            e.resumo()
+        );
     }
 }

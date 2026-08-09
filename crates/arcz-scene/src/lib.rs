@@ -4,16 +4,14 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 /// Nível de confiança da informação no Scene Graph.
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
-#[derive(Default)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Default)]
 pub enum NodeConfidence {
-    Observed,     // Medido no local / Scanner / Foto (Verde)
+    Observed, // Medido no local / Scanner / Foto (Verde)
     #[default]
-    GisDerived,   // Extraído de fonte oficial GIS (Azul)
-    Reconstructed,// Reconstruído por SFM/AI (Amarelo)
-    Inferred,     // Gerado procedualmente (Vermelho)
+    GisDerived, // Extraído de fonte oficial GIS (Azul)
+    Reconstructed, // Reconstruído por SFM/AI (Amarelo)
+    Inferred, // Gerado procedualmente (Vermelho)
 }
-
 
 /// Tipos de nós no Scene Graph.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -141,14 +139,31 @@ impl CommandBus {
                 }
             }
             Command::UpdateTransform { id, transform: _ } => {
-                let prev_t = self.nodes.get(id).map(|n| n.transform.clone()).unwrap_or_default();
-                Command::UpdateTransform { id: *id, transform: prev_t }
+                let prev_t = self
+                    .nodes
+                    .get(id)
+                    .map(|n| n.transform.clone())
+                    .unwrap_or_default();
+                Command::UpdateTransform {
+                    id: *id,
+                    transform: prev_t,
+                }
             }
             Command::RenameNode { id, name: _ } => {
-                let prev_name = self.nodes.get(id).map(|n| n.name.clone()).unwrap_or_default();
-                Command::RenameNode { id: *id, name: prev_name }
+                let prev_name = self
+                    .nodes
+                    .get(id)
+                    .map(|n| n.name.clone())
+                    .unwrap_or_default();
+                Command::RenameNode {
+                    id: *id,
+                    name: prev_name,
+                }
             }
-            Command::SetVisibility { id, visible } => Command::SetVisibility { id: *id, visible: !*visible },
+            Command::SetVisibility { id, visible } => Command::SetVisibility {
+                id: *id,
+                visible: !*visible,
+            },
         };
 
         match &cmd {
@@ -178,7 +193,6 @@ impl CommandBus {
         self.undo_stack.push(inverse);
         self.redo_stack.clear();
     }
-
 
     pub fn undo(&mut self) -> Option<Command> {
         let inverse = self.undo_stack.pop()?;
@@ -216,7 +230,6 @@ impl CommandBus {
         Some(cmd)
     }
 }
-
 
 #[cfg(test)]
 mod tests {

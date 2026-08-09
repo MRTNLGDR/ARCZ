@@ -6,12 +6,17 @@ A solicitação pública contém apenas IDs/revisões. No submit, o serviço con
 uma cópia da revisão Aedifex, resolve o GLB derivado real quando disponível e
 materializa somente caminhos já verificados dentro da raiz do ARCZ. Nenhum
 worker recebe URL externa, segredo ou caminho escolhido livremente pelo cliente.
+
+Blender também é uma dependência materializada: o runtime aceita somente o
+vendor auditado em ``vendor/blender`` (ou ARCZ_BLENDER apontando exatamente para
+um executável dentro da raiz do repo e coberto pelo mesmo manifesto). PATH
+externo não é fallback de produção.
 """
 
 from copy import deepcopy
+import json
 import os
 from pathlib import Path
-import shutil
 from typing import Any
 
 from .ai_broker import ModelRegistry
@@ -38,21 +43,88 @@ class PhotorealRenderService:
         self.root = root.resolve(); self.schemas = schemas; self.models = models
         self.media = media; self.floorplanner = floorplanner; self.jobs = jobs
 
+    def _inside_root(self, path: Path) -> bool:
+        try:
+            path.resolve().relative_to(self.root)
+            return True
+        except (ValueError, OSError):
+            return False
+
     def _blender_status(self) -> dict[str, Any]:
         launcher = self.root / "workers" / "blender" / "launch_blender.py"
         render_script = self.root / "workers" / "blender" / "render_floor_scene.py"
-        configured = os.environ.get("ARCZ_BLENDER")
-        executable = Path(configured).expanduser().resolve() if configured else None
-        if executable and not executable.is_file():
-            executable = None
-        discovered = str(executable) if executable else shutil.which("blender")
+        vendor_root = self.root / "vendor" / "blender"
+        manifest_path = vendor_root / "manifest.json"
+        manifest: dict[str, Any] | None = None
+        executable: Path | None = None
+        blockers: list[str] = []
+
+        try:
+            parsed = json.loads(manifest_path.read_text(encoding="utf-8"))
+            if not isinstance(parsed, dict):
+                raise ValueError("manifesto não é objeto")
+            manifest = parsed
+        except (OSError, json.JSONDecodeError, ValueError) as error:
+            blockers.append(f"manifesto Blender local inválido/ausente: {error}")
+
+        if manifest is not None:
+            if manifest.get("schema_version") != 1 or manifest.get("dependency") != "Blender":
+                blockers.append("manifesto Blender possui contrato desconhecido")
+            if manifest.get("runtime_network_required") is not False:
+                blockers.append("vendor Blender não declara runtime offline")
+            relative_executable = str(manifest.get("executable") or "").strip()
+            if not relative_executable:
+                blockers.append("manifesto Blender não declara executável")
+            else:
+                candidate = (vendor_root / relative_executable).resolve()
+                if not self._inside_root(candidate) or not candidate.is_file() or candidate.is_symlink():
+                    blockers.append("executável Blender não existe dentro do repo")
+                else:
+                    expected_hash = str((manifest.get("integrity") or {}).get("executable_sha256") or "")
+                    if len(expected_hash) != 64:
+                        blockers.append("manifesto Blender sem SHA-256 válido")
+                    else:
+                        actual_hash = sha256_file(candidate)
+                        if actual_hash != expected_hash:
+                            blockers.append("SHA-256 do executável Blender diverge do manifesto")
+                        else:
+                            executable = candidate
+
+        configured = os.environ.get("ARCZ_BLENDER", "").strip()
+        configured_path: Path | None = None
+        configured_inside_repo = False
+        if configured:
+            try:
+                configured_path = Path(configured).expanduser().resolve()
+                configured_inside_repo = self._inside_root(configured_path)
+            except OSError:
+                configured_path = None
+            if not configured_inside_repo:
+                blockers.append("ARCZ_BLENDER aponta para fora da raiz do ARCZ")
+            elif executable is not None and configured_path != executable:
+                blockers.append("ARCZ_BLENDER não corresponde ao executável coberto pelo vendor manifest")
+            elif executable is None:
+                blockers.append("ARCZ_BLENDER local não substitui manifesto/hash obrigatório")
+
+        installed = bool(
+            executable
+            and not blockers
+            and launcher.is_file()
+            and render_script.is_file()
+        )
         return {
-            "installed": bool(discovered and launcher.is_file() and render_script.is_file()),
-            "executable": discovered,
+            "installed": installed,
+            "verified_repo_local": bool(executable and not blockers),
+            "executable": str(executable) if executable else None,
+            "manifest": str(manifest_path),
+            "manifest_version": manifest.get("version") if manifest else None,
+            "configured": str(configured_path) if configured_path else configured or None,
+            "configured_inside_repo": configured_inside_repo if configured else None,
             "launcher": str(launcher),
             "render_script": str(render_script),
             "launcher_exists": launcher.is_file(),
             "render_script_exists": render_script.is_file(),
+            "blockers": blockers,
         }
 
     def _resolve_scene_export(self, project_id: str, revision: int,
@@ -168,7 +240,10 @@ class PhotorealRenderService:
         if not blender["installed"]:
             blockers.append({
                 "code": "BLENDER_NOT_INSTALLED",
-                "message": "Defina ARCZ_BLENDER ou instale Blender local; nenhum render fictício será criado.",
+                "message": (
+                    "Materialize uma distribuição Blender portátil auditada em vendor/blender com "
+                    "tools/vendor_blender.py; nenhum PATH externo ou render fictício será usado."
+                ),
                 "details": blender,
             })
 
@@ -240,6 +315,7 @@ class PhotorealRenderService:
             resolved_references.append(record)
         frozen["reference_media_records"] = resolved_references
         frozen["resolved_enhancement_model"] = preflight.get("model")
+        frozen["resolved_blender"] = preflight.get("blender")
         return self.jobs.create(
             "render.photoreal", frozen, int(request.get("generation_epoch", 0)),
         )

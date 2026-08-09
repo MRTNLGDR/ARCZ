@@ -6,6 +6,11 @@ from __future__ import annotations
 Etapa 1: Blender gera a cena, beauty e passes técnicos.
 Etapa 2: quando solicitado, o Local AI Broker executa o modelo de difusão
 instalado e a saída só substitui o beauty se passar pelo geometry guard.
+
+O executável Blender NÃO é descoberto pelo PATH. Ele chega congelado no request
+pelo preflight do ARCZ, deve estar dentro de ``vendor/blender`` e precisa manter
+o SHA-256 registrado no manifesto local. Assim o worker executa exatamente a
+mesma dependência que foi auditada antes da criação do job.
 """
 
 import json
@@ -32,6 +37,68 @@ def _within(path: Path, root: Path) -> Path:
     except ValueError as error:
         raise RuntimeError(f"enhancement output escaped staging: {resolved}") from error
     return resolved
+
+
+def _within_repo(path: Path, root: Path, label: str) -> Path:
+    resolved = path.expanduser().resolve()
+    try:
+        resolved.relative_to(root.resolve())
+    except ValueError as error:
+        raise RuntimeError(f"{label} escaped ARCZ repository: {resolved}") from error
+    if not resolved.is_file() or resolved.is_symlink():
+        raise RuntimeError(f"{label} is missing or is not a regular file: {resolved}")
+    return resolved
+
+
+def _resolve_blender(wrapper: dict, root: Path) -> Path:
+    request = wrapper.get("request")
+    if not isinstance(request, dict):
+        raise RuntimeError("worker request envelope has no request object")
+    frozen = request.get("resolved_blender")
+    if not isinstance(frozen, dict) or frozen.get("verified_repo_local") is not True:
+        raise RuntimeError("BLENDER_NOT_VERIFIED: job has no frozen repo-local Blender")
+
+    executable_value = str(frozen.get("executable") or "").strip()
+    if not executable_value:
+        raise RuntimeError("BLENDER_NOT_VERIFIED: frozen executable is empty")
+    executable = _within_repo(Path(executable_value), root, "Blender executable")
+
+    vendor_root = (root / "vendor" / "blender").resolve()
+    try:
+        executable.relative_to(vendor_root)
+    except ValueError as error:
+        raise RuntimeError(
+            f"BLENDER_PATH_ESCAPE: executable is outside vendor/blender: {executable}"
+        ) from error
+
+    manifest_value = str(frozen.get("manifest") or "").strip()
+    manifest_path = _within_repo(
+        Path(manifest_value) if manifest_value else root / "vendor" / "blender" / "manifest.json",
+        root,
+        "Blender manifest",
+    )
+    if manifest_path.parent != vendor_root:
+        raise RuntimeError(f"BLENDER_MANIFEST_ESCAPE: {manifest_path}")
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    if manifest.get("schema_version") != 1 or manifest.get("dependency") != "Blender":
+        raise RuntimeError("BLENDER_MANIFEST_INVALID: unexpected contract")
+    if manifest.get("runtime_network_required") is not False:
+        raise RuntimeError("BLENDER_MANIFEST_INVALID: runtime must be offline")
+
+    expected = str((manifest.get("integrity") or {}).get("executable_sha256") or "")
+    if len(expected) != 64:
+        raise RuntimeError("BLENDER_MANIFEST_INVALID: executable SHA-256 missing")
+    actual = _sha256(executable)
+    if actual != expected:
+        raise RuntimeError(
+            f"BLENDER_HASH_MISMATCH: expected {expected}, got {actual}"
+        )
+    manifest_executable = (vendor_root / str(manifest.get("executable") or "")).resolve()
+    if manifest_executable != executable:
+        raise RuntimeError(
+            "BLENDER_EXECUTABLE_MISMATCH: frozen executable differs from vendor manifest"
+        )
+    return executable
 
 
 def _enhance(request_path: Path, output: Path, root: Path) -> None:
@@ -129,22 +196,29 @@ def main() -> int:
     output.mkdir(parents=True, exist_ok=True)
     wrapper = json.loads(request.read_text(encoding="utf-8"))
     root = Path(wrapper.get("root") or Path(__file__).resolve().parents[2]).resolve()
-    blender = os.environ.get("ARCZ_BLENDER") or shutil.which("blender")
-    if not blender:
-        print("BLENDER_NOT_INSTALLED: set ARCZ_BLENDER or install Blender", file=sys.stderr)
+    try:
+        blender = _resolve_blender(wrapper, root)
+    except Exception as error:
+        print(f"BLENDER_NOT_VERIFIED: {error}", file=sys.stderr)
         return 127
     script = Path(__file__).with_name("render_floor_scene.py").resolve()
     if not script.is_file():
         print(f"worker script missing: {script}", file=sys.stderr)
         return 2
     command = [
-        blender, "--background", "--factory-startup", "--python", str(script),
+        str(blender), "--background", "--factory-startup", "--python", str(script),
         "--", str(request), str(output),
     ]
     completed = subprocess.run(
         command,
         shell=False,
-        env={**os.environ, "ARCZ_NETWORK_MODE": "offline_strict", "NO_PROXY": "*", "no_proxy": "*"},
+        env={
+            **os.environ,
+            "ARCZ_BLENDER": str(blender),
+            "ARCZ_NETWORK_MODE": "offline_strict",
+            "NO_PROXY": "*",
+            "no_proxy": "*",
+        },
     )
     if completed.returncode != 0:
         return completed.returncode

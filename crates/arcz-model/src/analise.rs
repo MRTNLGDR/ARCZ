@@ -525,7 +525,8 @@ mod real {
     #[test]
     #[ignore = "depende de ARCZ_MODELO apontando para um GLB real"]
     fn pavimentos_do_modelo_externo() {
-        let caminho = std::env::var("ARCZ_MODELO").expect("defina ARCZ_MODELO para executar este teste ignorado");
+        let caminho = std::env::var("ARCZ_MODELO")
+            .expect("defina ARCZ_MODELO para executar este teste ignorado");
         let m = Model::load(&caminho).expect("abrir o modelo");
         println!(
             "bbox: x {:.2}..{:.2}  y {:.2}..{:.2}  z {:.2}..{:.2}",

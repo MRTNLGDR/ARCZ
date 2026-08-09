@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { readFile, access } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -30,37 +30,6 @@ const {
   buildPhotorealRequest,
 } = await import("../app/render/photoreal-client.js");
 
-function installCesiumStub() {
-  globalThis.Cesium = {
-    Math: { toRadians: value => value * Math.PI / 180 },
-    Cartesian2: class Cartesian2 { constructor(x, y) { this.x = x; this.y = y; } },
-    Cartesian3: class Cartesian3 {
-      constructor(x, y, z) { this.x = x; this.y = y; this.z = z; }
-      static fromDegrees(lon, lat, height) { return { lon, lat, height }; }
-    },
-    CloudCollection: class CloudCollection {
-      constructor() { this.items = []; this.show = true; }
-      add(value) { this.items.push(value); return value; }
-      removeAll() { this.items.length = 0; }
-      isDestroyed() { return false; }
-    },
-    DynamicAtmosphereLightingType: { SUNLIGHT: "sunlight" },
-    Color: { fromCssColorString: value => ({ value }) },
-    EasingFunction: { QUINTIC_IN_OUT: "quint", CUBIC_OUT: "cubic" },
-  };
-}
-installCesiumStub();
-const {
-  normalizeEarthPresentation,
-  resolveEarthIntroTarget,
-  ensureProceduralClouds,
-  applyCinematicEarthBaseline,
-  CinematicGlobeIntro,
-  flyToCamera,
-} = await import("../app/earth/cinematic-globe.js");
-
-
-
 test("dock usa navegação circular, hover apenas em ponteiro fino e largura segura", () => {
   assert.equal(nextPanelTabIndex(0, "ArrowUp", 4), 3);
   assert.equal(nextPanelTabIndex(3, "ArrowDown", 4), 0);
@@ -68,46 +37,19 @@ test("dock usa navegação circular, hover apenas em ponteiro fino e largura seg
   assert.equal(nextPanelTabIndex(1, "End", 4), 3);
   assert.equal(panelHoverIsAvailable(() => ({ matches: true })), false);
   assert.equal(panelHoverIsAvailable(() => ({ matches: false })), true);
+  assert.equal(clampPanelWidth(12), 240);
+  assert.equal(clampPanelWidth(999), 720);
 });
 
-test("baseline cinematográfico e nuvens locais não dependem de provider", () => {
-  const primitives = {
-    values: [],
-    add(value) { this.values.push(value); return value; },
-  };
-  const scene = {
-    primitives, requestRender() {}, highDynamicRange: false,
-    postProcessStages: { fxaa: { enabled: false } },
-    skyAtmosphere: {}, atmosphere: {}, sun: {}, moon: {}, skyBox: {}, fog: {},
-    globe: {},
-  };
-  const result = applyCinematicEarthBaseline({ scene }, { clouds: true, fog: true });
-  assert.equal(result.applied, true);
-  assert.equal(scene.highDynamicRange, true);
-  assert.equal(scene.globe.enableLighting, true);
-  const first = ensureProceduralClouds(scene, { lon: -48, lat: -27 }, { cloud_count: 4 });
-  assert.equal(first.created, true);
-  assert.equal(first.count, 4);
-  assert.equal(first.collection.items.length, 4);
-  const second = ensureProceduralClouds(scene, { lon: -48, lat: -27 }, { cloud_count: 2 });
-  assert.equal(second.collection, first.collection);
-  assert.equal(second.collection.items.length, 2, "regeneração deve reutilizar e limpar a coleção local");
-});
-
-test("estado da abertura funciona em runtimes sem CustomEvent", () => {
-  const previousEvent = globalThis.CustomEvent;
-  const previousDispatch = globalThis.dispatchEvent;
-  try {
-    delete globalThis.CustomEvent;
-    delete globalThis.dispatchEvent;
-    let observed = null;
-    const intro = new CinematicGlobeIntro({ onStateChange: value => { observed = value; } });
-    assert.doesNotThrow(() => intro._setState("PREPARING", { progress: 0.25 }));
-    assert.deepEqual(observed, { state: "PREPARING", progress: 0.25 });
-  } finally {
-    if (previousEvent !== undefined) globalThis.CustomEvent = previousEvent;
-    if (previousDispatch !== undefined) globalThis.dispatchEvent = previousDispatch;
-  }
+test("startup V10 não possui mais abertura cinematográfica e entra no fluxo de autoria", async () => {
+  const shell = await readFile(path.join(ROOT, "app/shell/fusion-shell.js"), "utf8");
+  assert.match(shell, /await this\.activate\("globo", \{ persist: false \}\)/);
+  assert.match(shell, /1 · Localizar/);
+  assert.match(shell, /2 · Modelar/);
+  assert.match(shell, /3 · Fotorreal/);
+  assert.match(shell, /4 · Rua/);
+  assert.doesNotMatch(shell, /CinematicGlobeIntro|\.play\(/);
+  await assert.rejects(access(path.join(ROOT, "app/earth/cinematic-globe.js")));
 });
 
 test("layout de autoria mantém globo visível e limita dimensões persistíveis", () => {
@@ -119,8 +61,6 @@ test("layout de autoria mantém globo visível e limita dimensões persistíveis
     auto_publish_delay_ms: 400,
   });
   assert.equal(normalizeSiteAuthoringLayout({ show_globe: false, auto_publish: false }).show_globe, false);
-  assert.equal(clampPanelWidth(12), 240);
-  assert.equal(clampPanelWidth(999), 720);
 });
 
 test("lote desenhado domina bbox e resumo da Região Ativa", () => {
@@ -170,44 +110,6 @@ test("request fotorreal valida câmera, passes e saída 8K sem provider remoto",
   assert.equal(request.output_name, "take-01-hero");
   assert.equal(request.camera.focal_length_mm, 50);
   assert.deepEqual(request.reference_media, ["a".repeat(64)]);
-});
-
-test("configuração cinematográfica é limitada e destino inválido não move câmera", () => {
-  const value = normalizeEarthPresentation({
-    duration_ms: 99,
-    start_altitude_m: 999999999,
-    orbit_altitude_m: 300,
-    end_altitude_m: -10,
-    orbit_heading_delta_deg: 200,
-  });
-  assert.equal(value.duration_ms, 400);
-  assert.equal(value.start_altitude_m, 80000000);
-  assert.equal(value.orbit_altitude_m, 500);
-  assert.equal(value.end_altitude_m, 20);
-  assert.equal(value.orbit_heading_delta_deg, 90);
-  assert.equal(resolveEarthIntroTarget({ lat: 92, lon: 0 }), null);
-  assert.deepEqual(resolveEarthIntroTarget({ lat: -27, lon: -48, pitch: -200 }), {
-    lon: -48, lat: -27, alt: 250, heading: 0, pitch: -90, roll: 0,
-  });
-});
-
-test("flyToCamera só resolve quando callback real do Cesium termina", async () => {
-  let options;
-  const camera = {
-    flyTo(value) { options = value; },
-    cancelFlight() { options?.cancel?.(); },
-  };
-  let settled = false;
-  const promise = flyToCamera(camera, { duration: 1 }).then(value => { settled = true; return value; });
-  await Promise.resolve();
-  assert.equal(settled, false, "o wrapper não pode fingir conclusão síncrona");
-  options.complete();
-  assert.equal(await promise, true);
-
-  const controller = new AbortController();
-  const aborted = flyToCamera(camera, { duration: 1 }, { signal: controller.signal });
-  controller.abort();
-  assert.equal(await aborted, false);
 });
 
 test("host Floorplanner conserva Cesium, publicação por revisão e autoridade única", async () => {

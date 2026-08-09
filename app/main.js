@@ -13,6 +13,7 @@ import { recorteApp } from "./recorte.js";
 import { uiApp } from "./ui.js";
 import { criarProvedorDeRelevo } from "./relevo.js";
 import { qualidadeApp } from "./qualidade.js";
+import { installGizmoFrameCoalescing } from "./core/gizmo-frame-coalescing.js";
 import { initializeV2Runtime } from "./runtime-v2.js";
 import { initializeFusionShell } from "./shell/fusion-shell.js";
 
@@ -26,8 +27,8 @@ function exibirErro(msg) {
     banner = document.createElement("div");
     banner.id = "error_banner";
     banner.style.cssText =
-      "position:fixed;bottom:40px;left:10px;right:10px;z-index:99999;background:rgba(220,38,38,.92);" +
-      "color:#fff;padding:10px 14px;border-radius:6px;font:12px sans-serif;box-shadow:0 4px 12px rgba(0,0,0,.5);cursor:pointer";
+      "position:fixed;bottom:40px;left:10px;right:10px;z-index:99999;background:#8f1d28;" +
+      "color:#fff;padding:10px 14px;border-radius:6px;font:12px sans-serif;box-shadow:none;cursor:pointer";
     banner.addEventListener("click", () => banner.remove());
     document.body.appendChild(banner);
   }
@@ -35,12 +36,27 @@ function exibirErro(msg) {
   console.error(msg);
 }
 
+function bloquearShell(msg) {
+  const workspace = document.getElementById("fusion_workspace");
+  if (workspace) workspace.remove();
+  const body = document.getElementById("corpo");
+  if (!body) return;
+  const blocker = document.createElement("div");
+  blocker.className = "arcz-primary-shell-error";
+  const title = document.createElement("strong");
+  title.textContent = "Interface principal indisponível";
+  const detail = document.createElement("p");
+  detail.textContent = msg;
+  const action = document.createElement("p");
+  action.textContent = "Abra Diagnóstico/console e corrija o runtime. O ARCZ não troca silenciosamente para uma UI antiga.";
+  blocker.append(title, detail, action);
+  body.appendChild(blocker);
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   try {
     Cesium.Ion.defaultAccessToken = undefined;
 
-    // requestRenderMode: só desenha quando algo muda (câmera parada = 0% de GPU).
-    // A qualidade em si vem do perfil escolhido em qualidade.js, não daqui.
     const viewer = new Cesium.Viewer("cesiumContainer", {
       animation: false,
       baseLayerPicker: false,
@@ -55,8 +71,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       scene3DOnly: true,
       requestRenderMode: true,
       maximumRenderTimeChange: 0.05,
-      // Sem isto o Cesium tenta a imagem padrão do Ion e leva 401 a cada carga
-      // (token zerado logo acima). Quem monta as camadas é o ambiente.js.
       baseLayer: false,
       contextOptions: {
         webgl: {
@@ -74,25 +88,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
     window.arczViewer = viewer;
 
-    // Configuração do globo sem buracos: cor base oceânica escura e cache de tiles
     viewer.scene.globe.baseColor = Cesium.Color.fromCssColorString('#020917');
     viewer.scene.globe.showWaterEffect = true;
     viewer.scene.globe.tileCacheSize = 250;
     viewer.scene.globe.loadingDescendantLimit = 10;
     viewer.scene.globe.depthTestAgainstTerrain = true;
 
-    // Perfil de imagem + detecção de GPU (avisa quando o navegador está sem aceleração).
     const gpu = qualidadeApp.inicializar(viewer);
     if (gpu.software) {
-      console.warn(`ARCZ: navegador sem aceleração de vídeo (${gpu.nome}). Rode ABRIR.cmd para abrir com GPU.`);
+      console.warn(`ARCZ: navegador sem aceleração de vídeo (${gpu.nome}). Use ARCZ.bat para validar/iniciar o runtime local.`);
     }
 
-    // LOCAL-FIRST: o boot usa elipsoide. DEM só é ligado depois de carregar o
-    // projeto e apenas quando o usuário/projeto pediu explicitamente `dem`.
-    // Tile ausente gera erro estruturado; nunca vira terreno plano silencioso.
-
-    // requestRenderMode economiza GPU, mas exige pedir quadro a cada mudança de
-    // estado — senão mover uma peça não aparece até o usuário mexer na câmera.
     if (viewer.scene.requestRenderMode) {
       estadoApp.inscrever(() => viewer.scene.requestRender());
     }
@@ -101,23 +107,28 @@ document.addEventListener("DOMContentLoaded", async () => {
     cameraApp.inicializar(viewer);
     cenaApp.inicializar(viewer);
     feedbackApp.inicializar(viewer);
-    // O gizmo lê o bloqueio de seleção do posicionador: este vem antes.
     posicionadorApp.inicializar(viewer);
     gizmoApp.inicializar(viewer);
+    // Pointer/MOUSE_MOVE pode chegar muito acima da taxa de render. O wrapper
+    // preserva apenas a posição mais recente por frame e faz flush no mouse-up,
+    // evitando serialização/transformações repetidas enquanto o usuário arrasta.
+    installGizmoFrameCoalescing(gizmoApp);
     bibliotecaApp.inicializar(viewer);
     entornoApp.inicializar(viewer);
     corteApp.inicializar(viewer);
     recorteApp.inicializar(viewer);
     uiApp.inicializar(viewer);
 
-    // Estado salvo (migra o formato antigo automaticamente).
     await estadoApp.carregarDoServidor();
 
-    // V2 é aditiva. Uma falha de plugin/contrato não impede o globo base de
-    // abrir; o erro fica visível em console/diagnóstico para implementação.
+    // Runtime V2 é aditivo ao mapa, mas qualquer falha fica explícita no painel
+    // de diagnóstico. A casca principal nunca é substituída por uma UI fake.
     let runtimeV2 = null;
-    try { runtimeV2 = initializeV2Runtime({ viewer }); }
-    catch (runtimeError) { console.error("ARCZ V2 indisponível; núcleo legado preservado:", runtimeError); }
+    try {
+      runtimeV2 = initializeV2Runtime({ viewer });
+    } catch (runtimeError) {
+      exibirErro(`ARCZ V2 indisponível: ${runtimeError.message || runtimeError}`);
+    }
 
     const st = estadoApp.obter();
     const pos = normalizarPosicao(st.posicao);
@@ -137,7 +148,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     await cenaApp.sincronizarDerivadoAtivo(st);
     cenaApp.restaurarPecas(st.pecas || []);
 
-    // Corte salvo no projeto volta ligado (com a tampa) junto com a cena.
     if (st.corte?.ativo) corteApp.aplicar();
     if ((st.recorte?.perimetro || []).length >= 3) recorteApp.desenharEntidades();
 
@@ -147,10 +157,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         : { lat: pos.lat, lon: pos.lon, alt: 250, pitch: -30 }
     );
 
-    // Fusion V6 is additive and lives outside ui.js. If its shell fails, the
-    // legacy globe remains fully operational and the failure stays visible.
-    try { await initializeFusionShell({ viewer, estadoApp, runtime: runtimeV2 }); }
-    catch (fusionError) { console.error("ARCZ Fusion V10 indisponível; globo legado preservado:", fusionError); }
+    try {
+      await initializeFusionShell({ viewer, estadoApp, runtime: runtimeV2 });
+    } catch (fusionError) {
+      const message = fusionError?.message || String(fusionError);
+      exibirErro(`ARCZ Fusion indisponível: ${message}`);
+      bloquearShell(message);
+      throw fusionError;
+    }
 
     console.log(`ARCZ pronto — ${(st.pecas || []).length} peças, ${(st.takes || []).length} takes`);
   } catch (e) {

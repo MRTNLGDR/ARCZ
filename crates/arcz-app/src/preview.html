@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ARCZ Native Preview</title>
+<style>
+:root{color-scheme:dark;font-family:Inter,system-ui,sans-serif;background:#0b0d10;color:#edf1f7}*{box-sizing:border-box}body{margin:0;display:grid;grid-template-columns:320px 1fr;min-height:100vh}.panel{padding:18px;border-right:1px solid #252b33;background:#11151a;overflow:auto}.panel h1{font-size:18px;margin:0 0 4px}.panel p{color:#8d98a7;font-size:12px;margin:0 0 18px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{display:flex;flex-direction:column;gap:5px}.field.wide{grid-column:1/-1}label{font-size:11px;color:#aab4c1}input{width:100%;padding:8px;border:1px solid #303844;border-radius:6px;background:#0b0f14;color:#fff}button{border:1px solid #3d8cff;background:#1768d7;color:white;border-radius:7px;padding:10px;cursor:pointer;font-weight:600}.secondary{background:#171d25;border-color:#394350}.viewport{position:relative;display:grid;place-items:center;overflow:hidden;background:radial-gradient(circle at 50% 30%,#1a2430,#07090c 65%)}#render{max-width:100%;max-height:100vh;object-fit:contain}.hud{position:absolute;right:14px;top:14px;background:#0b0d10d9;border:1px solid #303844;border-radius:7px;padding:8px 10px;font:11px ui-monospace,monospace;white-space:pre-wrap;max-width:42ch}.actions{display:grid;gap:8px;margin-top:14px}@media(max-width:800px){body{grid-template-columns:1fr}.panel{border-right:0;border-bottom:1px solid #252b33}.viewport{min-height:60vh}}
+</style>
+</head>
+<body>
+<aside class="panel">
+<h1>ARCZ Native Preview</h1><p>Camera, implantação e render são resolvidos pelo servidor Rust.</p>
+<div class="grid">
+<div class="field"><label for="lat">Latitude</label><input id="lat" type="number" step="0.000001" value="-27.15"></div>
+<div class="field"><label for="lon">Longitude</label><input id="lon" type="number" step="0.000001" value="-48.50"></div>
+<div class="field"><label for="heading">Heading °</label><input id="heading" type="number" step="1" value="0"></div>
+<div class="field"><label for="pitch">Pitch °</label><input id="pitch" type="number" step="1" value="-22"></div>
+<div class="field"><label for="yaw">Yaw °</label><input id="yaw" type="number" step="1" value="35"></div>
+<div class="field"><label for="dist">Distância m</label><input id="dist" type="number" min="1" value="120"></div>
+<div class="field"><label for="leste">Leste m</label><input id="leste" type="number" step="0.1" value="0"></div>
+<div class="field"><label for="norte">Norte m</label><input id="norte" type="number" step="0.1" value="0"></div>
+<div class="field"><label for="vertical">Vertical m</label><input id="vertical" type="number" step="0.1" value="0"></div>
+<div class="field"><label for="escala">Escala</label><input id="escala" type="number" step="0.01" min="0.01" value="1"></div>
+</div>
+<div class="actions">
+<button id="renderizar">Renderizar /render.png</button>
+<button id="estado" class="secondary">Atualizar /estado.json</button>
+<button id="camera" class="secondary">Salvar câmera /cameras</button>
+<button id="area" class="secondary">Aplicar área /area</button>
+<a href="/earth" style="color:#73aaff;text-align:center;font-size:12px">Abrir ARCZ Earth UI</a>
+</div>
+</aside>
+<main class="viewport"><img id="render" alt="Render ARCZ"><div id="hud" class="hud">pronto</div></main>
+<script>
+const ids=['lat','lon','heading','leste','norte','vertical','escala','pitch','yaw','dist'];
+const hud=document.getElementById('hud');
+function query(){const q=new URLSearchParams();for(const id of ids)q.set(id,document.getElementById(id).value);return q.toString()}
+async function getJson(path){const r=await fetch(path);if(!r.ok)throw new Error(await r.text());return r.json()}
+document.getElementById('renderizar').onclick=()=>{document.getElementById('render').src='/render.png?'+query()+'&t='+Date.now();hud.textContent='render solicitado';};
+document.getElementById('estado').onclick=async()=>{try{hud.textContent=JSON.stringify(await getJson('/estado.json?'+query()),null,2)}catch(e){hud.textContent=String(e)}};
+document.getElementById('camera').onclick=async()=>{try{const body=JSON.stringify([{name:'preview',params:Object.fromEntries(new URLSearchParams(query()))}]);const r=await fetch('/cameras',{method:'POST',body});hud.textContent=r.ok?'câmera salva':await r.text()}catch(e){hud.textContent=String(e)}};
+document.getElementById('area').onclick=async()=>{try{hud.textContent=JSON.stringify(await getJson('/area?'+query()),null,2)}catch(e){hud.textContent=String(e)}};
+document.getElementById('renderizar').click();
+</script>
+</body>
+</html>

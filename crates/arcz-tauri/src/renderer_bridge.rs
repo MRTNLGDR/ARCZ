@@ -18,7 +18,6 @@ pub enum ModoGizmo {
     Escalar,
 }
 
-
 /// Pose de câmera no espaço geoespacial ENU/WGS84.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct CameraPose {
@@ -58,12 +57,22 @@ pub struct ViewportBounds {
 #[serde(tag = "tipo", content = "payload")]
 pub enum UiToRendererAction {
     SetCamera(CameraPose),
-    SelectNode { node_id: Option<u64> },
-    TransformNode { node_id: u64, delta_x: f32, delta_y: f32, delta_z: f32 },
+    SelectNode {
+        node_id: Option<u64>,
+    },
+    TransformNode {
+        node_id: u64,
+        delta_x: f32,
+        delta_y: f32,
+        delta_z: f32,
+    },
     SetGizmoMode(ModoGizmo),
     ResizeViewport(ViewportBounds),
     ResetView,
-    SetSnapping { ativo: bool, passo_grid_m: f32 },
+    SetSnapping {
+        ativo: bool,
+        passo_grid_m: f32,
+    },
 }
 
 /// Estado gerenciado pela ponte do renderer.
@@ -107,8 +116,13 @@ pub fn ui_to_renderer(
 ) -> Result<BridgeStatusReport, String> {
     match &acao {
         UiToRendererAction::SetCamera(pose) => {
-            log::info!("ui_to_renderer: SetCamera lat={:.5}, lon={:.5}", pose.lat_deg, pose.lon_deg);
-            app.emit("viewport:camera_updated", pose).map_err(|e| e.to_string())?;
+            log::info!(
+                "ui_to_renderer: SetCamera lat={:.5}, lon={:.5}",
+                pose.lat_deg,
+                pose.lon_deg
+            );
+            app.emit("viewport:camera_updated", pose)
+                .map_err(|e| e.to_string())?;
         }
 
         UiToRendererAction::SelectNode { node_id } => {
@@ -116,7 +130,8 @@ pub fn ui_to_renderer(
             if let Ok(mut sel) = estado.selecionado_id.lock() {
                 *sel = *node_id;
             }
-            app.emit("viewport:node_selected", node_id).map_err(|e| e.to_string())?;
+            app.emit("viewport:node_selected", node_id)
+                .map_err(|e| e.to_string())?;
         }
         UiToRendererAction::SetGizmoMode(modo) => {
             log::info!("ui_to_renderer: SetGizmoMode {:?}", modo);
@@ -125,7 +140,11 @@ pub fn ui_to_renderer(
             }
         }
         UiToRendererAction::ResizeViewport(bounds) => {
-            log::info!("ui_to_renderer: ResizeViewport {}x{}", bounds.largura, bounds.altura);
+            log::info!(
+                "ui_to_renderer: ResizeViewport {}x{}",
+                bounds.largura,
+                bounds.altura
+            );
             if let Ok(mut b) = estado.bounds.lock() {
                 *b = Some(*bounds);
             }
@@ -133,20 +152,43 @@ pub fn ui_to_renderer(
         UiToRendererAction::ResetView => {
             log::info!("ui_to_renderer: ResetView");
             let default_pose = CameraPose::default();
-            app.emit("viewport:camera_updated", &default_pose).map_err(|e| e.to_string())?;
+            app.emit("viewport:camera_updated", &default_pose)
+                .map_err(|e| e.to_string())?;
         }
-        UiToRendererAction::TransformNode { node_id, delta_x, delta_y, delta_z } => {
-            log::info!("ui_to_renderer: TransformNode #{} d=({}, {}, {})", node_id, delta_x, delta_y, delta_z);
+        UiToRendererAction::TransformNode {
+            node_id,
+            delta_x,
+            delta_y,
+            delta_z,
+        } => {
+            log::info!(
+                "ui_to_renderer: TransformNode #{} d=({}, {}, {})",
+                node_id,
+                delta_x,
+                delta_y,
+                delta_z
+            );
         }
-        UiToRendererAction::SetSnapping { ativo, passo_grid_m } => {
-            log::info!("ui_to_renderer: SetSnapping ativo={} passo={}m", ativo, passo_grid_m);
+        UiToRendererAction::SetSnapping {
+            ativo,
+            passo_grid_m,
+        } => {
+            log::info!(
+                "ui_to_renderer: SetSnapping ativo={} passo={}m",
+                ativo,
+                passo_grid_m
+            );
             if let Ok(mut s) = estado.snapping_ativo.lock() {
                 *s = *ativo;
             }
         }
     }
 
-    let modo = estado.gizmo_modo.lock().map(|g| *g).unwrap_or(ModoGizmo::Camera);
+    let modo = estado
+        .gizmo_modo
+        .lock()
+        .map(|g| *g)
+        .unwrap_or(ModoGizmo::Camera);
     let sel_id = estado.selecionado_id.lock().map(|s| *s).unwrap_or(None);
 
     Ok(BridgeStatusReport {

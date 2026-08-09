@@ -304,7 +304,13 @@ impl Renderer {
         altura: u32,
         mostrar_modelo: bool,
     ) -> anyhow::Result<Vec<u8>> {
-        self.render_rgba_camadas(camera, largura, altura, mostrar_modelo, crate::gpu::Camadas::TUDO)
+        self.render_rgba_camadas(
+            camera,
+            largura,
+            altura,
+            mostrar_modelo,
+            crate::gpu::Camadas::TUDO,
+        )
     }
 
     /// Igual, escolhendo o que entra no quadro.
@@ -374,7 +380,12 @@ impl Renderer {
                         } else {
                             // Preto com alpha zero: o que nao for desenhado sai
                             // transparente de verdade no PNG.
-                            wgpu::Color { r: 0.0, g: 0.0, b: 0.0, a: 0.0 }
+                            wgpu::Color {
+                                r: 0.0,
+                                g: 0.0,
+                                b: 0.0,
+                                a: 0.0,
+                            }
                         }),
                         store: wgpu::StoreOp::Store,
                     },
@@ -390,7 +401,8 @@ impl Renderer {
                 timestamp_writes: None,
                 occlusion_query_set: None,
             });
-            self.recursos.desenhar_completo(&mut passe, mostrar_modelo, camadas);
+            self.recursos
+                .desenhar_completo(&mut passe, mostrar_modelo, camadas);
         }
 
         encoder.copy_texture_to_buffer(

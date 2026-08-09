@@ -212,7 +212,11 @@ mod tests {
             let inst = resolver(Bioma::LITORAL_SC, i as f64 * 7.3, i as f64 * -4.1, 1);
             vistas.insert((inst.especie, (inst.altura_m * 100.0) as i64));
         }
-        assert!(vistas.len() > 20, "so {} variacoes em 40 arvores", vistas.len());
+        assert!(
+            vistas.len() > 20,
+            "so {} variacoes em 40 arvores",
+            vistas.len()
+        );
     }
 
     #[test]

@@ -159,14 +159,30 @@ mod testes {
         let mut m = Material::default();
         m.nome = nome_material.into();
         let vertices = vec![
-            ModelVertex { position: [lo[0], hi[1], lo[2]], normal: [0.0, 1.0, 0.0], uv: [0.0, 0.0] },
-            ModelVertex { position: [hi[0], hi[1], lo[2]], normal: [0.0, 1.0, 0.0], uv: [1.0, 0.0] },
-            ModelVertex { position: [hi[0], lo[1], hi[2]], normal: [0.0, 1.0, 0.0], uv: [1.0, 1.0] },
+            ModelVertex {
+                position: [lo[0], hi[1], lo[2]],
+                normal: [0.0, 1.0, 0.0],
+                uv: [0.0, 0.0],
+            },
+            ModelVertex {
+                position: [hi[0], hi[1], lo[2]],
+                normal: [0.0, 1.0, 0.0],
+                uv: [1.0, 0.0],
+            },
+            ModelVertex {
+                position: [hi[0], lo[1], hi[2]],
+                normal: [0.0, 1.0, 0.0],
+                uv: [1.0, 1.0],
+            },
         ];
         Model {
             vertices,
             indices: vec![0, 1, 2],
-            submeshes: vec![Submesh { material: 0, offset: 0, count: 3 }],
+            submeshes: vec![Submesh {
+                material: 0,
+                offset: 0,
+                count: 3,
+            }],
             materiais: vec![m],
             texturas: Vec::new(),
             min: lo,
@@ -188,7 +204,10 @@ mod testes {
     #[test]
     fn acha_a_piscina_e_rebaixa_a_lamina() {
         // Mesmas medidas da piscina real do Zenite.
-        let m = modelo_com("PEDRA HIJAU 20x20", ([19.97, 16.56, -24.33], [25.54, 20.97, -15.37]));
+        let m = modelo_com(
+            "PEDRA HIJAU 20x20",
+            ([19.97, 16.56, -24.33], [25.54, 20.97, -15.37]),
+        );
         let l = detectar(&m);
         assert_eq!(l.len(), 1);
         assert!((l[0].largura() - 5.57).abs() < 0.01, "{}", l[0].largura());
@@ -201,15 +220,30 @@ mod testes {
     #[test]
     fn descarta_detalhe_pequeno_com_o_mesmo_revestimento() {
         // A faixa de 0,15 m que existe no arquivo real viraria uma poca.
-        let m = modelo_com("PEDRA HIJAU 20x20", ([22.67, 19.41, -21.73], [22.67, 19.49, -21.58]));
+        let m = modelo_com(
+            "PEDRA HIJAU 20x20",
+            ([22.67, 19.41, -21.73], [22.67, 19.49, -21.58]),
+        );
         assert!(detectar(&m).is_empty());
     }
 
     #[test]
     fn a_malha_fecha_dois_triangulos_por_piscina_e_olha_para_cima() {
         let laminas = [
-            Lamina { x_min: 0.0, x_max: 4.0, z_min: 0.0, z_max: 8.0, y: 3.0 },
-            Lamina { x_min: 10.0, x_max: 13.0, z_min: 0.0, z_max: 3.0, y: 1.0 },
+            Lamina {
+                x_min: 0.0,
+                x_max: 4.0,
+                z_min: 0.0,
+                z_max: 8.0,
+                y: 3.0,
+            },
+            Lamina {
+                x_min: 10.0,
+                x_max: 13.0,
+                z_min: 0.0,
+                z_max: 3.0,
+                y: 1.0,
+            },
         ];
         let m = malha(&laminas);
         assert_eq!(m.vertices.len(), 8);
@@ -218,14 +252,23 @@ mod testes {
         // A caixa precisa envolver as duas laminas, senao o picking erra.
         assert_eq!(m.min, [0.0, 1.0, 0.0]);
         assert_eq!(m.max, [13.0, 3.0, 8.0]);
-        assert!(m.materiais[0].transparente, "sem alfa a agua vira tampa azul");
+        assert!(
+            m.materiais[0].transparente,
+            "sem alfa a agua vira tampa azul"
+        );
     }
 
     #[test]
     fn winding_faz_a_normal_geometrica_apontar_para_cima() {
         // A normal declarada pode mentir; a que a GPU usa sai do winding. Mede
         // o produto vetorial do primeiro triangulo.
-        let m = malha(&[Lamina { x_min: 0.0, x_max: 2.0, z_min: 0.0, z_max: 2.0, y: 0.0 }]);
+        let m = malha(&[Lamina {
+            x_min: 0.0,
+            x_max: 2.0,
+            z_min: 0.0,
+            z_max: 2.0,
+            y: 0.0,
+        }]);
         let p = |i: usize| m.vertices[m.indices[i] as usize].position;
         let (a, b, c) = (p(0), p(1), p(2));
         let u = [b[0] - a[0], b[1] - a[1], b[2] - a[2]];

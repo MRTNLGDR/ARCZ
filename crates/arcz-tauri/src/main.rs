@@ -51,8 +51,11 @@ fn main() {
 
     tauri::Builder::default()
         .manage(bridge_state)
-        .invoke_handler(tauri::generate_handler![superficie_status, viewport_area, ui_to_renderer])
-
+        .invoke_handler(tauri::generate_handler![
+            superficie_status,
+            viewport_area,
+            ui_to_renderer
+        ])
         .setup(|app| {
             let janela: WebviewWindow = app
                 .get_webview_window("main")

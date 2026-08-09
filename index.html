@@ -11,13 +11,14 @@
   licenciados e registrados no manifesto da distribuição; nunca via CDN.
 -->
 
-<!-- CesiumJS 1.143 local (vendor/cesium) -->
+<!-- CesiumJS 1.144.0 local, construído do pin auditado em upstreams/manifest.toml. -->
 <script>window.CESIUM_BASE_URL = "/vendor/cesium/Cesium/";</script>
 <link rel="stylesheet" href="/vendor/cesium/Cesium/Widgets/widgets.css">
 <script src="/vendor/cesium/Cesium/Cesium.js"></script>
 
 <link rel="stylesheet" href="./app/estilo.css">
 <link rel="stylesheet" href="./app/fusion-v6.css">
+<link rel="stylesheet" href="./app/workflow-clean.css">
 </head>
 <body>
 
@@ -39,6 +40,26 @@
   <footer id="statusbar"></footer>
 </div>
 
-<script type="module" src="./app/main.js"></script>
+<script type="module">
+if (!globalThis.Cesium) {
+  const shell = document.getElementById("app_shell");
+  shell.className = "arcz-boot-blocked";
+  shell.innerHTML = `
+    <main class="arcz-boot-blocker">
+      <div class="arcz-boot-blocker__card">
+        <strong>Runtime geográfico local incompleto</strong>
+        <h1>CesiumJS local não foi materializado.</h1>
+        <p>O ARCZ não usa CDN nem fallback remoto. O mapa só abre quando o bundle auditado existe dentro de <code>vendor/cesium/Cesium</code>.</p>
+        <ol>
+          <li><code>python tools/materialize_upstreams.py --only cesiumjs</code></li>
+          <li><code>python tools/vendor_cesium.py --from-pinned-source --allow-network --force</code></li>
+          <li>Reabra o ARCZ. Depois do setup, o runtime funciona com os arquivos locais do repo.</li>
+        </ol>
+      </div>
+    </main>`;
+} else {
+  await import("./app/main.js");
+}
+</script>
 </body>
 </html>

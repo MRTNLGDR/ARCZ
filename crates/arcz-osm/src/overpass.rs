@@ -100,11 +100,15 @@ pub fn montar_consulta(bbox: &GeoBBox, camadas: Camadas) -> String {
         corpo.push_str(&format!("  way[\"highway\"]({b});\n"));
     }
     if camadas.superficies {
-        corpo.push_str(&format!("  way[\"natural\"~\"^(water|wood|scrub|beach|sand)$\"]({b});\n"));
+        corpo.push_str(&format!(
+            "  way[\"natural\"~\"^(water|wood|scrub|beach|sand)$\"]({b});\n"
+        ));
         corpo.push_str(&format!(
             "  way[\"landuse\"~\"^(forest|grass|meadow|village_green|recreation_ground)$\"]({b});\n"
         ));
-        corpo.push_str(&format!("  way[\"leisure\"~\"^(park|garden|pitch)$\"]({b});\n"));
+        corpo.push_str(&format!(
+            "  way[\"leisure\"~\"^(park|garden|pitch)$\"]({b});\n"
+        ));
         corpo.push_str(&format!("  way[\"waterway\"=\"riverbank\"]({b});\n"));
     }
     if camadas.arvores {
@@ -189,7 +193,11 @@ fn classificar_way(el: &Elemento, entorno: &mut Entorno) {
     let nome = el.tags.get("name").cloned();
 
     // Predio. `building=no` existe e significa explicitamente "nao e predio".
-    if let Some(v) = el.tags.get("building").or_else(|| el.tags.get("building:part")) {
+    if let Some(v) = el
+        .tags
+        .get("building")
+        .or_else(|| el.tags.get("building:part"))
+    {
         if v != "no" {
             if let Some(contorno) = fechar_anel(&el.geometry) {
                 let classe = ClasseEdificio::da_tag(v);
@@ -504,7 +512,10 @@ mod tests {
         assert_ne!(giro_estavel(12345), giro_estavel(12346));
         for id in [1, 2, 999, -40, i64::MAX] {
             let g = giro_estavel(id);
-            assert!((0.0..=std::f64::consts::TAU).contains(&g), "giro {g} fora de faixa");
+            assert!(
+                (0.0..=std::f64::consts::TAU).contains(&g),
+                "giro {g} fora de faixa"
+            );
         }
     }
 
