@@ -201,7 +201,6 @@ def create_spatial_tree(model, project_name: str, levels: list[dict[str, Any]]):
             ifc_class="IfcBuildingStorey",
             name=str(level.get("name") or props.get("name") or node_id),
         )
-        storey.Tag = node_id
         storey.Elevation = elevation
         placement = np.identity(4)
         placement[2, 3] = elevation
