@@ -35,46 +35,56 @@ def run_bytes(cmd: list[str], cwd: Path) -> bytes:
     return proc.stdout
 
 
-def legal_files_from_git(checkout: Path) -> list[dict[str, object]]:
-    """Read legal evidence from the pinned Git tree, not from mutable worktree state."""
-    names = run(["git", "ls-tree", "--name-only", "HEAD"], cwd=checkout).splitlines()
-    candidates = [
-        name
-        for name in names
-        if name.upper().startswith("LICENSE") or name.upper().startswith("COPYING")
-    ]
-    legal: list[dict[str, object]] = []
-    for name in sorted(candidates):
-        payload = run_bytes(["git", "show", f"HEAD:{name}"], cwd=checkout)
-        legal.append(
+def git_object_evidence(checkout: Path, paths: list[str], label: str) -> list[dict[str, object]]:
+    if not paths:
+        raise SystemExit(f"manifest must declare at least one {label} path")
+    evidence: list[dict[str, object]] = []
+    for raw_path in paths:
+        path = str(raw_path).strip().replace("\\", "/")
+        if not path or path.startswith("/") or ".." in Path(path).parts:
+            raise SystemExit(f"unsafe {label} path in manifest: {raw_path!r}")
+        payload = run_bytes(["git", "show", f"HEAD:{path}"], cwd=checkout)
+        if not payload:
+            raise SystemExit(f"empty {label} object at pinned HEAD: {path}")
+        evidence.append(
             {
-                "path": name,
+                "path": path,
                 "bytes": len(payload),
                 "sha256": hashlib.sha256(payload).hexdigest(),
             }
         )
-    return legal
+    return evidence
 
 
 def write_evidence(source: dict[str, object], checkout: Path, head: str) -> Path:
-    licenses = legal_files_from_git(checkout)
-    if not licenses:
-        raise SystemExit(f"no top-level LICENSE/COPYING object found for {source['id']}")
+    licenses = git_object_evidence(
+        checkout,
+        [str(path) for path in source.get("legal_files", [])],
+        "legal file",
+    )
+    boundaries = []
+    if source.get("license_boundary_files"):
+        boundaries = git_object_evidence(
+            checkout,
+            [str(path) for path in source.get("license_boundary_files", [])],
+            "license-boundary file",
+        )
 
     # Evidence belongs to ARCZ, never inside an immutable third-party checkout.
     EVIDENCE_ROOT.mkdir(parents=True, exist_ok=True)
     output = EVIDENCE_ROOT / f"{source['id']}.json"
     stamp = {
-        "schema_version": 3,
+        "schema_version": 4,
         "id": source["id"],
         "repository": source["repository"],
         "commit": head,
         "declared_license": source["license"],
         "license_files": licenses,
+        "license_boundary_files": boundaries,
         "checkout": str(checkout.relative_to(ROOT)).replace("\\", "/"),
         "immutable": True,
         "git_status_clean": True,
-        "license_evidence_source": "git_object_at_pinned_head",
+        "license_evidence_source": "declared_git_objects_at_pinned_head",
     }
     output.write_text(json.dumps(stamp, indent=2) + "\n", encoding="utf-8")
     return output
@@ -117,7 +127,10 @@ def main() -> int:
                 dry=args.dry_run,
             )
         if args.dry_run:
-            print(f"  pin {source_id} -> {source['commit']}")
+            print(
+                f"  pin {source_id} -> {source['commit']} "
+                f"legal={','.join(map(str, source.get('legal_files', [])))}"
+            )
             continue
 
         if args.reset:
