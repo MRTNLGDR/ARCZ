@@ -1,0 +1,105 @@
+name: ARCZ Upstream Validation
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'upstreams/**'
+      - 'integrations/aedifex/**'
+      - 'tools/materialize_upstreams.py'
+      - 'tools/vendor_aedifex.py'
+      - 'tools/build_aedifex_sidecar.py'
+      - '.github/workflows/upstream-validation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  immutable-pins:
+    name: Pin ${{ matrix.source }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        source: [aedifex, cesiumjs, kepler-gl, ifcopenshell-bonsai]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Materialize exact upstream commit
+        run: python tools/materialize_upstreams.py --only '${{ matrix.source }}'
+      - name: Prove upstream checkout remains clean
+        shell: bash
+        run: |
+          set -euo pipefail
+          source_path=$(python - '${{ matrix.source }}' <<'PY'
+          import sys,tomllib
+          from pathlib import Path
+          wanted=sys.argv[1]
+          manifest=tomllib.loads(Path('upstreams/manifest.toml').read_text())
+          print(next(s['path'] for s in manifest['source'] if s['id']==wanted))
+          PY
+          )
+          test -z "$(git -C "$source_path" status --porcelain)"
+          test -s "validation/upstreams/${{ matrix.source }}.json"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: upstream-evidence-${{ matrix.source }}
+          path: validation/upstreams/${{ matrix.source }}.json
+          if-no-files-found: error
+
+  aedifex-controlled-fork:
+    name: Aedifex controlled fork + sidecar
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      ARCZ_NETWORK_MODE: import_assisted
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Install ARCZ audit dependencies
+        run: python -m pip install -r requirements-dev.txt
+      - name: Materialize pinned Aedifex
+        run: python tools/materialize_upstreams.py --only aedifex
+      - name: Audit full upstream and create removable ARCZ fork
+        run: python tools/vendor_aedifex.py --source upstreams/sources/aedifex
+      - name: Build and test controlled local sidecar
+        run: python tools/build_aedifex_sidecar.py --allow-network
+      - name: Verify build manifest and upstream cleanliness
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s vendor/aedifex-floorplanner/arcz-aedifex-build.json
+          test -z "$(git -C upstreams/sources/aedifex status --porcelain)"
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report=json.loads(Path('integrations/aedifex/generated/CONVERSION_COVERAGE_REPORT.json').read_text())
+          build=json.loads(Path('vendor/aedifex-floorplanner/arcz-aedifex-build.json').read_text())
+          assert report['ready'] is True and not report['blockers']
+          assert build['upstream_commit'] == '5319368bae16500ca5267f6f8d68b36c9586d5bb'
+          assert build['integrity']['file_count'] > 0
+          assert build['wasm_integrity']['web-ifc.wasm']['bytes'] > 100000
+          assert build['wasm_integrity']['web-ifc-mt.wasm']['bytes'] > 100000
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: aedifex-validation
+          path: |
+            validation/aedifex/
+            integrations/aedifex/generated/
+            opensources/integrations/aedifex-materialization.json
+            vendor/aedifex-floorplanner/arcz-aedifex-build.json
+          if-no-files-found: error
