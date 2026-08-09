@@ -16,6 +16,17 @@ test('all Windows entrypoints converge on the single ARCZ.bat launcher', () => {
   assert.match(prepare, /call\s+"%~dp0ARCZ\.bat"\s+-ForceSetup/i);
   assert.match(photoreal, /call\s+"%~dp0ARCZ\.bat"\s+-ForceSetup/i);
   assert.match(ps, /tools\\windows\\arcz_launch\.py/i);
+  assert.match(ps, /adopt_git_checkout\.py/i);
+});
+
+test('ZIP adoption preserves a source snapshot before switching to tracked main', () => {
+  const source = read('tools/windows/adopt_git_checkout.py');
+  assert.match(source, /ARCZ local source snapshot before Git adoption/);
+  assert.match(source, /arcz-local-backup-/);
+  assert.match(source, /git-adoption\.json/);
+  assert.match(source, /origin\/main/);
+  assert.match(source, /local_source_preserved["']:\s*True/);
+  assert.doesNotMatch(source, /reset["'],\s*["']--hard|clean["'],\s*["']-fd/i);
 });
 
 test('canonical Windows controller refuses partial runtime and opens offline only', () => {
