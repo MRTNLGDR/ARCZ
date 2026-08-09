@@ -1,0 +1,61 @@
+name: ARCZ Windows User Flow
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: arcz-windows-user-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows-user-flow:
+    name: One BAT → setup → tests → healthy app
+    runs-on: windows-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Parse canonical PowerShell launcher
+        shell: powershell
+        run: |
+          $tokens = $null
+          $errors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile(
+            (Resolve-Path 'tools/windows/arcz-launch.ps1'),
+            [ref]$tokens,
+            [ref]$errors
+          ) | Out-Null
+          if ($errors.Count -gt 0) {
+            $errors | Format-List -Force
+            exit 1
+          }
+
+      - name: Run exactly the user entrypoint
+        shell: cmd
+        run: ARCZ.bat -SkipUpdate -NoBrowser
+
+      - name: Verify real local server after launcher
+        shell: powershell
+        run: |
+          $health = Invoke-RestMethod -Uri 'http://127.0.0.1:8123/api/v2/health' -TimeoutSec 10
+          if (-not $health.ok) { throw 'ARCZ health returned ok=false' }
+          if ($health.network_mode -ne 'offline_strict') { throw "network_mode=$($health.network_mode)" }
+          if (-not (Test-Path 'vendor/cesium/Cesium/Cesium.js')) { throw 'Cesium vendor absent' }
+          if (-not (Test-Path 'vendor/aedifex-floorplanner/arcz-aedifex-build.json')) { throw 'Aedifex vendor absent' }
+          if (-not (Test-Path 'vendor/blender/manifest.json')) { throw 'Blender vendor absent' }
+          if (-not (Test-Path 'target/release/arcz-generation-cli.exe')) { throw 'Rust release worker absent' }
+          if (-not (Test-Path 'target/release/arcz-osm-cli.exe')) { throw 'OSM release worker absent' }
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: arcz-windows-user-logs
+          path: |
+            .arcz/logs/
+            .arcz/interactive-preflight.json
+          if-no-files-found: warn
