@@ -17,7 +17,10 @@ def _top_level_object_ranges(text: str, marker: str = "export const CATALOG_ITEM
     marker_index = text.find(marker)
     if marker_index < 0:
         raise RuntimeError("CATALOG_ITEMS não encontrado")
-    array_start = text.find("[", marker_index)
+    equals = text.find("=", marker_index)
+    if equals < 0:
+        raise RuntimeError("atribuição CATALOG_ITEMS não encontrada")
+    array_start = text.find("[", equals)
     if array_start < 0:
         raise RuntimeError("array CATALOG_ITEMS não encontrado")
 
