@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 """Publica CesiumJS como vendor local auditável do ARCZ.
 
-Há dois modos reais:
-1. ``--from-pinned-source --allow-network``: usa o checkout imutável auditado em
-   ``upstreams/sources/cesium``, compila uma CÓPIA controlada com Node/npm e
-   publica ``Build/Cesium`` dentro de ``vendor/cesium``;
-2. ``--source``: aceita uma build/ZIP local já fornecida e valida antes de publicar.
+Modo principal:
+  python tools/vendor_cesium.py --from-pinned-source --allow-network --force
 
-Nenhum modo contém CDN ou fallback remoto de runtime. O navegador sempre usa
-``/vendor/cesium/Cesium`` dentro do próprio repositório ARCZ.
+O checkout auditado nunca é alterado. Como o commit Cesium pinado não traz um
+package-lock npm utilizável, a cópia controlada resolve um lock UMA vez durante
+``import_assisted``, instala exatamente esse lock, compila, apaga node_modules e
+prova uma segunda instalação ``npm ci --offline``. O lock resolvido e seu SHA-256
+são publicados junto do vendor. Em runtime não existe CDN, npm ou download.
+
+O modo ``--source`` continua aceitando uma build/ZIP local já fornecida.
 """
 from __future__ import annotations
 
@@ -58,7 +60,7 @@ def run(args: list[str], cwd: Path, *, env: dict[str, str] | None = None) -> str
         stderr=subprocess.STDOUT,
     )
     if completed.returncode != 0:
-        tail = "\n".join(completed.stdout.splitlines()[-120:])
+        tail = "\n".join(completed.stdout.splitlines()[-140:])
         raise RuntimeError(f"{' '.join(args)} falhou ({completed.returncode})\n{tail}")
     return completed.stdout
 
@@ -130,15 +132,32 @@ def assert_pinned_checkout(source: Path, expected_sha: str) -> None:
         raise RuntimeError(f"checkout Cesium imutável está sujo:\n{dirty}")
 
 
-def build_from_pinned_source(source: Path, *, allow_network: bool) -> tuple[Path, Path, str, str, tempfile.TemporaryDirectory]:
+def npm_environment() -> dict[str, str]:
+    return {
+        **os.environ,
+        "CI": "1",
+        "HUSKY": "0",
+        "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1",
+        "npm_config_audit": "false",
+        "npm_config_fund": "false",
+        "npm_config_update_notifier": "false",
+    }
+
+
+def build_from_pinned_source(
+    source: Path,
+    *,
+    allow_network: bool,
+) -> tuple[Path, Path, Path, str, str, bool, tempfile.TemporaryDirectory]:
     pin = pinned_config()
     expected_sha = str(pin["commit"])
     assert_pinned_checkout(source, expected_sha)
     if not allow_network:
         raise RuntimeError(
-            "dependências npm só podem ser instaladas na fase import_assisted; "
-            "use --allow-network durante setup. O runtime gerado continua offline."
+            "a resolução inicial de dependências só é permitida em import_assisted; "
+            "use --allow-network durante setup. O runtime publicado continua offline."
         )
+
     npm = shutil.which("npm")
     node = shutil.which("node")
     if not npm or not node:
@@ -150,26 +169,42 @@ def build_from_pinned_source(source: Path, *, allow_network: bool) -> tuple[Path
     shutil.copytree(
         source,
         work,
-        ignore=shutil.ignore_patterns(".git", "node_modules", "Build"),
+        ignore=shutil.ignore_patterns(".git", "node_modules", "Build", "package-lock.json"),
     )
-    env = {
-        **os.environ,
-        "CI": "1",
-        "HUSKY": "0",
-        "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1",
-        "npm_config_audit": "false",
-        "npm_config_fund": "false",
-    }
-    run([npm, "ci"], work, env=env)
+    env = npm_environment()
+
+    # O pin não possui package-lock npm. Resolve UMA vez sem executar prepare/
+    # husky/playwright, então todas as instalações seguintes usam apenas o lock.
+    run(
+        [npm, "install", "--package-lock-only", "--ignore-scripts", "--no-audit", "--no-fund"],
+        work,
+        env=env,
+    )
+    lock = work / "package-lock.json"
+    if not lock.is_file() or lock.stat().st_size < 1000:
+        raise RuntimeError("npm não produziu package-lock.json utilizável para Cesium")
+    lock_sha = sha256_file(lock)
+
+    run([npm, "ci", "--ignore-scripts", "--no-audit", "--no-fund"], work, env=env)
     run([npm, "run", "build-release"], work, env=env)
     built = find_cesium_root(work / "Build")
+
+    # Prova de reprodutibilidade: remove instalação inteira e reinstala SOMENTE do
+    # package-lock e cache locais, sem rede. Se qualquer pacote não estiver preso/
+    # cacheado, o vendor falha aqui.
+    shutil.rmtree(work / "node_modules", ignore_errors=True)
+    offline = dict(env)
+    offline["npm_config_offline"] = "true"
+    run([npm, "ci", "--offline", "--ignore-scripts", "--no-audit", "--no-fund"], work, env=offline)
+    verified_offline = True
+
     package = json.loads((work / "package.json").read_text(encoding="utf-8"))
     version = str(package.get("version") or "unknown")
     license_file = source / "LICENSE.md"
     if not license_file.is_file():
         raise RuntimeError("LICENSE.md ausente no checkout Cesium auditado")
     assert_pinned_checkout(source, expected_sha)
-    return built, license_file, version, node_version, holder
+    return built, license_file, lock, version, node_version, verified_offline, holder
 
 
 def build_manifest(
@@ -179,6 +214,8 @@ def build_manifest(
     license_path: Path,
     upstream_commit: str | None = None,
     node_version: str | None = None,
+    resolved_lock: Path | None = None,
+    verified_frozen_offline: bool = False,
 ) -> dict:
     files = []
     for path in sorted(p for p in root.rglob("*") if p.is_file()):
@@ -205,11 +242,27 @@ def build_manifest(
         manifest["upstream_commit"] = upstream_commit
     if node_version:
         manifest["toolchain"] = {"node": node_version}
+    if resolved_lock:
+        manifest["resolved_lockfile"] = {
+            "file": "resolved-package-lock.json",
+            "sha256": sha256_file(resolved_lock),
+            "bytes": resolved_lock.stat().st_size,
+            "verified_frozen_offline": verified_frozen_offline,
+        }
     return manifest
 
 
-def publish(source_root: Path, license_file: Path, *, version: str, force: bool,
-            upstream_commit: str | None = None, node_version: str | None = None) -> dict:
+def publish(
+    source_root: Path,
+    license_file: Path,
+    *,
+    version: str,
+    force: bool,
+    upstream_commit: str | None = None,
+    node_version: str | None = None,
+    resolved_lock: Path | None = None,
+    verified_frozen_offline: bool = False,
+) -> dict:
     validate_tree(source_root)
     if DEST_CESIUM.exists() and not force:
         raise FileExistsError(f"{DEST_CESIUM} já existe; use --force para substituição atômica")
@@ -222,6 +275,8 @@ def publish(source_root: Path, license_file: Path, *, version: str, force: bool,
         shutil.copytree(source_root, staged_cesium)
         staged_license = staged_root / "LICENSE.md"
         shutil.copy2(license_file, staged_license)
+        if resolved_lock:
+            shutil.copy2(resolved_lock, staged_root / "resolved-package-lock.json")
         validate_tree(staged_cesium)
         manifest = build_manifest(
             staged_cesium,
@@ -229,6 +284,8 @@ def publish(source_root: Path, license_file: Path, *, version: str, force: bool,
             license_path=staged_license,
             upstream_commit=upstream_commit,
             node_version=node_version,
+            resolved_lock=resolved_lock,
+            verified_frozen_offline=verified_frozen_offline,
         )
         (staged_root / "manifest.json").write_text(
             json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
@@ -257,7 +314,7 @@ def main() -> int:
     parser.add_argument("--license-file", type=Path, help="licença para --source manual")
     parser.add_argument("--version", help="versão para --source manual")
     parser.add_argument("--from-pinned-source", action="store_true", help="compila o checkout Cesium auditado")
-    parser.add_argument("--allow-network", action="store_true", help="permite npm ci apenas durante setup")
+    parser.add_argument("--allow-network", action="store_true", help="permite resolução npm somente durante setup")
     parser.add_argument("--force", action="store_true", help="substitui vendor existente após validação")
     args = parser.parse_args()
 
@@ -266,9 +323,15 @@ def main() -> int:
         if args.from_pinned_source:
             if args.source or args.license_file or args.version:
                 parser.error("--from-pinned-source não aceita --source/--license-file/--version")
-            source_root, license_file, version, node_version, holder = build_from_pinned_source(
-                PINNED_SOURCE, allow_network=args.allow_network
-            )
+            (
+                source_root,
+                license_file,
+                resolved_lock,
+                version,
+                node_version,
+                verified_offline,
+                holder,
+            ) = build_from_pinned_source(PINNED_SOURCE, allow_network=args.allow_network)
             pin = pinned_config()
             manifest = publish(
                 source_root,
@@ -277,6 +340,8 @@ def main() -> int:
                 force=args.force,
                 upstream_commit=str(pin["commit"]),
                 node_version=node_version,
+                resolved_lock=resolved_lock,
+                verified_frozen_offline=verified_offline,
             )
         else:
             if not args.source or not args.license_file or not args.version:
@@ -305,6 +370,7 @@ def main() -> int:
             "files": len(manifest["files"]),
             "manifest": str(DEST_ROOT / "manifest.json"),
             "upstream_commit": manifest.get("upstream_commit"),
+            "offline_lock_verified": manifest.get("resolved_lockfile", {}).get("verified_frozen_offline"),
         }, ensure_ascii=False))
         return 0
     finally:
