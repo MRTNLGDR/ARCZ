@@ -67,7 +67,7 @@ def prepare_modeler() -> None:
         "--source",
         "upstreams/sources/aedifex",
     ])
-    run([sys.executable, "tools/build_aedifex_sidecar.py", "--allow-network"])
+    run([sys.executable, "tools/build_aedifex_sidecar_controlled.py", "--allow-network"])
     run([sys.executable, "tools/smoke_aedifex_sidecar.py"])
 
 
@@ -95,7 +95,6 @@ def main() -> int:
     require_import_assisted()
     if args.map:
         prepare_map()
-        # O perfil interactive também exige modelador; aqui validamos o vendor diretamente.
         env = {**os.environ, "ARCZ_NETWORK_MODE": "offline_strict"}
         run_check = subprocess.run(
             [sys.executable, "-c", (
