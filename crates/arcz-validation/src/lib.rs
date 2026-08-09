@@ -82,7 +82,7 @@ pub fn validate_mesh(mesh: MeshView<'_>) -> Result<ValidationReport, GeometryErr
     if mesh.normals.len() != mesh.positions.len() || mesh.uvs.len() != mesh.positions.len() {
         return Err(GeometryError::AttributeLengthMismatch);
     }
-    if mesh.indices.len() % 3 != 0 {
+    if !mesh.indices.len().is_multiple_of(3) {
         return Err(GeometryError::IndexCountNotTriangular);
     }
     let mut min = [f32::INFINITY; 3];
