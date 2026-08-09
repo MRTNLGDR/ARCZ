@@ -78,7 +78,13 @@ impl ArchvizWorker {
         for material in &req.material_overrides {
             validate_identifier(material, "material override")?;
         }
-        if !req.position.iter().chain(req.scale.iter()).chain(req.rotation_euler.iter()).all(|v| v.is_finite()) {
+        if !req
+            .position
+            .iter()
+            .chain(req.scale.iter())
+            .chain(req.rotation_euler.iter())
+            .all(|v| v.is_finite())
+        {
             anyhow::bail!("transform do asset contém valor não finito");
         }
         if req.scale.iter().any(|value| *value == 0.0) {
@@ -128,7 +134,10 @@ impl ArchvizWorker {
             "materials_verified": materials_applied.len(),
         });
 
-        Ok(InstantiateAssetResult { node, materials_applied })
+        Ok(InstantiateAssetResult {
+            node,
+            materials_applied,
+        })
     }
 
     fn find_asset(&self, asset_id: &str) -> anyhow::Result<PathBuf> {
@@ -140,7 +149,11 @@ impl ArchvizWorker {
                 } else {
                     root.join(subdir).join(format!("{asset_id}.{ext}"))
                 };
-                if candidate.is_file() && !std::fs::symlink_metadata(&candidate)?.file_type().is_symlink() {
+                if candidate.is_file()
+                    && !std::fs::symlink_metadata(&candidate)?
+                        .file_type()
+                        .is_symlink()
+                {
                     return Ok(candidate);
                 }
             }
@@ -154,16 +167,24 @@ impl ArchvizWorker {
 
     fn load_material(&self, material_id: &str) -> anyhow::Result<PbrMaterial> {
         let root = self.library_dir.resolve_local()?;
-        let path = root.join("materials").join(format!("{material_id}.json"));
+        let path = root
+            .join("materials")
+            .join(format!("{material_id}.json"));
         if !path.is_file() || std::fs::symlink_metadata(&path)?.file_type().is_symlink() {
             anyhow::bail!("manifest PBR local ausente: {}", path.display());
         }
         let mut material: PbrMaterial = serde_json::from_slice(&std::fs::read(&path)?)
             .map_err(|e| anyhow::anyhow!("manifest PBR inválido '{}': {e}", path.display()))?;
         if material.id != material_id {
-            anyhow::bail!("manifest '{}' declara id '{}'", path.display(), material.id);
+            anyhow::bail!(
+                "manifest '{}' declara id '{}'",
+                path.display(),
+                material.id
+            );
         }
-        if !(0.0..=1.0).contains(&material.roughness) || !(0.0..=1.0).contains(&material.metallic) {
+        if !(0.0..=1.0).contains(&material.roughness)
+            || !(0.0..=1.0).contains(&material.metallic)
+        {
             anyhow::bail!("roughness/metallic fora de 0..1 em {}", path.display());
         }
         for value in &mut [
@@ -174,7 +195,11 @@ impl ArchvizWorker {
         ] {
             if let Some(relative) = value.as_deref() {
                 let resolved = resolve_inside(&root, relative)?;
-                if !resolved.is_file() || std::fs::symlink_metadata(&resolved)?.file_type().is_symlink() {
+                if !resolved.is_file()
+                    || std::fs::symlink_metadata(&resolved)?
+                        .file_type()
+                        .is_symlink()
+                {
                     anyhow::bail!("mapa PBR declarado mas ausente: {}", resolved.display());
                 }
                 **value = Some(resolved.display().to_string());
@@ -191,7 +216,10 @@ trait LocalRoot {
 impl LocalRoot for PathBuf {
     fn resolve_local(&self) -> anyhow::Result<PathBuf> {
         let root = std::fs::canonicalize(self).map_err(|e| {
-            anyhow::anyhow!("biblioteca Archviz local indisponível '{}': {e}", self.display())
+            anyhow::anyhow!(
+                "biblioteca Archviz local indisponível '{}': {e}",
+                self.display()
+            )
         })?;
         if !root.is_dir() {
             anyhow::bail!("biblioteca Archviz não é diretório: {}", root.display());
@@ -209,9 +237,12 @@ fn resolve_inside(root: &Path, relative: &str) -> anyhow::Result<PathBuf> {
     let resolved = std::fs::canonicalize(&candidate).map_err(|e| {
         anyhow::anyhow!("mapa PBR não encontrado '{}': {e}", candidate.display())
     })?;
-    resolved
-        .strip_prefix(root)
-        .map_err(|_| anyhow::anyhow!("mapa PBR escapou da biblioteca: {}", resolved.display()))?;
+    resolved.strip_prefix(root).map_err(|_| {
+        anyhow::anyhow!(
+            "mapa PBR escapou da biblioteca: {}",
+            resolved.display()
+        )
+    })?;
     Ok(resolved)
 }
 
@@ -263,9 +294,11 @@ mod tests {
         let base = std::env::temp_dir().join(format!("arcz-archviz-{}", std::process::id()));
         std::fs::create_dir_all(base.join("assets")).unwrap();
         std::fs::create_dir_all(base.join("materials")).unwrap();
+        // Minimal but schema-valid glTF 2.0. The production worker intentionally
+        // rejects malformed files; the test fixture must therefore be real too.
         std::fs::write(
             base.join("assets/cadeira.gltf"),
-            r#"{"asset":{"version":"2.0"},"scenes":[{}],"scene":0}"#,
+            r#"{"asset":{"version":"2.0"},"nodes":[],"scenes":[{"nodes":[]}],"scene":0}"#,
         )
         .unwrap();
         std::fs::write(
@@ -296,7 +329,8 @@ mod tests {
 
     #[test]
     fn asset_ausente_falha_sem_material_default_ficticio() {
-        let base = std::env::temp_dir().join(format!("arcz-archviz-missing-{}", std::process::id()));
+        let base =
+            std::env::temp_dir().join(format!("arcz-archviz-missing-{}", std::process::id()));
         std::fs::create_dir_all(&base).unwrap();
         let worker = ArchvizWorker::com_raiz(&base);
         let result = worker.instanciar_asset(InstantiateAssetRequest {
