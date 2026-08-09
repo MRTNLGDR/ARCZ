@@ -15,7 +15,7 @@
 - JavaScript tests + syntax: green;
 - TypeScript Aedifex overlay syntax: green;
 - schemas/manifests/plugin catalog: green;
-- Rust 1.82 workspace: `fmt`, `check`, `test`, `clippy -D warnings` green.
+- Rust 1.97.1 workspace: `fmt`, `check`, `test`, `clippy -D warnings` green.
 
 ## Gate C — canonical authoring
 
