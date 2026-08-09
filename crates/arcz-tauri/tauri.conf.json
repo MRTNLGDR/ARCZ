@@ -1,0 +1,26 @@
+{
+  "productName": "ARCZ Earth",
+  "version": "0.1.0",
+  "identifier": "com.arcz.earth",
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "ARCZ Earth",
+        "width": 1440,
+        "height": 900,
+        "minWidth": 1024,
+        "minHeight": 640,
+        "resizable": true,
+        "fullscreen": false,
+        "maximized": false,
+        "visible": true,
+        "decorations": true,
+        "transparent": false
+      }
+    ]
+  },
+  "bundle": {
+    "active": false
+  }
+}
