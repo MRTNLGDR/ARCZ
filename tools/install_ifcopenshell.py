@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
-"""Install the pinned IfcOpenShell runtime with wheel integrity evidence.
+"""Install the pinned IfcOpenShell runtime with wheel and license evidence.
 
 Network is allowed only when ARCZ_NETWORK_MODE=import_assisted. The selected
 official wheel is downloaded into vendor/ifcopenshell/wheelhouse, verified
 against the platform/Python SHA-256 allowlist, then installed into the active
-repo-local .venv. Runtime use itself is offline.
+repo-local .venv. License texts come from the exact immutable IfcOpenShell
+checkout already verified by ``tools/materialize_upstreams.py``. Runtime use
+itself is offline.
 """
 
 import hashlib
 import importlib
-import importlib.metadata
 import json
 import os
 from pathlib import Path
@@ -25,7 +26,10 @@ from datetime import datetime, timezone
 ROOT = Path(__file__).resolve().parents[1]
 VENDOR = ROOT / "vendor/ifcopenshell"
 WHEELHOUSE = VENDOR / "wheelhouse"
+UPSTREAM = ROOT / "upstreams/sources/ifcopenshell"
+UPSTREAM_EVIDENCE = ROOT / "validation/upstreams/ifcopenshell-bonsai.json"
 VERSION = "0.8.5"
+UPSTREAM_COMMIT = "7ed8584edc6609654cea608d699348c9cca7ce5d"
 
 # Official PyPI file hashes for IfcOpenShell 0.8.5. ARCZ bootstrap guarantees
 # Python >= 3.11; x86-64 Windows is the primary desktop target. Linux entries
@@ -82,30 +86,65 @@ def run(args: list[str], *, capture: bool = False) -> subprocess.CompletedProces
     return completed
 
 
-def current_version() -> str | None:
-    try:
-        module = importlib.import_module("ifcopenshell")
-    except Exception:
-        return None
-    value = str(getattr(module, "version", "") or "")
-    return value or None
+def validate_upstream_license_evidence() -> dict[str, dict[str, object]]:
+    if not (UPSTREAM / ".git").is_dir() or not UPSTREAM_EVIDENCE.is_file():
+        raise RuntimeError(
+            "pinned IfcOpenShell checkout/evidence missing; run materialize_upstreams.py --only ifcopenshell-bonsai"
+        )
+    head = run(["git", "-C", str(UPSTREAM), "rev-parse", "HEAD"], capture=True).stdout.strip()
+    if head != UPSTREAM_COMMIT:
+        raise RuntimeError(f"IfcOpenShell upstream pin mismatch: {head}")
+    dirty = run(["git", "-C", str(UPSTREAM), "status", "--porcelain"], capture=True).stdout.strip()
+    if dirty:
+        raise RuntimeError("immutable IfcOpenShell upstream checkout is dirty")
+
+    evidence = json.loads(UPSTREAM_EVIDENCE.read_text(encoding="utf-8"))
+    if evidence.get("commit") != UPSTREAM_COMMIT or evidence.get("git_status_clean") is not True:
+        raise RuntimeError("IfcOpenShell upstream evidence does not match the pinned clean commit")
+    records = {
+        str(record.get("path")): record
+        for record in evidence.get("license_files") or []
+        if isinstance(record, dict)
+    }
+    required = {"COPYING", "COPYING.LESSER"}
+    if not required.issubset(records):
+        raise RuntimeError(f"IfcOpenShell upstream evidence lacks legal files: {sorted(required - records.keys())}")
+    for name in required:
+        source = UPSTREAM / name
+        record = records[name]
+        if not source.is_file():
+            raise RuntimeError(f"pinned legal file missing: {source}")
+        actual = sha256(source)
+        if actual != record.get("sha256") or source.stat().st_size != int(record.get("bytes") or -1):
+            raise RuntimeError(f"pinned legal file evidence mismatch: {name}")
+    return records
 
 
-def copy_license() -> tuple[Path, str]:
-    distribution = importlib.metadata.distribution("ifcopenshell")
-    candidates = []
-    for item in distribution.files or ():
-        name = str(item).replace("\\", "/").lower()
-        if any(token in name for token in ("license", "copying", "lgpl")):
-            path = Path(distribution.locate_file(item)).resolve()
-            if path.is_file() and path.stat().st_size:
-                candidates.append(path)
-    if not candidates:
-        raise RuntimeError("installed IfcOpenShell distribution exposes no license file")
-    source = sorted(candidates, key=lambda path: (len(path.parts), str(path)))[0]
-    destination = VENDOR / "LICENSE"
-    shutil.copy2(source, destination)
-    return destination, sha256(destination)
+def copy_license_evidence() -> list[dict[str, object]]:
+    records = validate_upstream_license_evidence()
+    outputs: list[dict[str, object]] = []
+    mapping = {
+        "COPYING": "LICENSE.GPL-3.0",
+        "COPYING.LESSER": "LICENSE.LGPL-3.0",
+    }
+    for source_name, output_name in mapping.items():
+        source = UPSTREAM / source_name
+        destination = VENDOR / output_name
+        shutil.copy2(source, destination)
+        digest = sha256(destination)
+        upstream_record = records[source_name]
+        if digest != upstream_record.get("sha256"):
+            raise RuntimeError(f"copied IfcOpenShell legal file hash mismatch: {source_name}")
+        outputs.append(
+            {
+                "path": str(destination.relative_to(ROOT)),
+                "sha256": digest,
+                "bytes": destination.stat().st_size,
+                "upstream_path": source_name,
+                "upstream_commit": UPSTREAM_COMMIT,
+            }
+        )
+    return outputs
 
 
 def validate_import() -> dict:
@@ -133,6 +172,9 @@ def main() -> int:
     if not expected:
         raise RuntimeError(f"unsupported IfcOpenShell wheel target: {key}")
 
+    # Legal provenance must be present and pinned before the binary wheel is
+    # accepted into the runtime vendor.
+    validate_upstream_license_evidence()
     VENDOR.mkdir(parents=True, exist_ok=True)
     WHEELHOUSE.mkdir(parents=True, exist_ok=True)
 
@@ -172,14 +214,17 @@ def main() -> int:
         str(published),
     ])
     importlib.invalidate_caches()
-    evidence = validate_import()
-    license_path, license_hash = copy_license()
+    runtime_evidence = validate_import()
+    legal_files = copy_license_evidence()
+    lgpl = next(item for item in legal_files if item["upstream_path"] == "COPYING.LESSER")
 
     manifest = {
-        "schema_version": 1,
+        "schema_version": 2,
         "dependency": "IfcOpenShell",
         "version": VERSION,
         "license": "LGPL-3.0-or-later",
+        "license_boundary": "IfcOpenShell Python/C++ engine only; Bonsai GPL subtree is not imported into ARCZ core",
+        "upstream_commit": UPSTREAM_COMMIT,
         "runtime_network_required": False,
         "python": f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}",
         "platform": platform.platform(),
@@ -188,12 +233,10 @@ def main() -> int:
             "sha256": actual,
             "bytes": published.stat().st_size,
         },
-        "license_file": {
-            "path": str(license_path.relative_to(ROOT)),
-            "sha256": license_hash,
-            "bytes": license_path.stat().st_size,
-        },
-        "module": evidence["module"],
+        # Backward-compatible primary LGPL evidence for the fast preflight.
+        "license_file": lgpl,
+        "license_files": legal_files,
+        "module": runtime_evidence["module"],
         "installed_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
     }
     (VENDOR / "manifest.json").write_text(
