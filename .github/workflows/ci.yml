@@ -131,13 +131,61 @@ jobs:
           path: Cargo.lock
           if-no-files-found: error
       - name: Check workspace
-        run: cargo check --locked --workspace --all-targets
+        shell: bash
+        run: |
+          set +e
+          cargo check --locked --workspace --all-targets > /tmp/arcz-cargo-check.log 2>&1
+          rc=$?
+          if [ "$rc" -ne 0 ]; then
+            echo '===== ARCZ RUST CHECK ERROR SUMMARY ====='
+            grep -n -C 6 -E 'error(\[[A-Z0-9]+\])?:|could not compile|failed to' /tmp/arcz-cargo-check.log | tail -260 || true
+            echo '===== LAST 120 LINES ====='
+            tail -120 /tmp/arcz-cargo-check.log
+          else
+            echo 'cargo check --locked --workspace --all-targets: PASS'
+          fi
+          exit "$rc"
       - name: Test workspace
-        run: cargo test --locked --workspace --all-targets
+        shell: bash
+        run: |
+          set +e
+          cargo test --locked --workspace --all-targets > /tmp/arcz-cargo-test.log 2>&1
+          rc=$?
+          if [ "$rc" -ne 0 ]; then
+            echo '===== ARCZ RUST TEST ERROR SUMMARY ====='
+            grep -n -C 8 -E 'FAILED|failures:|error(\[[A-Z0-9]+\])?:|could not compile|test result: FAILED' /tmp/arcz-cargo-test.log | tail -300 || true
+            echo '===== LAST 140 LINES ====='
+            tail -140 /tmp/arcz-cargo-test.log
+          else
+            echo 'cargo test --locked --workspace --all-targets: PASS'
+          fi
+          exit "$rc"
       - name: Clippy
-        run: cargo clippy --locked --workspace --all-targets -- -D warnings
+        shell: bash
+        run: |
+          set +e
+          cargo clippy --locked --workspace --all-targets -- -D warnings > /tmp/arcz-cargo-clippy.log 2>&1
+          rc=$?
+          if [ "$rc" -ne 0 ]; then
+            echo '===== ARCZ CLIPPY ERROR SUMMARY ====='
+            grep -n -C 6 -E 'error(\[[A-Z0-9]+\])?:|could not compile|warning:' /tmp/arcz-cargo-clippy.log | tail -300 || true
+            echo '===== LAST 120 LINES ====='
+            tail -120 /tmp/arcz-cargo-clippy.log
+          else
+            echo 'cargo clippy --locked --workspace --all-targets -- -D warnings: PASS'
+          fi
+          exit "$rc"
       - name: Require committed rustfmt state
         run: git diff --exit-code -- '*.rs'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: arcz-rust-diagnostics
+          path: |
+            /tmp/arcz-cargo-check.log
+            /tmp/arcz-cargo-test.log
+            /tmp/arcz-cargo-clippy.log
+          if-no-files-found: ignore
 
   integrity-report:
     name: Handoff integrity report
