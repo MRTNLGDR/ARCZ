@@ -12,6 +12,7 @@ if errorlevel 1 (
 
 set "ARCZ_NETWORK_MODE=offline_strict"
 set "ARCZ_BANCO=%CD%\resources\assets"
+set "ARCZ_SEM_NAVEGADOR=1"
 
 if not exist "%ARCZ_BANCO%" (
   echo [ERRO] Biblioteca local ausente: %ARCZ_BANCO%
@@ -34,7 +35,7 @@ if errorlevel 1 (
 )
 
 echo [OK] Runtime local validado. Iniciando API/UI em http://127.0.0.1:8123/
-start "ARCZ Local Server" /D "%~dp0" cmd /k "set ARCZ_NETWORK_MODE=offline_strict&& set ARCZ_BANCO=%CD%\resources\assets&& python servidor.py 8123"
+start "ARCZ Local Server" /D "%~dp0" cmd /k "set ARCZ_NETWORK_MODE=offline_strict&& set ARCZ_BANCO=%CD%\resources\assets&& set ARCZ_SEM_NAVEGADOR=1&& python servidor.py 8123"
 
 set /a tries=0
 :wait_server
