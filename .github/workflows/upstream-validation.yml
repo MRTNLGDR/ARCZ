@@ -8,8 +8,10 @@ on:
       - 'upstreams/**'
       - 'integrations/aedifex/**'
       - 'arcz_server/aedifex_inventory.py'
+      - 'arcz_server/aedifex_catalog_localizer.py'
       - 'tools/materialize_upstreams.py'
       - 'tools/vendor_aedifex.py'
+      - 'tools/vendor_aedifex_controlled.py'
       - 'tools/build_aedifex_sidecar.py'
       - '.github/workflows/upstream-validation.yml'
   workflow_dispatch:
@@ -18,7 +20,7 @@ permissions:
   contents: read
 
 env:
-  ARCZ_UPSTREAM_PROBE_GENERATION: '4'
+  ARCZ_UPSTREAM_PROBE_GENERATION: '5'
 
 jobs:
   immutable-pins:
@@ -76,28 +78,37 @@ jobs:
           bun-version: latest
       - name: Install ARCZ audit dependencies
         run: python -m pip install -r requirements-dev.txt
+      - name: Run ARCZ regression tests
+        run: python -m pytest -q tests_python/test_aedifex_inventory_node_kinds.py tests_python/test_aedifex_catalog_localizer.py
       - name: Materialize pinned Aedifex
         run: python tools/materialize_upstreams.py --only aedifex
-      - name: Audit full upstream and create removable ARCZ fork
-        run: python tools/vendor_aedifex.py --source upstreams/sources/aedifex
+      - name: Audit upstream and create provenance-safe ARCZ fork
+        run: python tools/vendor_aedifex_controlled.py --source upstreams/sources/aedifex
       - name: Build and test controlled local sidecar
         run: python tools/build_aedifex_sidecar.py --allow-network
-      - name: Verify build manifest and upstream cleanliness
+      - name: Verify build manifest, localization and upstream cleanliness
         shell: bash
         run: |
           set -euo pipefail
           test -s vendor/aedifex-floorplanner/arcz-aedifex-build.json
+          test -s integrations/aedifex/generated/LOCALIZATION_REPORT.json
           test -z "$(git -C upstreams/sources/aedifex status --porcelain)"
           python - <<'PY'
           import json
           from pathlib import Path
           report=json.loads(Path('integrations/aedifex/generated/CONVERSION_COVERAGE_REPORT.json').read_text())
+          localization=json.loads(Path('integrations/aedifex/generated/LOCALIZATION_REPORT.json').read_text())
           build=json.loads(Path('vendor/aedifex-floorplanner/arcz-aedifex-build.json').read_text())
           assert report['ready'] is True and not report['blockers']
+          assert localization['remaining_forbidden'] == []
+          assert localization['catalog']['excluded_remote_only_count'] == 10
+          assert localization['catalog']['rewritten'] > 0
           assert build['upstream_commit'] == '5319368bae16500ca5267f6f8d68b36c9586d5bb'
           assert build['integrity']['file_count'] > 0
           assert build['wasm_integrity']['web-ifc.wasm']['bytes'] > 100000
           assert build['wasm_integrity']['web-ifc-mt.wasm']['bytes'] > 100000
+          assert build['decoder_integrity']['basis/basis_transcoder.wasm']['bytes'] > 100000
+          assert build['decoder_integrity']['draco/draco_decoder.wasm']['bytes'] > 100000
           PY
       - uses: actions/upload-artifact@v4
         if: always()
