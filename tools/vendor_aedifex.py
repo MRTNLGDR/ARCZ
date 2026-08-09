@@ -28,6 +28,7 @@ from arcz_server.schema_validation import SchemaRegistry
 
 LOCK_PATH = ROOT / "integrations/aedifex/UPSTREAM_LOCK.json"
 POLICY_PATH = ROOT / "integrations/aedifex/CONVERSION_COVERAGE.json"
+RUNTIME_POLICY_PATH = ROOT / "integrations/aedifex/RUNTIME_ADMISSION_RULES.json"
 PATCH_PATH = ROOT / "integrations/aedifex/PATCH_MANIFEST.json"
 LOCK = json.loads(LOCK_PATH.read_text(encoding="utf-8"))
 SCHEMAS = SchemaRegistry(ROOT / "schemas")
@@ -109,9 +110,64 @@ def verify_source(source: Path) -> str:
     return head
 
 
+def effective_conversion_policy() -> dict:
+    policy = json.loads(POLICY_PATH.read_text(encoding="utf-8"))
+    runtime = json.loads(RUNTIME_POLICY_PATH.read_text(encoding="utf-8"))
+    if runtime.get("schema_version") != 1:
+        raise RuntimeError("RUNTIME_ADMISSION_RULES.json usa schema_version não suportado")
+    if runtime.get("upstream_commit") != LOCK["commit"]:
+        raise RuntimeError("RUNTIME_ADMISSION_RULES.json pertence a outro commit Aedifex")
+    additions = runtime.get("categories")
+    if not isinstance(additions, dict):
+        raise RuntimeError("RUNTIME_ADMISSION_RULES.json sem categories")
+    categories = policy.get("categories")
+    if not isinstance(categories, dict):
+        raise RuntimeError("CONVERSION_COVERAGE.json sem categories")
+    for category, extra_rules in additions.items():
+        if category not in categories or not isinstance(extra_rules, list):
+            raise RuntimeError(f"categoria de runtime inválida: {category}")
+        rules = categories[category]
+        if not isinstance(rules, list):
+            raise RuntimeError(f"categoria de policy inválida: {category}")
+        fallback = next(
+            (
+                index
+                for index, rule in enumerate(rules)
+                if isinstance(rule, dict)
+                and rule.get("pattern") == "*"
+                and not rule.get("source_patterns")
+            ),
+            None,
+        )
+        if fallback is None:
+            raise RuntimeError(f"categoria {category} não possui fallback fail-closed")
+        signatures = {
+            (
+                str(rule.get("pattern")),
+                tuple(str(value) for value in rule.get("source_patterns", [])),
+                str(rule.get("status")),
+            )
+            for rule in rules
+            if isinstance(rule, dict)
+        }
+        admitted = []
+        for rule in extra_rules:
+            if not isinstance(rule, dict):
+                raise RuntimeError(f"regra runtime inválida em {category}")
+            signature = (
+                str(rule.get("pattern")),
+                tuple(str(value) for value in rule.get("source_patterns", [])),
+                str(rule.get("status")),
+            )
+            if signature not in signatures:
+                admitted.append(rule)
+        rules[fallback:fallback] = admitted
+    return policy
+
+
 def audit_source(source: Path) -> tuple[dict, dict]:
     inventory = inventory_upstream(source, expected_commit=LOCK["commit"])
-    policy = json.loads(POLICY_PATH.read_text(encoding="utf-8"))
+    policy = effective_conversion_policy()
     SCHEMAS.validate("aedifex-conversion-policy.schema.json", policy)
     SCHEMAS.validate("aedifex-upstream-inventory.schema.json", inventory)
     report = validate_coverage(inventory, policy)
@@ -126,7 +182,7 @@ def audit_source(source: Path) -> tuple[dict, dict]:
         )
         raise RuntimeError(
             "Conversão Aedifex bloqueada por superfícies não admitidas. "
-            f"Atualize CONVERSION_COVERAGE.json após auditoria: {summary}"
+            f"Atualize CONVERSION_COVERAGE.json/RUNTIME_ADMISSION_RULES.json após auditoria: {summary}"
         )
     return inventory, report
 
@@ -253,7 +309,7 @@ def _localize_base_url(path: Path) -> int:
     end += len(end_marker)
     replacement = (
         "export const BASE_URL =\n"
-        "  process.env.NEXT_PUBLIC_APP_URL || 'http://127.0.0.1:8124'"
+        f"  process.env.NEXT_PUBLIC_APP_URL || '{LOCAL_BASE_URL}'"
     )
     path.write_text(text[:start] + replacement + text[end:], encoding="utf-8")
     return 1
@@ -375,6 +431,8 @@ def main() -> int:
         "fork_integrity": tree_fingerprint(fork),
         "overlay_manifest": "integrations/aedifex/PATCH_MANIFEST.json",
         "overlay_manifest_sha256": sha256_file(PATCH_PATH),
+        "runtime_admission_rules": "integrations/aedifex/RUNTIME_ADMISSION_RULES.json",
+        "runtime_admission_rules_sha256": sha256_file(RUNTIME_POLICY_PATH),
         "inventory_hash": inventory["inventory_hash"],
         "coverage_report_hash": coverage["report_hash"],
         "coverage_ready": True,
