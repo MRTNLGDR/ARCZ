@@ -26,35 +26,46 @@ def run(cmd: list[str], cwd: Path | None = None, dry: bool = False) -> str:
     return proc.stdout.strip()
 
 
-def sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
+def run_bytes(cmd: list[str], cwd: Path) -> bytes:
+    print("+ " + " ".join(map(str, cmd)))
+    proc = subprocess.run(cmd, cwd=cwd, capture_output=True, check=False)
+    if proc.returncode:
+        sys.stderr.buffer.write(proc.stdout + proc.stderr)
+        raise SystemExit(proc.returncode)
+    return proc.stdout
+
+
+def legal_files_from_git(checkout: Path) -> list[dict[str, object]]:
+    """Read legal evidence from the pinned Git tree, not from mutable worktree state."""
+    names = run(["git", "ls-tree", "--name-only", "HEAD"], cwd=checkout).splitlines()
+    candidates = [
+        name
+        for name in names
+        if name.upper().startswith("LICENSE") or name.upper().startswith("COPYING")
+    ]
+    legal: list[dict[str, object]] = []
+    for name in sorted(candidates):
+        payload = run_bytes(["git", "show", f"HEAD:{name}"], cwd=checkout)
+        legal.append(
+            {
+                "path": name,
+                "bytes": len(payload),
+                "sha256": hashlib.sha256(payload).hexdigest(),
+            }
+        )
+    return legal
 
 
 def write_evidence(source: dict[str, object], checkout: Path, head: str) -> Path:
-    candidates = ["LICENSE", "LICENSE.md", "COPYING", "COPYING.md"]
-    licenses = []
-    for name in candidates:
-        candidate = checkout / name
-        if candidate.is_file():
-            licenses.append(
-                {
-                    "path": name,
-                    "bytes": candidate.stat().st_size,
-                    "sha256": sha256(candidate),
-                }
-            )
+    licenses = legal_files_from_git(checkout)
     if not licenses:
-        raise SystemExit(f"no top-level license file found for {source['id']}")
+        raise SystemExit(f"no top-level LICENSE/COPYING object found for {source['id']}")
 
     # Evidence belongs to ARCZ, never inside an immutable third-party checkout.
     EVIDENCE_ROOT.mkdir(parents=True, exist_ok=True)
     output = EVIDENCE_ROOT / f"{source['id']}.json"
     stamp = {
-        "schema_version": 2,
+        "schema_version": 3,
         "id": source["id"],
         "repository": source["repository"],
         "commit": head,
@@ -63,6 +74,7 @@ def write_evidence(source: dict[str, object], checkout: Path, head: str) -> Path
         "checkout": str(checkout.relative_to(ROOT)).replace("\\", "/"),
         "immutable": True,
         "git_status_clean": True,
+        "license_evidence_source": "git_object_at_pinned_head",
     }
     output.write_text(json.dumps(stamp, indent=2) + "\n", encoding="utf-8")
     return output
@@ -123,7 +135,6 @@ def main() -> int:
         if head != source["commit"]:
             raise SystemExit(f"pin mismatch for {source_id}: {head}")
 
-        # Verify immutability after checkout and again after generating evidence.
         if run(["git", "status", "--porcelain"], cwd=checkout):
             raise SystemExit(f"checkout became dirty before evidence: {source_id}")
         output = write_evidence(source, checkout, head)
