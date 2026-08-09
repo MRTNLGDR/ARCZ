@@ -1,0 +1,179 @@
+name: ARCZ Save Contract + Rust Diagnostic
+
+on:
+  push:
+    branches:
+      - agent/arcz-100-done
+    paths:
+      - .github/workflows/_fix-aedifex-save-rust-diagnostic.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch-aedifex-save:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/arcz-100-done
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Patch typed save contract and keepalive
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          page = Path('integrations/aedifex/overlay/apps/arcz-floorplanner/app/page.tsx')
+          text = page.read_text(encoding='utf-8')
+          text = text.replace(
+              "import { Editor, ItemsPanel, SettingsPanel } from '@aedifex/editor'",
+              "import { Editor, ItemsPanel, SettingsPanel, useScene, type EditorProps } from '@aedifex/editor'",
+              1,
+          )
+          anchor = "type LocationConfig = { projectId: string; apiBaseUrl: string; channel: string }\n"
+          if "type EditorSaveHandler" not in text:
+              if anchor not in text:
+                  raise SystemExit('LocationConfig anchor missing')
+              text = text.replace(
+                  anchor,
+                  anchor + "type EditorSaveHandler = NonNullable<EditorProps['onSave']>\n\n"
+                  + "function currentSceneSnapshot(): SceneSnapshot {\n"
+                  + "  const state = useScene.getState()\n"
+                  + "  return {\n"
+                  + "    nodes: state.nodes,\n"
+                  + "    rootNodeIds: state.rootNodeIds,\n"
+                  + "    collections: state.collections,\n"
+                  + "    materials: state.materials,\n"
+                  + "    installedPlugins: state.installedPlugins,\n"
+                  + "  }\n"
+                  + "}\n",
+                  1,
+              )
+
+          old_persist = """      scene: SceneSnapshot,
+      origin = 'editor',
+      metadata: Record<string, unknown> = {},
+    ) => {
+"""
+          new_persist = """      scene: SceneSnapshot,
+      origin = 'editor',
+      metadata: Record<string, unknown> = {},
+      requestOptions: { keepalive?: boolean } = {},
+    ) => {
+"""
+          if old_persist in text:
+              text = text.replace(old_persist, new_persist, 1)
+          elif "requestOptions: { keepalive?: boolean } = {}" not in text:
+              raise SystemExit('persistScene signature anchor missing')
+
+          old_call = "const result = await client.saveScene(scene, revisionRef.current, origin, metadata)"
+          new_call = "const result = await client.saveScene(scene, revisionRef.current, origin, metadata, requestOptions)"
+          if old_call in text:
+              text = text.replace(old_call, new_call, 1)
+          elif new_call not in text:
+              raise SystemExit('saveScene call anchor missing')
+
+          old_save = """  const save = useCallback(
+    (scene: SceneSnapshot) => persistScene(scene, 'editor'),
+    [persistScene],
+  )
+"""
+          new_save = """  const save: EditorSaveHandler = useCallback(
+    async (_scene, options) => {
+      await persistScene(currentSceneSnapshot(), 'editor', {}, options)
+    },
+    [persistScene],
+  )
+"""
+          if old_save in text:
+              text = text.replace(old_save, new_save, 1)
+          elif "const save: EditorSaveHandler" not in text:
+              raise SystemExit('save callback anchor missing')
+          page.write_text(text, encoding='utf-8')
+
+          bridge = Path('integrations/aedifex/overlay/packages/arcz-bridge/src/index.ts')
+          text = bridge.read_text(encoding='utf-8')
+          old_sig = """    origin = 'editor',
+    metadata: Record<string, unknown> = {},
+  ) {
+"""
+          new_sig = """    origin = 'editor',
+    metadata: Record<string, unknown> = {},
+    requestOptions: { keepalive?: boolean } = {},
+  ) {
+"""
+          if old_sig in text:
+              text = text.replace(old_sig, new_sig, 1)
+          elif "requestOptions: { keepalive?: boolean } = {}" not in text:
+              raise SystemExit('bridge signature anchor missing')
+          old_init = """      {
+        method: 'POST',
+        body: JSON.stringify({
+"""
+          new_init = """      {
+        method: 'POST',
+        keepalive: requestOptions.keepalive === true,
+        body: JSON.stringify({
+"""
+          if old_init in text:
+              text = text.replace(old_init, new_init, 1)
+          elif "keepalive: requestOptions.keepalive === true" not in text:
+              raise SystemExit('bridge RequestInit anchor missing')
+          bridge.write_text(text, encoding='utf-8')
+          PY
+          python -m pip install -q -r requirements-dev.txt
+          python -m pytest -q tests_python/test_aedifex_inventory_node_kinds.py tests_python/test_aedifex_catalog_localizer.py
+          node tools/check_typescript_syntax.mjs integrations/aedifex/overlay
+      - name: Commit verified patch and remove temporary workflow
+        shell: bash
+        run: |
+          rm -f .github/workflows/_fix-aedifex-save-rust-diagnostic.yml
+          git config user.name 'ARCZ CI'
+          git config user.email 'actions@users.noreply.github.com'
+          git add integrations/aedifex/overlay/apps/arcz-floorplanner/app/page.tsx integrations/aedifex/overlay/packages/arcz-bridge/src/index.ts .github/workflows/_fix-aedifex-save-rust-diagnostic.yml
+          git diff --cached --quiet && exit 0
+          git commit -m 'fix: preserve typed Aedifex save snapshot and keepalive'
+          git push origin HEAD:agent/arcz-100-done
+
+  rust-diagnostic:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      RUSTUP_TOOLCHAIN: 1.97.1
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Tauri Linux prerequisites
+        run: |
+          sudo apt-get update >/dev/null
+          sudo apt-get install -y --no-install-recommends \
+            libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev \
+            libssl-dev libayatana-appindicator3-dev librsvg2-dev libgtk-3-dev \
+            libglib2.0-dev pkg-config patchelf >/dev/null
+      - name: Install Rust
+        run: rustup toolchain install 1.97.1 --profile minimal --component rustfmt --component clippy --target wasm32-unknown-unknown
+      - name: Full workspace check with concise diagnostics
+        shell: bash
+        run: |
+          set +e
+          cargo generate-lockfile >/tmp/arcz-cargo-lock.log 2>&1
+          cargo check --locked --workspace --all-targets >/tmp/arcz-cargo-check.log 2>&1
+          rc=$?
+          echo '===== ARCZ RUST ERROR SUMMARY ====='
+          if [ "$rc" -ne 0 ]; then
+            grep -n -C 6 -E 'error(\[[A-Z0-9]+\])?:|could not compile|failed to' /tmp/arcz-cargo-check.log | tail -260 || true
+            echo '===== LAST 120 LINES ====='
+            tail -120 /tmp/arcz-cargo-check.log
+          else
+            echo 'cargo check --locked --workspace --all-targets: PASS'
+          fi
+          exit "$rc"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: rust-diagnostic-log
+          path: /tmp/arcz-cargo-check.log
+          if-no-files-found: error
