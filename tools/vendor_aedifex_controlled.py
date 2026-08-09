@@ -3,9 +3,8 @@ from __future__ import annotations
 
 """Canonical ARCZ entrypoint for the controlled Aedifex fork.
 
-It reuses the audited vendor pipeline while applying provenance-safe catalog
-localization and ARCZ-local runtime rewrites only to the controlled fork. The
-immutable upstream checkout is never modified.
+Only the controlled fork is rewritten. The pinned upstream checkout remains
+immutable and is still the conformance oracle.
 """
 
 from pathlib import Path
@@ -53,22 +52,26 @@ def _localize_runtime(fork: Path) -> dict[str, object]:
     return report
 
 
-def _replace_once(text: str, old: str, new: str, label: str) -> str:
+def _replace_exact(text: str, old: str, new: str, expected: int, label: str) -> str:
     count = text.count(old)
-    if count != 1:
-        raise RuntimeError(f"rewrite {label} esperava 1 ocorrência, encontrou {count}")
-    return text.replace(old, new, 1)
+    if count != expected:
+        raise RuntimeError(
+            f"rewrite {label} esperava {expected} ocorrência(s), encontrou {count}"
+        )
+    return text.replace(old, new)
+
+
+def _replace_once(text: str, old: str, new: str, label: str) -> str:
+    return _replace_exact(text, old, new, 1, label)
 
 
 def _patch_autosave_performance(fork: Path) -> None:
-    """Keep Aedifex autosave O(1) while the user drags geometry.
+    """Remove scene-wide JSON serialization from the continuous drag hot path.
 
-    The pinned upstream serializes the entire `nodes` object with JSON.stringify
-    on every Zustand update merely to detect whether the document changed. Drag
-    tools update the store continuously, so large projects can freeze the UI.
-    Zustand already replaces the relevant state containers on mutation; tracking
-    those references is sufficient for dirty detection and leaves serialization
-    to the debounced save itself.
+    Zustand replaces the scene containers when they change. Reference comparison
+    is therefore enough to schedule the existing debounced save. Serialization
+    still occurs when persistence actually writes the snapshot; it no longer
+    happens for every pointer movement.
     """
 
     path = fork / "packages/editor/src/hooks/use-auto-save.ts"
@@ -84,19 +87,29 @@ def _patch_autosave_performance(fork: Path) -> None:
 """,
         "autosave initial node references",
     )
-    loading_old = """        lastNodesSnapshot = JSON.stringify(state.nodes)
+
+    refresh_old = """        lastNodesSnapshot = JSON.stringify(state.nodes)
         lastCollectionsRef = state.collections
         lastMaterialsRef = state.materials
         lastInstalledPluginsRef = state.installedPlugins
 """
-    loading_new = """        lastNodesRef = state.nodes
+    refresh_new = """        lastNodesRef = state.nodes
         lastRootNodeIdsRef = state.rootNodeIds
         lastCollectionsRef = state.collections
         lastMaterialsRef = state.materials
         lastInstalledPluginsRef = state.installedPlugins
 """
-    text = _replace_once(text, loading_old, loading_new, "autosave loading reference refresh")
-    text = _replace_once(text, loading_old, loading_new, "autosave preview reference refresh")
+    # The pinned upstream has this exact refresh block twice: while loading and
+    # while version-preview mode is active. Requiring exactly two occurrences
+    # keeps the rewrite fail-closed if upstream behavior changes.
+    text = _replace_exact(
+        text,
+        refresh_old,
+        refresh_new,
+        2,
+        "autosave loading/preview reference refresh",
+    )
+
     text = _replace_once(
         text,
         """      const currentNodesSnapshot = JSON.stringify(state.nodes)
@@ -144,8 +157,10 @@ def _patch_host_contracts(fork: Path) -> None:
         "import { Editor, ItemsPanel, SettingsPanel, useScene, type EditorProps } from '@aedifex/editor'",
         "editor imports",
     )
-    location_type = "type LocationConfig = { projectId: string; apiBaseUrl: string; channel: string }\n"
-    snapshot_helper = """type LocationConfig = { projectId: string; apiBaseUrl: string; channel: string }
+    text = _replace_once(
+        text,
+        "type LocationConfig = { projectId: string; apiBaseUrl: string; channel: string }\n",
+        """type LocationConfig = { projectId: string; apiBaseUrl: string; channel: string }
 type EditorSaveHandler = NonNullable<EditorProps['onSave']>
 
 function currentSceneSnapshot(): SceneSnapshot {
@@ -158,8 +173,9 @@ function currentSceneSnapshot(): SceneSnapshot {
     installedPlugins: state.installedPlugins,
   }
 }
-"""
-    text = _replace_once(text, location_type, snapshot_helper, "typed scene snapshot helper")
+""",
+        "typed scene snapshot helper",
+    )
     text = _replace_once(
         text,
         """      scene: SceneSnapshot,
