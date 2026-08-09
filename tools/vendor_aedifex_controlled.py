@@ -8,11 +8,17 @@ with the provenance-safe implementation that excludes remote-only content not
 present in the pinned upstream source tree.
 """
 
+from pathlib import Path
+import sys
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+
 import tools.vendor_aedifex as vendor
 from arcz_server.aedifex_catalog_localizer import localize_catalog_assets
 
 
-def _localize(fork):
+def _localize(fork: Path):
     return localize_catalog_assets(fork, vendor._local_catalog_value)
 
 
