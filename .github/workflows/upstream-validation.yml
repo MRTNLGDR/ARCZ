@@ -16,6 +16,9 @@ on:
 permissions:
   contents: read
 
+env:
+  ARCZ_UPSTREAM_PROBE_GENERATION: '2'
+
 jobs:
   immutable-pins:
     name: Pin ${{ matrix.source }}
