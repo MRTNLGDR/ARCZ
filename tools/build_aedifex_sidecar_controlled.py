@@ -3,15 +3,14 @@ from __future__ import annotations
 
 """ARCZ packaging guard for the Aedifex standalone build.
 
-Next.js standalone generated from a Bun workspace may contain symlinks under
-``.next/standalone/node_modules`` whose targets live in the controlled fork's
-Bun store but were not copied by Next's file tracer. The base builder correctly
-refuses to silently ignore them; this wrapper materializes those links from the
-already-installed, frozen/offline-proven Bun store before the final vendor copy.
+Next.js standalone generated from a Bun workspace may contain symlinks whose
+targets live in the controlled fork's Bun store and may omit a small runtime
+package required by Next itself. The base builder correctly refuses to ignore
+those gaps. This wrapper materializes them exclusively from the already-
+installed, frozen/offline-proven Bun store before the final vendor copy.
 
 Nothing is fetched here. A missing target is fatal. The final vendor tree cannot
-contain dangling symlinks or dependencies that resolve outside the standalone
-source tree.
+contain dangling/external symlinks or unresolved required runtime packages.
 """
 
 from pathlib import Path
@@ -25,6 +24,7 @@ sys.path.insert(0, str(ROOT))
 import tools.build_aedifex_sidecar as builder
 
 _ORIGINAL_COPYTREE = shutil.copytree
+_REQUIRED_RUNTIME_PACKAGES = ("@swc/helpers",)
 
 
 def _inside(path: Path, root: Path) -> bool:
@@ -41,8 +41,6 @@ def _fallback_targets(link: Path, standalone: Path) -> list[Path]:
         builder.FORK / rel,
         builder.FORK / "apps/arcz-floorplanner" / rel,
     ]
-    # Bun's hoisted links under node_modules/.bun/node_modules/<name> always
-    # have an equivalent link in the controlled fork root store.
     parts = rel.parts
     marker = ("node_modules", ".bun", "node_modules")
     for index in range(max(0, len(parts) - len(marker) + 1)):
@@ -57,9 +55,57 @@ def _fallback_targets(link: Path, standalone: Path) -> list[Path]:
     return result
 
 
+def _resolve_fork_package(package_name: str) -> Path:
+    parts = package_name.split("/")
+    candidates = [
+        builder.FORK / "node_modules" / Path(*parts),
+        builder.FORK / "apps/arcz-floorplanner/node_modules" / Path(*parts),
+    ]
+    for candidate in candidates:
+        try:
+            resolved = candidate.resolve(strict=True)
+        except (FileNotFoundError, RuntimeError, OSError):
+            continue
+        if (resolved / "package.json").is_file():
+            if not _inside(resolved, builder.FORK):
+                raise RuntimeError(
+                    f"pacote runtime Aedifex escapou do fork controlado: {package_name} -> {resolved}"
+                )
+            return resolved
+    raise RuntimeError(
+        f"pacote runtime obrigatório não existe no Bun store congelado: {package_name}"
+    )
+
+
+def materialize_required_packages(standalone: Path) -> list[dict[str, str]]:
+    materialized: list[dict[str, str]] = []
+    for package_name in _REQUIRED_RUNTIME_PACKAGES:
+        parts = package_name.split("/")
+        destination = standalone / "node_modules" / Path(*parts)
+        if (destination / "package.json").is_file():
+            continue
+        source = _resolve_fork_package(package_name)
+        if destination.exists() or destination.is_symlink():
+            if destination.is_dir() and not destination.is_symlink():
+                shutil.rmtree(destination)
+            else:
+                destination.unlink()
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        _ORIGINAL_COPYTREE(source, destination, symlinks=False)
+        if not (destination / "package.json").is_file():
+            raise RuntimeError(
+                f"materialização do pacote runtime falhou: {package_name}"
+            )
+        materialized.append({
+            "package": package_name,
+            "source": source.relative_to(builder.FORK).as_posix(),
+            "destination": destination.relative_to(standalone).as_posix(),
+        })
+    return materialized
+
+
 def materialize_dangling_links(standalone: Path) -> list[dict[str, str]]:
     repaired: list[dict[str, str]] = []
-    # Snapshot first because replacements change traversal semantics.
     links = sorted(
         (path for path in standalone.rglob("*") if path.is_symlink()),
         key=lambda path: len(path.parts),
@@ -69,9 +115,6 @@ def materialize_dangling_links(standalone: Path) -> list[dict[str, str]]:
         resolved = (link.parent / raw_target).resolve(strict=False)
         if resolved.exists() and _inside(resolved, standalone):
             continue
-        # Even a currently-existing target outside standalone is forbidden in
-        # the artifact: the vendor must be self-contained after the worktree is
-        # deleted.
         source = None
         for candidate in _fallback_targets(link, standalone):
             try:
@@ -125,19 +168,23 @@ def _guarded_copytree(src, dst, *args, **kwargs):
         is_standalone = False
     if is_standalone:
         repaired = materialize_dangling_links(source)
+        packages = materialize_required_packages(source)
         print(f"[aedifex-standalone] materialized {len(repaired)} Bun link(s)")
         for item in repaired:
             print(
                 "[aedifex-standalone] "
                 f"{item['path']} <= {item['materialized_from']}"
             )
+        for item in packages:
+            print(
+                "[aedifex-standalone] runtime package "
+                f"{item['package']} <= {item['source']}"
+            )
         kwargs["symlinks"] = False
     return _ORIGINAL_COPYTREE(src, dst, *args, **kwargs)
 
 
 def main() -> int:
-    # The imported builder references the shared shutil module. Replace only for
-    # this process and restore in finally so helper calls remain deterministic.
     original = builder.shutil.copytree
     builder.shutil.copytree = _guarded_copytree
     try:
