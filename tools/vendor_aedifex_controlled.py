@@ -60,6 +60,81 @@ def _replace_once(text: str, old: str, new: str, label: str) -> str:
     return text.replace(old, new, 1)
 
 
+def _patch_autosave_performance(fork: Path) -> None:
+    """Keep Aedifex autosave O(1) while the user drags geometry.
+
+    The pinned upstream serializes the entire `nodes` object with JSON.stringify
+    on every Zustand update merely to detect whether the document changed. Drag
+    tools update the store continuously, so large projects can freeze the UI.
+    Zustand already replaces the relevant state containers on mutation; tracking
+    those references is sufficient for dirty detection and leaves serialization
+    to the debounced save itself.
+    """
+
+    path = fork / "packages/editor/src/hooks/use-auto-save.ts"
+    text = path.read_text(encoding="utf-8")
+    text = _replace_once(
+        text,
+        """    let lastNodesSnapshot = JSON.stringify(useScene.getState().nodes)
+    let lastNodeCount = Object.keys(useScene.getState().nodes).length
+""",
+        """    let lastNodesRef = useScene.getState().nodes
+    let lastRootNodeIdsRef = useScene.getState().rootNodeIds
+    let lastNodeCount = Object.keys(useScene.getState().nodes).length
+""",
+        "autosave initial node references",
+    )
+    loading_old = """        lastNodesSnapshot = JSON.stringify(state.nodes)
+        lastCollectionsRef = state.collections
+        lastMaterialsRef = state.materials
+        lastInstalledPluginsRef = state.installedPlugins
+"""
+    loading_new = """        lastNodesRef = state.nodes
+        lastRootNodeIdsRef = state.rootNodeIds
+        lastCollectionsRef = state.collections
+        lastMaterialsRef = state.materials
+        lastInstalledPluginsRef = state.installedPlugins
+"""
+    text = _replace_once(text, loading_old, loading_new, "autosave loading reference refresh")
+    text = _replace_once(text, loading_old, loading_new, "autosave preview reference refresh")
+    text = _replace_once(
+        text,
+        """      const currentNodesSnapshot = JSON.stringify(state.nodes)
+      const changed =
+        currentNodesSnapshot !== lastNodesSnapshot ||
+        state.collections !== lastCollectionsRef ||
+        state.materials !== lastMaterialsRef ||
+        state.installedPlugins !== lastInstalledPluginsRef
+""",
+        """      const changed =
+        state.nodes !== lastNodesRef ||
+        state.rootNodeIds !== lastRootNodeIdsRef ||
+        state.collections !== lastCollectionsRef ||
+        state.materials !== lastMaterialsRef ||
+        state.installedPlugins !== lastInstalledPluginsRef
+""",
+        "autosave O(1) dirty detection",
+    )
+    text = _replace_once(
+        text,
+        """      lastNodesSnapshot = currentNodesSnapshot
+      lastCollectionsRef = state.collections
+      lastMaterialsRef = state.materials
+      lastInstalledPluginsRef = state.installedPlugins
+""",
+        """      lastNodesRef = state.nodes
+      lastRootNodeIdsRef = state.rootNodeIds
+      lastCollectionsRef = state.collections
+      lastMaterialsRef = state.materials
+      lastInstalledPluginsRef = state.installedPlugins
+""",
+        "autosave dirty reference commit",
+    )
+    if "JSON.stringify(state.nodes)" in text or "lastNodesSnapshot" in text:
+        raise RuntimeError("autosave Aedifex ainda contém serialização scene-wide no hot path")
+    path.write_text(text, encoding="utf-8")
+
+
 def _patch_host_contracts(fork: Path) -> None:
     page = fork / "apps/arcz-floorplanner/app/page.tsx"
     text = page.read_text(encoding="utf-8")
@@ -153,6 +228,8 @@ function currentSceneSnapshot(): SceneSnapshot {
         "bridge saveScene keepalive request",
     )
     bridge.write_text(text, encoding="utf-8")
+
+    _patch_autosave_performance(fork)
 
 
 def _merge_workspace(fork: Path) -> None:
