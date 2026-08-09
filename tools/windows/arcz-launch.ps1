@@ -41,6 +41,16 @@ if (-not $Python) {
 }
 if (-not $Python) { throw 'Python 3.11+ could not be resolved after installation.' }
 
+# A user may obtain ARCZ as a GitHub ZIP on the first run. Convert that source
+# tree into a real, updatable checkout before the canonical controller runs.
+# The Python helper commits the local ZIP snapshot to a backup branch first, so
+# this operation never requires deleting the user's original tracked source.
+if (-not (Test-Path (Join-Path $Root '.git'))) {
+  Write-Host '[ARCZ] Source ZIP detected; adopting it into a real Git checkout...'
+  & $Python (Join-Path $Root 'tools\windows\adopt_git_checkout.py')
+  if ($LASTEXITCODE -ne 0) { throw 'Automatic Git adoption of the source ZIP failed.' }
+}
+
 $ArgsList = @((Join-Path $Root 'tools\windows\arcz_launch.py'))
 if ($ForceSetup) { $ArgsList += '--force-setup' }
 if ($SkipUpdate) { $ArgsList += '--skip-update' }
