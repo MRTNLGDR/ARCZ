@@ -73,10 +73,16 @@ def prepare_modeler() -> None:
 
 
 def prepare_ifc() -> None:
-    # IfcOpenShell itself is installed from one version/platform-specific wheel
-    # whose SHA-256 is checked before pip is allowed to install it. The smoke
-    # then exports an ARCZ wall/slab/column scene, reopens IFC4 and creates
-    # geometry with the actual IfcOpenShell engine.
+    # The immutable exact upstream is materialized first so the runtime vendor
+    # carries GPL/LGPL texts and commit/hash provenance from the same audited
+    # source tree. The binary wheel is then selected by Python/platform and its
+    # official SHA-256 allowlist before pip installs it into the repo .venv.
+    run([
+        sys.executable,
+        "tools/materialize_upstreams.py",
+        "--only",
+        "ifcopenshell-bonsai",
+    ])
     run([sys.executable, "tools/install_ifcopenshell.py"])
     env = {**os.environ, "ARCZ_NETWORK_MODE": "offline_strict"}
     print("+ smoke IfcOpenShell offline_strict", flush=True)
@@ -118,7 +124,7 @@ def main() -> int:
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--map", action="store_true", help="materializa e compila somente CesiumJS")
     group.add_argument("--modeler", action="store_true", help="materializa e compila somente Aedifex")
-    group.add_argument("--ifc", action="store_true", help="instala wheel verificado e testa IfcOpenShell")
+    group.add_argument("--ifc", action="store_true", help="materializa licença, instala wheel verificado e testa IfcOpenShell")
     group.add_argument("--interactive", action="store_true", help="prepara mapa + modelador + IFC e valida o perfil interativo")
     args = parser.parse_args()
 
