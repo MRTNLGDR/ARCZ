@@ -16,8 +16,11 @@ def python_env(extra: dict[str, str] | None = None) -> dict[str, str]:
     return env
 
 
-def query_asset_bank(env: dict[str, str]) -> Path:
-    code = "import json,os; print(json.dumps({'bank': os.environ.get('ARCZ_BANCO')}))"
+def query_runtime_environment(env: dict[str, str]) -> dict[str, str]:
+    code = (
+        "import json,arcz_local; "
+        "print(json.dumps(arcz_local.apply_runtime_environment()))"
+    )
     completed = subprocess.run(
         [sys.executable, "-c", code],
         cwd=ROOT,
@@ -26,32 +29,49 @@ def query_asset_bank(env: dict[str, str]) -> Path:
         capture_output=True,
         check=True,
     )
-    return Path(json.loads(completed.stdout.strip())["bank"]).resolve()
+    return json.loads(completed.stdout.strip())
 
 
-def test_python_server_default_asset_bank_is_inside_repo() -> None:
+def test_official_python_runtime_defaults_asset_bank_inside_repo() -> None:
     env = python_env()
     env.pop("ARCZ_BANCO", None)
-    bank = query_asset_bank(env)
+    applied = query_runtime_environment(env)
+    bank = Path(applied["ARCZ_BANCO"]).resolve()
     assert bank == (ROOT / "resources" / "assets").resolve()
     bank.relative_to(ROOT)
+    assert applied["ARCZ_NETWORK_MODE"] == "offline_strict"
 
 
-def test_external_asset_bank_override_is_clamped_to_repo(tmp_path: Path) -> None:
+def test_official_python_runtime_rejects_external_asset_bank_override(tmp_path: Path) -> None:
     external = (tmp_path / "outside-assets").resolve()
-    bank = query_asset_bank(python_env({"ARCZ_BANCO": str(external)}))
+    applied = query_runtime_environment(python_env({"ARCZ_BANCO": str(external)}))
+    bank = Path(applied["ARCZ_BANCO"]).resolve()
     assert bank == (ROOT / "resources" / "assets").resolve()
     bank.relative_to(ROOT)
+    assert applied["ARCZ_NETWORK_MODE"] == "offline_strict"
 
 
-def test_import_assisted_mode_is_not_overwritten_by_bootstrap() -> None:
-    code = "import os; print(os.environ.get('ARCZ_NETWORK_MODE'))"
+def test_official_runtime_cannot_be_promoted_to_import_assisted() -> None:
+    applied = query_runtime_environment(
+        python_env({"ARCZ_NETWORK_MODE": "import_assisted"})
+    )
+    assert applied["ARCZ_NETWORK_MODE"] == "offline_strict"
+
+
+def test_environment_builder_is_pure_and_repo_local(tmp_path: Path) -> None:
+    code = (
+        "import json,arcz_local; "
+        "print(json.dumps(arcz_local.runtime_environment({"
+        "'ARCZ_NETWORK_MODE':'import_assisted','ARCZ_BANCO':'%s'})))"
+        % str(tmp_path).replace("\\", "\\\\")
+    )
     completed = subprocess.run(
         [sys.executable, "-c", code],
         cwd=ROOT,
-        env=python_env({"ARCZ_NETWORK_MODE": "import_assisted"}),
         text=True,
         capture_output=True,
         check=True,
     )
-    assert completed.stdout.strip() == "import_assisted"
+    env = json.loads(completed.stdout.strip())
+    assert env["ARCZ_NETWORK_MODE"] == "offline_strict"
+    assert Path(env["ARCZ_BANCO"]).resolve() == (ROOT / "resources" / "assets").resolve()
