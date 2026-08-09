@@ -1,0 +1,58 @@
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 57678)
+Traceback (most recent call last):
+  File "C:\Program Files\Python312\Lib\socketserver.py", line 692, in process_request_thread
+    self.finish_request(request, client_address)
+  File "C:\Program Files\Python312\Lib\socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "D:\ARCZ\servidor.py", line 218, in __init__
+    super().__init__(*a, directory=str(RAIZ), **k)
+  File "C:\Program Files\Python312\Lib\http\server.py", line 672, in __init__
+    super().__init__(*args, **kwargs)
+  File "C:\Program Files\Python312\Lib\socketserver.py", line 761, in __init__
+    self.handle()
+  File "C:\Program Files\Python312\Lib\http\server.py", line 436, in handle
+    self.handle_one_request()
+  File "C:\Program Files\Python312\Lib\http\server.py", line 424, in handle_one_request
+    method()
+  File "D:\ARCZ\servidor.py", line 372, in do_POST
+    return self.salvar_projeto(corpo)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\ARCZ\servidor.py", line 736, in salvar_projeto
+    return self.responder({
+           ^^^^^^^^^^^^^^^^
+  File "D:\ARCZ\servidor.py", line 1114, in responder
+    self.wfile.write(corpo)
+  File "C:\Program Files\Python312\Lib\socketserver.py", line 840, in write
+    self._sock.sendall(b)
+ConnectionAbortedError: [WinError 10053] An established connection was aborted by the software in your host machine
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 65368)
+Traceback (most recent call last):
+  File "C:\Program Files\Python312\Lib\socketserver.py", line 692, in process_request_thread
+    self.finish_request(request, client_address)
+  File "C:\Program Files\Python312\Lib\socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "D:\ARCZ\servidor.py", line 218, in __init__
+    super().__init__(*a, directory=str(RAIZ), **k)
+  File "C:\Program Files\Python312\Lib\http\server.py", line 672, in __init__
+    super().__init__(*args, **kwargs)
+  File "C:\Program Files\Python312\Lib\socketserver.py", line 761, in __init__
+    self.handle()
+  File "C:\Program Files\Python312\Lib\http\server.py", line 436, in handle
+    self.handle_one_request()
+  File "C:\Program Files\Python312\Lib\http\server.py", line 424, in handle_one_request
+    method()
+  File "D:\ARCZ\servidor.py", line 372, in do_POST
+    return self.salvar_projeto(corpo)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\ARCZ\servidor.py", line 736, in salvar_projeto
+    return self.responder({
+           ^^^^^^^^^^^^^^^^
+  File "D:\ARCZ\servidor.py", line 1114, in responder
+    self.wfile.write(corpo)
+  File "C:\Program Files\Python312\Lib\socketserver.py", line 840, in write
+    self._sock.sendall(b)
+ConnectionAbortedError: [WinError 10053] An established connection was aborted by the software in your host machine
+----------------------------------------
