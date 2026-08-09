@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Prepara vendors locais do ARCZ durante a fase explícita import_assisted.
 
-Este script é instalador/setup, não runtime. Ele pode acessar os repositórios e
+Este script é instalador/setup, não runtime. Ele pode acessar repositórios e
 registries apenas quando ARCZ_NETWORK_MODE=import_assisted. O resultado aceito é
 sempre materializado dentro do repo e imediatamente validado para uso
 `offline_strict`.
@@ -9,6 +9,7 @@ sempre materializado dentro do repo e imediatamente validado para uso
 Exemplos:
   ARCZ_NETWORK_MODE=import_assisted python tools/prepare_local_runtime.py --map
   ARCZ_NETWORK_MODE=import_assisted python tools/prepare_local_runtime.py --modeler
+  ARCZ_NETWORK_MODE=import_assisted python tools/prepare_local_runtime.py --ifc
   ARCZ_NETWORK_MODE=import_assisted python tools/prepare_local_runtime.py --interactive
 """
 from __future__ import annotations
@@ -71,6 +72,24 @@ def prepare_modeler() -> None:
     run([sys.executable, "tools/smoke_aedifex_sidecar.py"])
 
 
+def prepare_ifc() -> None:
+    # IfcOpenShell itself is installed from one version/platform-specific wheel
+    # whose SHA-256 is checked before pip is allowed to install it. The smoke
+    # then exports an ARCZ wall/slab/column scene, reopens IFC4 and creates
+    # geometry with the actual IfcOpenShell engine.
+    run([sys.executable, "tools/install_ifcopenshell.py"])
+    env = {**os.environ, "ARCZ_NETWORK_MODE": "offline_strict"}
+    print("+ smoke IfcOpenShell offline_strict", flush=True)
+    completed = subprocess.run(
+        [sys.executable, "tools/smoke_ifcopenshell.py"],
+        cwd=ROOT,
+        env=env,
+        shell=False,
+    )
+    if completed.returncode != 0:
+        raise SystemExit(completed.returncode)
+
+
 def verify(profile: str) -> None:
     env = {**os.environ, "ARCZ_NETWORK_MODE": "offline_strict"}
     print(f"+ verify offline_strict profile={profile}", flush=True)
@@ -89,7 +108,8 @@ def main() -> int:
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--map", action="store_true", help="materializa e compila somente CesiumJS")
     group.add_argument("--modeler", action="store_true", help="materializa e compila somente Aedifex")
-    group.add_argument("--interactive", action="store_true", help="prepara mapa + modelador e valida o perfil interativo")
+    group.add_argument("--ifc", action="store_true", help="instala wheel verificado e testa IfcOpenShell")
+    group.add_argument("--interactive", action="store_true", help="prepara mapa + modelador + IFC e valida o perfil interativo")
     args = parser.parse_args()
 
     require_import_assisted()
@@ -122,9 +142,13 @@ def main() -> int:
             shell=False,
         )
         return run_check.returncode
+    if args.ifc:
+        prepare_ifc()
+        return 0
 
     prepare_map()
     prepare_modeler()
+    prepare_ifc()
     verify("interactive")
     return 0
 
