@@ -7,10 +7,7 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@aedifex/core": "*",
     "@aedifex/mcp": "*",
-    "@aedifex/nodes": "*",
-    "@aedifex/plugin-trees": "*",
     "@modelcontextprotocol/sdk": "1.26.0"
   },
   "devDependencies": {
