@@ -26,11 +26,31 @@ def run(cmd: list[str], cwd: Path | None = None, dry: bool = False) -> str:
     return proc.stdout.strip()
 
 
-def run_bytes(cmd: list[str], cwd: Path) -> bytes:
-    print("+ " + " ".join(map(str, cmd)))
-    proc = subprocess.run(cmd, cwd=cwd, capture_output=True, check=False)
+def legal_candidates(checkout: Path) -> list[str]:
+    names = run(["git", "ls-tree", "-r", "--name-only", "HEAD"], cwd=checkout).splitlines()
+    candidates: list[str] = []
+    for name in names:
+        base = Path(name).name.upper()
+        if base.startswith("LICENSE") or base.startswith("COPYING") or base.startswith("NOTICE"):
+            candidates.append(name)
+    return sorted(candidates)
+
+
+def git_object(checkout: Path, path: str, label: str) -> bytes:
+    print(f"+ git show HEAD:{path}")
+    proc = subprocess.run(
+        ["git", "show", f"HEAD:{path}"],
+        cwd=checkout,
+        capture_output=True,
+        check=False,
+    )
     if proc.returncode:
-        sys.stderr.buffer.write(proc.stdout + proc.stderr)
+        candidates = legal_candidates(checkout)
+        rendered = "\n  - ".join(candidates) if candidates else "<none>"
+        sys.stderr.write(
+            f"missing declared {label} at pinned HEAD: {path}\n"
+            f"legal/notice candidates in exact pinned tree:\n  - {rendered}\n"
+        )
         raise SystemExit(proc.returncode)
     return proc.stdout
 
@@ -43,7 +63,7 @@ def git_object_evidence(checkout: Path, paths: list[str], label: str) -> list[di
         path = str(raw_path).strip().replace("\\", "/")
         if not path or path.startswith("/") or ".." in Path(path).parts:
             raise SystemExit(f"unsafe {label} path in manifest: {raw_path!r}")
-        payload = run_bytes(["git", "show", f"HEAD:{path}"], cwd=checkout)
+        payload = git_object(checkout, path, label)
         if not payload:
             raise SystemExit(f"empty {label} object at pinned HEAD: {path}")
         evidence.append(
@@ -70,11 +90,10 @@ def write_evidence(source: dict[str, object], checkout: Path, head: str) -> Path
             "license-boundary file",
         )
 
-    # Evidence belongs to ARCZ, never inside an immutable third-party checkout.
     EVIDENCE_ROOT.mkdir(parents=True, exist_ok=True)
     output = EVIDENCE_ROOT / f"{source['id']}.json"
     stamp = {
-        "schema_version": 4,
+        "schema_version": 5,
         "id": source["id"],
         "repository": source["repository"],
         "commit": head,
@@ -85,6 +104,7 @@ def write_evidence(source: dict[str, object], checkout: Path, head: str) -> Path
         "immutable": True,
         "git_status_clean": True,
         "license_evidence_source": "declared_git_objects_at_pinned_head",
+        "legal_candidates_at_pinned_head": legal_candidates(checkout),
     }
     output.write_text(json.dumps(stamp, indent=2) + "\n", encoding="utf-8")
     return output
