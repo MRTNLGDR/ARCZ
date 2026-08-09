@@ -14,6 +14,7 @@ on:
       - 'tools/vendor_aedifex_controlled.py'
       - 'tools/build_aedifex_sidecar.py'
       - 'tools/smoke_aedifex_sidecar.py'
+      - 'tools/vendor_cesium.py'
       - '.github/workflows/upstream-validation.yml'
   workflow_dispatch:
 
@@ -57,6 +58,56 @@ jobs:
         with:
           name: upstream-evidence-${{ matrix.source }}
           path: validation/upstreams/${{ matrix.source }}.json
+          if-no-files-found: error
+
+  cesium-runtime-vendor:
+    name: CesiumJS pinned source → local vendor runtime
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      ARCZ_NETWORK_MODE: import_assisted
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Materialize pinned CesiumJS
+        run: python tools/materialize_upstreams.py --only cesiumjs
+      - name: Build controlled repo-local Cesium vendor
+        run: python tools/vendor_cesium.py --from-pinned-source --allow-network --force
+      - name: Verify browser runtime integrity and immutable source
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s vendor/cesium/Cesium/Cesium.js
+          test -s vendor/cesium/Cesium/Widgets/widgets.css
+          test -s vendor/cesium/Cesium/Assets/Textures/NaturalEarthII/tilemapresource.xml
+          test -s vendor/cesium/manifest.json
+          test -z "$(git -C upstreams/sources/cesium status --porcelain)"
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          manifest=json.loads(Path('vendor/cesium/manifest.json').read_text())
+          assert manifest['schema_version'] == 2
+          assert manifest['dependency'] == 'CesiumJS'
+          assert manifest['version'] == '1.144.0'
+          assert manifest['runtime_network_required'] is False
+          assert manifest['upstream_commit'] == '6d5d8b1f0725b6f831b336463f4b11c98023427b'
+          files={item['path']:item for item in manifest['files']}
+          for required in ['Cesium.js','Widgets/widgets.css','Assets/Textures/NaturalEarthII/tilemapresource.xml']:
+              assert required in files and files[required]['bytes'] > 0 and len(files[required]['sha256']) == 64
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cesium-local-vendor-evidence
+          path: |
+            vendor/cesium/manifest.json
+            validation/upstreams/cesiumjs.json
           if-no-files-found: error
 
   aedifex-controlled-fork:
