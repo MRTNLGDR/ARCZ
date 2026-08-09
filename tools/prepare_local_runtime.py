@@ -101,6 +101,16 @@ def verify(profile: str) -> None:
     )
     if completed.returncode != 0:
         raise SystemExit(completed.returncode)
+    if profile in {"interactive", "full"}:
+        print("+ verify offline_strict IfcOpenShell", flush=True)
+        ifc = subprocess.run(
+            [sys.executable, "tools/ifc_preflight.py"],
+            cwd=ROOT,
+            env=env,
+            shell=False,
+        )
+        if ifc.returncode != 0:
+            raise SystemExit(ifc.returncode)
 
 
 def main() -> int:
@@ -144,6 +154,7 @@ def main() -> int:
         return run_check.returncode
     if args.ifc:
         prepare_ifc()
+        verify("interactive")
         return 0
 
     prepare_map()
