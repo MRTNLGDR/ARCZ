@@ -4,14 +4,19 @@ import { readFileSync } from 'node:fs';
 
 const read = path => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
 
-test('photoreal preparation takes an explicit local Blender distribution', () => {
-  const source = read('PREPARAR_FOTORREAL.cmd');
+test('single launcher materializes a real Blender distribution into the repo', () => {
+  const alias = read('PREPARAR_FOTORREAL.cmd');
+  const source = read('tools/windows/arcz_launch.py');
+
+  assert.match(alias, /ARCZ\.bat/);
+  assert.match(alias, /-ForceSetup/);
   assert.match(source, /vendor_blender\.py/);
-  assert.match(source, /photoreal_preflight\.py/);
-  assert.match(source, /ARCZ_NETWORK_MODE=offline_strict/);
+  assert.match(source, /_blender_check/);
   assert.match(source, /--source/);
   assert.match(source, /--license-file/);
-  assert.doesNotMatch(source, /curl|wget|Invoke-WebRequest|https?:\/\//i);
+  assert.match(source, /vendor["']\s*\/\s*["']toolchains/);
+  assert.match(source, /offline_strict/);
+  assert.doesNotMatch(source, /https:\/\//i);
 });
 
 test('base Cycles preflight does not require a diffusion model', () => {
