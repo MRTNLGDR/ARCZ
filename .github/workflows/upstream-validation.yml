@@ -7,6 +7,7 @@ on:
     paths:
       - 'upstreams/**'
       - 'integrations/aedifex/**'
+      - 'arcz_server/aedifex_inventory.py'
       - 'tools/materialize_upstreams.py'
       - 'tools/vendor_aedifex.py'
       - 'tools/build_aedifex_sidecar.py'
