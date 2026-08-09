@@ -7,7 +7,7 @@ inspeciona os arquivos/binários efetivamente disponíveis nesta máquina.
 Perfis:
 - gateway: API Python local.
 - interactive: gateway + Cesium vendor local + Aedifex compilado + Node 22+.
-- full: interactive + workers Rust 1.97.1 + Blender + modelos locais.
+- full: interactive + workers Rust 1.97.1 + Blender vendor local + modelos locais.
 
 A preparação com rede é uma etapa explícita e separada (`prepare_local_runtime.py`)
 em ARCZ_NETWORK_MODE=import_assisted. Depois dela, o runtime volta a
@@ -16,6 +16,7 @@ em ARCZ_NETWORK_MODE=import_assisted. Depois dela, o runtime volta a
 from __future__ import annotations
 
 import argparse
+import hashlib
 import importlib.util
 import json
 import os
@@ -40,6 +41,14 @@ CESIUM_REQUIRED = (
     "vendor/cesium/manifest.json",
 )
 MODEL_TASKS = ("chat.global", "prompt.enhance", "prompt.translate", "render-diffusion", "upscale")
+
+
+def _sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def _command_version(command: str, args: list[str], pattern: str) -> tuple[bool, str | None]:
@@ -225,15 +234,67 @@ def _rust_checks(root: Path) -> list[dict[str, Any]]:
     ]
 
 
-def _blender_check() -> dict[str, Any]:
+def _blender_check(root: Path) -> dict[str, Any]:
+    vendor = (root / "vendor" / "blender").resolve()
+    manifest_path = vendor / "manifest.json"
+    manifest = _read_json(manifest_path)
+    blockers: list[str] = []
+    executable: Path | None = None
+
+    if manifest is None:
+        blockers.append("vendor/blender/manifest.json ausente ou inválido")
+    else:
+        if manifest.get("schema_version") != 1 or manifest.get("dependency") != "Blender":
+            blockers.append("contrato do manifesto Blender inválido")
+        if manifest.get("runtime_network_required") is not False:
+            blockers.append("Blender vendor não declara runtime offline")
+        relative = str(manifest.get("executable") or "").strip()
+        if not relative:
+            blockers.append("manifesto Blender sem executável")
+        else:
+            candidate = (vendor / relative).resolve()
+            try:
+                candidate.relative_to(vendor)
+            except ValueError:
+                blockers.append("executável Blender escapa de vendor/blender")
+            else:
+                if not candidate.is_file() or candidate.is_symlink():
+                    blockers.append("executável Blender local ausente/inválido")
+                else:
+                    expected = str((manifest.get("integrity") or {}).get("executable_sha256") or "")
+                    if len(expected) != 64:
+                        blockers.append("manifesto Blender sem SHA-256 do executável")
+                    elif _sha256(candidate) != expected:
+                        blockers.append("SHA-256 do executável Blender diverge")
+                    else:
+                        executable = candidate
+
     configured = os.environ.get("ARCZ_BLENDER", "").strip()
-    candidate = Path(configured).expanduser() if configured else None
-    executable = str(candidate) if candidate and candidate.is_file() else shutil.which("blender")
+    if configured:
+        try:
+            configured_path = Path(configured).expanduser().resolve()
+            configured_path.relative_to(root.resolve())
+        except (ValueError, OSError):
+            blockers.append("ARCZ_BLENDER aponta para fora do repositório")
+        else:
+            if executable is None or configured_path != executable:
+                blockers.append("ARCZ_BLENDER não corresponde ao executável auditado do vendor")
+
+    ready = executable is not None and not blockers
     return _check(
-        "blender_cycles",
-        bool(executable),
-        detail=executable,
-        action="Defina ARCZ_BLENDER para um Blender local com Cycles ou coloque Blender no PATH.",
+        "blender_repo_vendor",
+        ready,
+        detail={
+            "version": manifest.get("version") if manifest else None,
+            "manifest": str(manifest_path),
+            "executable": str(executable) if executable else None,
+            "blockers": blockers,
+        },
+        action=(
+            "Importe uma distribuição Blender portátil real para vendor/blender com: "
+            "python tools/vendor_blender.py --source <ZIP_OU_DIRETORIO> "
+            "--license-file <LICENCA> --force. PATH externo não é aceito."
+        ),
     )
 
 
@@ -285,7 +346,7 @@ def run_preflight(root: Path, profile: str) -> dict[str, Any]:
         checks.extend((_node_check(), _cesium_check(root), _aedifex_check(root)))
     if profile == "full":
         checks.extend(_rust_checks(root))
-        checks.append(_blender_check())
+        checks.append(_blender_check(root))
         checks.extend(_model_checks(root))
     blocked = [item for item in checks if item["required"] and item["status"] != "READY"]
     return {
