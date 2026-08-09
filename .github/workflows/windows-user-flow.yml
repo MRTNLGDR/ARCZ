@@ -10,7 +10,10 @@ permissions:
 
 concurrency:
   group: arcz-windows-user-${{ github.ref }}
-  cancel-in-progress: true
+  # This is intentionally false. A real clean-Windows ARCZ.bat run can spend
+  # several minutes materializing Aedifex/Cesium/Rust/Blender. Follow-up commits
+  # must queue instead of destroying that evidence mid-run.
+  cancel-in-progress: false
 
 jobs:
   windows-user-flow:
