@@ -9,7 +9,10 @@ def _catalog(root: Path, body: str) -> Path:
     path = root / "packages/editor/src/components/ui/item-catalog/catalog-items.tsx"
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
-        "export const CATALOG_ITEMS = [\n" + body + "\n]\n",
+        "export type CatalogItem = { id: string }\n"
+        "export const CATALOG_ITEMS: CatalogItem[] = [\n"
+        + body
+        + "\n]\n",
         encoding="utf-8",
     )
     return path
