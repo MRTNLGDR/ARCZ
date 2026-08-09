@@ -13,6 +13,7 @@ import { recorteApp } from "./recorte.js";
 import { uiApp } from "./ui.js";
 import { criarProvedorDeRelevo } from "./relevo.js";
 import { qualidadeApp } from "./qualidade.js";
+import { installGizmoFrameCoalescing } from "./core/gizmo-frame-coalescing.js";
 import { initializeV2Runtime } from "./runtime-v2.js";
 import { initializeFusionShell } from "./shell/fusion-shell.js";
 
@@ -95,7 +96,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const gpu = qualidadeApp.inicializar(viewer);
     if (gpu.software) {
-      console.warn(`ARCZ: navegador sem aceleração de vídeo (${gpu.nome}). Use ABRIR_ARCZ.cmd para validar/iniciar o runtime local.`);
+      console.warn(`ARCZ: navegador sem aceleração de vídeo (${gpu.nome}). Use ARCZ.bat para validar/iniciar o runtime local.`);
     }
 
     if (viewer.scene.requestRenderMode) {
@@ -108,6 +109,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     feedbackApp.inicializar(viewer);
     posicionadorApp.inicializar(viewer);
     gizmoApp.inicializar(viewer);
+    // Pointer/MOUSE_MOVE pode chegar muito acima da taxa de render. O wrapper
+    // preserva apenas a posição mais recente por frame e faz flush no mouse-up,
+    // evitando serialização/transformações repetidas enquanto o usuário arrasta.
+    installGizmoFrameCoalescing(gizmoApp);
     bibliotecaApp.inicializar(viewer);
     entornoApp.inicializar(viewer);
     corteApp.inicializar(viewer);
