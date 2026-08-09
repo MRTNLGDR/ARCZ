@@ -9,12 +9,15 @@ package required by Next itself. The base builder correctly refuses to ignore
 those gaps. This wrapper materializes them exclusively from the already-
 installed, frozen/offline-proven Bun store before the final vendor copy.
 
-Nothing is fetched here. A missing target is fatal. The final vendor tree cannot
-contain dangling/external symlinks or unresolved required runtime packages.
+Nothing is fetched here. A missing or ambiguous target is fatal. The final
+vendor tree cannot contain dangling/external symlinks or unresolved required
+runtime packages.
 """
 
 from pathlib import Path
+import json
 import os
+import re
 import shutil
 import sys
 
@@ -33,6 +36,14 @@ def _inside(path: Path, root: Path) -> bool:
         return True
     except ValueError:
         return False
+
+
+def _read_package(path: Path) -> dict[str, object] | None:
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    return value if isinstance(value, dict) else None
 
 
 def _fallback_targets(link: Path, standalone: Path) -> list[Path]:
@@ -55,25 +66,124 @@ def _fallback_targets(link: Path, standalone: Path) -> list[Path]:
     return result
 
 
-def _resolve_fork_package(package_name: str) -> Path:
+def _declared_runtime_requirement(standalone: Path, package_name: str) -> str | None:
+    """Read the requirement from Next's own package metadata when available."""
+    manifests = [
+        standalone / "node_modules/next/package.json",
+        builder.FORK / "node_modules/next/package.json",
+        builder.FORK / "apps/arcz-floorplanner/node_modules/next/package.json",
+    ]
+    for manifest_path in manifests:
+        package = _read_package(manifest_path)
+        if not package:
+            continue
+        for field in ("dependencies", "optionalDependencies", "peerDependencies"):
+            values = package.get(field)
+            if isinstance(values, dict) and package_name in values:
+                requirement = values.get(package_name)
+                if isinstance(requirement, str) and requirement.strip():
+                    return requirement.strip()
+    return None
+
+
+def _bun_store_candidates(package_name: str) -> list[Path]:
+    """Locate package directories by package.json name inside Bun's frozen store."""
+    store = builder.FORK / "node_modules/.bun"
+    if not store.is_dir():
+        return []
+
+    package_parts = Path(*package_name.split("/"))
+    pattern = str(Path("*") / "node_modules" / package_parts / "package.json")
+    candidates: list[Path] = []
+    seen: set[Path] = set()
+    for manifest_path in store.glob(pattern):
+        package = _read_package(manifest_path)
+        if not package or package.get("name") != package_name:
+            continue
+        try:
+            resolved = manifest_path.parent.resolve(strict=True)
+        except (FileNotFoundError, RuntimeError, OSError):
+            continue
+        if not _inside(resolved, builder.FORK):
+            raise RuntimeError(
+                f"pacote Bun escapou do fork controlado: {package_name} -> {resolved}"
+            )
+        if resolved not in seen:
+            seen.add(resolved)
+            candidates.append(resolved)
+    return sorted(candidates, key=lambda path: path.as_posix())
+
+
+def _version_of(package_dir: Path) -> str | None:
+    package = _read_package(package_dir / "package.json")
+    value = package.get("version") if package else None
+    return value.strip() if isinstance(value, str) and value.strip() else None
+
+
+def _exact_requirement_version(requirement: str | None) -> str | None:
+    if not requirement:
+        return None
+    value = requirement.strip()
+    # We intentionally do not implement semver range resolution here. A package
+    # with multiple store versions is selected only when Next declares one exact
+    # version. Anything else remains ambiguous and fails closed.
+    match = re.fullmatch(r"(?:npm:)?(\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?)", value)
+    return match.group(1) if match else None
+
+
+def _resolve_fork_package(package_name: str, standalone: Path) -> Path:
     parts = package_name.split("/")
-    candidates = [
+    direct = [
         builder.FORK / "node_modules" / Path(*parts),
         builder.FORK / "apps/arcz-floorplanner/node_modules" / Path(*parts),
     ]
-    for candidate in candidates:
+    resolved_direct: list[Path] = []
+    for candidate in direct:
         try:
             resolved = candidate.resolve(strict=True)
         except (FileNotFoundError, RuntimeError, OSError):
             continue
-        if (resolved / "package.json").is_file():
+        package = _read_package(resolved / "package.json")
+        if package and package.get("name") == package_name:
             if not _inside(resolved, builder.FORK):
                 raise RuntimeError(
                     f"pacote runtime Aedifex escapou do fork controlado: {package_name} -> {resolved}"
                 )
-            return resolved
+            if resolved not in resolved_direct:
+                resolved_direct.append(resolved)
+    if len(resolved_direct) == 1:
+        return resolved_direct[0]
+    if len(resolved_direct) > 1:
+        versions = {(_version_of(path), path) for path in resolved_direct}
+        if len({version for version, _path in versions}) == 1:
+            return sorted(resolved_direct, key=lambda path: path.as_posix())[0]
+
+    candidates = _bun_store_candidates(package_name)
+    if not candidates:
+        raise RuntimeError(
+            f"pacote runtime obrigatório não existe no Bun store congelado: {package_name}"
+        )
+    if len(candidates) == 1:
+        return candidates[0]
+
+    requirement = _declared_runtime_requirement(standalone, package_name)
+    exact = _exact_requirement_version(requirement)
+    if exact:
+        matches = [candidate for candidate in candidates if _version_of(candidate) == exact]
+        if len(matches) == 1:
+            return matches[0]
+        if len(matches) > 1:
+            resolved_unique = sorted({path.resolve() for path in matches}, key=lambda path: path.as_posix())
+            if len(resolved_unique) == 1:
+                return resolved_unique[0]
+
+    inventory = ", ".join(
+        f"{_version_of(candidate) or '?'}:{candidate.relative_to(builder.FORK).as_posix()}"
+        for candidate in candidates
+    )
     raise RuntimeError(
-        f"pacote runtime obrigatório não existe no Bun store congelado: {package_name}"
+        "pacote runtime possui múltiplas versões no Bun store e não pode ser "
+        f"escolhido por aproximação: {package_name}; requirement={requirement!r}; candidates={inventory}"
     )
 
 
@@ -84,7 +194,7 @@ def materialize_required_packages(standalone: Path) -> list[dict[str, str]]:
         destination = standalone / "node_modules" / Path(*parts)
         if (destination / "package.json").is_file():
             continue
-        source = _resolve_fork_package(package_name)
+        source = _resolve_fork_package(package_name, standalone)
         if destination.exists() or destination.is_symlink():
             if destination.is_dir() and not destination.is_symlink():
                 shutil.rmtree(destination)
@@ -92,12 +202,14 @@ def materialize_required_packages(standalone: Path) -> list[dict[str, str]]:
                 destination.unlink()
         destination.parent.mkdir(parents=True, exist_ok=True)
         _ORIGINAL_COPYTREE(source, destination, symlinks=False)
-        if not (destination / "package.json").is_file():
+        copied = _read_package(destination / "package.json")
+        if not copied or copied.get("name") != package_name:
             raise RuntimeError(
                 f"materialização do pacote runtime falhou: {package_name}"
             )
         materialized.append({
             "package": package_name,
+            "version": str(copied.get("version") or "unknown"),
             "source": source.relative_to(builder.FORK).as_posix(),
             "destination": destination.relative_to(standalone).as_posix(),
         })
@@ -178,7 +290,7 @@ def _guarded_copytree(src, dst, *args, **kwargs):
         for item in packages:
             print(
                 "[aedifex-standalone] runtime package "
-                f"{item['package']} <= {item['source']}"
+                f"{item['package']}@{item['version']} <= {item['source']}"
             )
         kwargs["symlinks"] = False
     return _ORIGINAL_COPYTREE(src, dst, *args, **kwargs)
