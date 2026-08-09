@@ -18,7 +18,7 @@ permissions:
   contents: read
 
 env:
-  ARCZ_UPSTREAM_PROBE_GENERATION: '2'
+  ARCZ_UPSTREAM_PROBE_GENERATION: '3'
 
 jobs:
   immutable-pins:
