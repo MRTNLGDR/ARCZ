@@ -3,8 +3,8 @@
 
 Não baixa Blender. A entrada deve ser um diretório portátil ou ZIP local que o
 usuário já possua, acompanhado da licença correspondente. O importador valida o
-executável executando ``--version``, rejeita symlinks/escape de ZIP, copia para
-``vendor/blender/runtime`` e registra SHA-256/licença/versão em manifest.json.
+executável executando ``--version``, rejeita symlinks/escape de ZIP ou diretório,
+copia para ``vendor/blender/runtime`` e registra SHA-256/licença/versão.
 
 Isso transforma Blender em dependência local explícita do projeto, em vez de um
 binário arbitrário encontrado no PATH.
@@ -49,6 +49,16 @@ def safe_extract(archive: Path, destination: Path) -> None:
         zf.extractall(destination)
 
 
+def reject_source_symlinks(root: Path) -> None:
+    links = [path for path in root.rglob("*") if path.is_symlink()]
+    if links:
+        preview = ", ".join(str(path.relative_to(root)) for path in links[:12])
+        raise ValueError(
+            "distribuição Blender contém symlink; forneça uma distribuição portátil "
+            f"autocontida sem links externos. Exemplos: {preview}"
+        )
+
+
 def executable_candidates(root: Path) -> list[Path]:
     names = {"blender", "blender.exe"}
     values = [path for path in root.rglob("*") if path.is_file() and path.name.lower() in names]
@@ -85,6 +95,7 @@ def probe(executable: Path) -> dict:
 
 
 def copy_runtime(source: Path, destination: Path) -> None:
+    reject_source_symlinks(source)
     if destination.exists():
         shutil.rmtree(destination)
     shutil.copytree(source, destination, symlinks=False)
@@ -121,6 +132,7 @@ def main() -> int:
             source_root = extracted
         elif source.is_dir():
             source_root = source
+            reject_source_symlinks(source_root)
         else:
             raise ValueError("--source precisa ser diretório ou ZIP")
 
