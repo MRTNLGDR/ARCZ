@@ -4,10 +4,10 @@ from __future__ import annotations
 """ARCZ packaging guard for the Aedifex standalone build.
 
 Next.js standalone generated from a Bun workspace may contain symlinks whose
-targets live in the controlled fork's Bun store and may omit a small runtime
-package required by Next itself. The base builder correctly refuses to ignore
-those gaps. This wrapper materializes them exclusively from the already-
-installed, frozen/offline-proven Bun store before the final vendor copy.
+targets live in the controlled fork's Bun store and may omit runtime packages
+required by Next itself. The base builder correctly refuses to ignore those
+gaps. This wrapper materializes them exclusively from the already-installed,
+frozen/offline-proven Bun store before the final vendor copy.
 
 Nothing is fetched here. A missing or ambiguous target is fatal. The final
 vendor tree cannot contain dangling/external symlinks or unresolved required
@@ -27,7 +27,6 @@ sys.path.insert(0, str(ROOT))
 import tools.build_aedifex_sidecar as builder
 
 _ORIGINAL_COPYTREE = shutil.copytree
-_REQUIRED_RUNTIME_PACKAGES = ("@swc/helpers",)
 
 
 def _inside(path: Path, root: Path) -> bool:
@@ -66,10 +65,32 @@ def _fallback_targets(link: Path, standalone: Path) -> list[Path]:
     return result
 
 
+def _next_runtime_dependencies(standalone: Path) -> dict[str, str]:
+    """Return Next's mandatory runtime dependency map from the built artifact."""
+    manifest_path = standalone / "node_modules/next/package.json"
+    package = _read_package(manifest_path)
+    if not package or package.get("name") != "next":
+        raise RuntimeError(
+            f"standalone não contém next/package.json válido: {manifest_path}"
+        )
+    dependencies = package.get("dependencies")
+    if not isinstance(dependencies, dict):
+        raise RuntimeError("next/package.json não declara dependencies")
+    result: dict[str, str] = {}
+    for name, requirement in dependencies.items():
+        if isinstance(name, str) and isinstance(requirement, str) and name.strip() and requirement.strip():
+            result[name.strip()] = requirement.strip()
+    if not result:
+        raise RuntimeError("next/package.json retornou zero dependências runtime")
+    return dict(sorted(result.items()))
+
+
 def _declared_runtime_requirement(standalone: Path, package_name: str) -> str | None:
-    """Read the requirement from Next's own package metadata when available."""
+    next_requirements = _next_runtime_dependencies(standalone)
+    if package_name in next_requirements:
+        return next_requirements[package_name]
+
     manifests = [
-        standalone / "node_modules/next/package.json",
         builder.FORK / "node_modules/next/package.json",
         builder.FORK / "apps/arcz-floorplanner/node_modules/next/package.json",
     ]
@@ -124,9 +145,6 @@ def _exact_requirement_version(requirement: str | None) -> str | None:
     if not requirement:
         return None
     value = requirement.strip()
-    # We intentionally do not implement semver range resolution here. A package
-    # with multiple store versions is selected only when Next declares one exact
-    # version. Anything else remains ambiguous and fails closed.
     match = re.fullmatch(r"(?:npm:)?(\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?)", value)
     return match.group(1) if match else None
 
@@ -154,8 +172,8 @@ def _resolve_fork_package(package_name: str, standalone: Path) -> Path:
     if len(resolved_direct) == 1:
         return resolved_direct[0]
     if len(resolved_direct) > 1:
-        versions = {(_version_of(path), path) for path in resolved_direct}
-        if len({version for version, _path in versions}) == 1:
+        versions = {_version_of(path) for path in resolved_direct}
+        if len(versions) == 1:
             return sorted(resolved_direct, key=lambda path: path.as_posix())[0]
 
     candidates = _bun_store_candidates(package_name)
@@ -170,12 +188,16 @@ def _resolve_fork_package(package_name: str, standalone: Path) -> Path:
     exact = _exact_requirement_version(requirement)
     if exact:
         matches = [candidate for candidate in candidates if _version_of(candidate) == exact]
-        if len(matches) == 1:
-            return matches[0]
-        if len(matches) > 1:
-            resolved_unique = sorted({path.resolve() for path in matches}, key=lambda path: path.as_posix())
-            if len(resolved_unique) == 1:
-                return resolved_unique[0]
+        unique = sorted({path.resolve() for path in matches}, key=lambda path: path.as_posix())
+        if len(unique) == 1:
+            return unique[0]
+
+    # If Bun materialized the same version in multiple dependency-key folders,
+    # the package contents are equivalent for Next's exact package version. We
+    # still reject multiple distinct versions instead of choosing by proximity.
+    versions = {_version_of(candidate) for candidate in candidates}
+    if len(versions) == 1 and None not in versions:
+        return candidates[0]
 
     inventory = ", ".join(
         f"{_version_of(candidate) or '?'}:{candidate.relative_to(builder.FORK).as_posix()}"
@@ -189,11 +211,14 @@ def _resolve_fork_package(package_name: str, standalone: Path) -> Path:
 
 def materialize_required_packages(standalone: Path) -> list[dict[str, str]]:
     materialized: list[dict[str, str]] = []
-    for package_name in _REQUIRED_RUNTIME_PACKAGES:
+    requirements = _next_runtime_dependencies(standalone)
+    for package_name, requirement in requirements.items():
         parts = package_name.split("/")
         destination = standalone / "node_modules" / Path(*parts)
-        if (destination / "package.json").is_file():
+        existing = _read_package(destination / "package.json")
+        if existing and existing.get("name") == package_name:
             continue
+
         source = _resolve_fork_package(package_name, standalone)
         if destination.exists() or destination.is_symlink():
             if destination.is_dir() and not destination.is_symlink():
@@ -210,6 +235,7 @@ def materialize_required_packages(standalone: Path) -> list[dict[str, str]]:
         materialized.append({
             "package": package_name,
             "version": str(copied.get("version") or "unknown"),
+            "requirement": requirement,
             "source": source.relative_to(builder.FORK).as_posix(),
             "destination": destination.relative_to(standalone).as_posix(),
         })
@@ -290,7 +316,7 @@ def _guarded_copytree(src, dst, *args, **kwargs):
         for item in packages:
             print(
                 "[aedifex-standalone] runtime package "
-                f"{item['package']}@{item['version']} <= {item['source']}"
+                f"{item['package']}@{item['version']} ({item['requirement']}) <= {item['source']}"
             )
         kwargs["symlinks"] = False
     return _ORIGINAL_COPYTREE(src, dst, *args, **kwargs)
