@@ -131,6 +131,35 @@ def package_quality_commands(bun: str) -> list[tuple[list[str], Path]]:
     return commands
 
 
+def workspace_library_build_commands(bun: str) -> list[tuple[list[str], Path]]:
+    """Build dist-exporting Aedifex packages in dependency-safe order.
+
+    The pinned packages intentionally export dist/* rather than source for
+    core/viewer/mcp/nodes/ifc-converter. Running editor typechecks before these
+    outputs exist creates a large cascade of false module/unknown errors.
+    """
+    order = (
+        "@aedifex/core",
+        "@aedifex/viewer",
+        "@aedifex/mcp",
+        "@aedifex/ifc-converter",
+        "@aedifex/nodes",
+    )
+    packages = LOCK.get("packages", {})
+    commands: list[tuple[list[str], Path]] = []
+    for name in order:
+        spec = packages.get(name)
+        if not isinstance(spec, dict):
+            raise RuntimeError(f"pacote de build obrigatório ausente no lock: {name}")
+        package_path = FORK / str(spec["path"])
+        package = json.loads(package_path.read_text(encoding="utf-8"))
+        scripts = package.get("scripts") if isinstance(package.get("scripts"), dict) else {}
+        if "build" not in scripts:
+            raise RuntimeError(f"pacote dist-exporting sem script build: {name}")
+        commands.append(([bun, "run", "build"], package_path.parent))
+    return commands
+
+
 def _find_three_root(app: Path) -> Path:
     candidates = [FORK / "node_modules/three", app / "node_modules/three"]
     for candidate in candidates:
@@ -236,9 +265,6 @@ def main() -> int:
     resolved_lockfile: dict[str, object] | None = None
     if not args.skip_install:
         if args.allow_network:
-            # ARCZ adds local workspaces to the exact upstream tree. Resolve that
-            # controlled fork once, then immediately prove the resulting lock is
-            # sufficient without network or lock mutation.
             evidence.append(run([bun, "install"], FORK))
             resolved_lockfile = _resolved_lockfile()
             evidence.append(run([bun, "install", "--frozen-lockfile", "--offline"], FORK))
@@ -255,6 +281,9 @@ def main() -> int:
                 "sha256": sha256_file(lockfile),
                 "verified_frozen_offline": False,
             }
+
+    for command, cwd in workspace_library_build_commands(bun):
+        evidence.append(run(command, cwd))
 
     public_assets = prepare_local_public_assets()
 
@@ -313,7 +342,7 @@ def main() -> int:
         )
     }
     manifest = {
-        "schema_version": 5,
+        "schema_version": 6,
         "upstream_commit": LOCK["commit"],
         "inventory_hash": inventory["inventory_hash"],
         "coverage_report_hash": coverage["report_hash"],
