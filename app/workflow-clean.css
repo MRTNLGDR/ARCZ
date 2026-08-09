@@ -93,12 +93,70 @@
   border-color: #3569ac !important;
 }
 
-/* The map must remain the visual priority in the first stage. */
+/* O mapa é a etapa principal. Menu/trilha legados ficam visualmente subordinados,
+   sem competir com o fluxo 1→4 do topo. As funções reais continuam acessíveis. */
 .fusion-mode-globo #viewport { background: #02050a; }
 .fusion-mode-globo #menu,
 .fusion-mode-globo #trilha {
   box-shadow: none !important;
   filter: none !important;
+  background-image: none !important;
+}
+.fusion-mode-globo #menu { max-width: 226px; }
+.fusion-mode-globo #trilha { max-width: 310px; }
+.fusion-mode-globo .grupo-menu {
+  opacity: .65;
+  letter-spacing: .08em !important;
+}
+
+/* Fail-closed de dependência local. Uma falta de vendor nunca vira globo branco. */
+.arcz-boot-blocked {
+  min-height: 100vh;
+  display: grid !important;
+  grid-template: 1fr / 1fr !important;
+  background: #07090d;
+}
+.arcz-boot-blocker {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px;
+}
+.arcz-boot-blocker__card {
+  width: min(760px, 100%);
+  border: 1px solid #2a3442;
+  border-radius: 8px;
+  background: #0d1219;
+  padding: 28px;
+  color: #e7edf5;
+}
+.arcz-boot-blocker__card > strong {
+  display: block;
+  color: #ffbc75;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+.arcz-boot-blocker__card h1 {
+  margin: 8px 0 10px;
+  font-size: 24px;
+}
+.arcz-boot-blocker__card p,
+.arcz-boot-blocker__card li {
+  color: #a8b4c4;
+  line-height: 1.55;
+}
+.arcz-boot-blocker__card code {
+  color: #d8e8ff;
+  background: #090d13;
+  border: 1px solid #263242;
+  border-radius: 4px;
+  padding: 2px 5px;
+}
+.arcz-boot-blocker__card ol {
+  display: grid;
+  gap: 10px;
+  padding-left: 22px;
 }
 
 @media (max-width: 1100px) {
