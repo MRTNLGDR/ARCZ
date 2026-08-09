@@ -703,6 +703,23 @@
       },
       {
         "pattern": "*",
+        "source_patterns": [
+          "*.test.ts",
+          "*.test.tsx",
+          "*.test.js",
+          "*.test.jsx",
+          "*.spec.ts",
+          "*.spec.tsx",
+          "*.spec.js",
+          "*.spec.jsx"
+        ],
+        "status": "TEST_ONLY_URL_FIXTURE",
+        "owner": "test-tooling",
+        "integration": "URL literal appears exclusively in test/spec sources and is not part of the shipped runtime.",
+        "rationale": "Security/validation fixtures remain visible in inventory but do not grant runtime egress."
+      },
+      {
+        "pattern": "*",
         "status": "REVIEW_REQUIRED",
         "owner": "network-security",
         "integration": "Determine whether the URL is inert documentation, localizable asset, optional import connector or forbidden runtime endpoint.",
