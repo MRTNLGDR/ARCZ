@@ -1,0 +1,60 @@
+name: ARCZ IFC Validation
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: arcz-ifc-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ifcopenshell-roundtrip:
+    name: Verified wheel → ARCZ export → reopen → geometry
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      ARCZ_NETWORK_MODE: import_assisted
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Install base ARCZ validation dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Install exact verified IfcOpenShell wheel
+        run: python tools/install_ifcopenshell.py
+      - name: Prove fast offline integrity
+        env:
+          ARCZ_NETWORK_MODE: offline_strict
+        run: python tools/ifc_preflight.py
+      - name: Export ARCZ semantic scene and reopen real IFC geometry
+        env:
+          ARCZ_NETWORK_MODE: offline_strict
+        run: python tools/smoke_ifcopenshell.py
+      - name: Prove installer is blocked during normal runtime
+        env:
+          ARCZ_NETWORK_MODE: offline_strict
+        shell: bash
+        run: |
+          set +e
+          python tools/install_ifcopenshell.py
+          rc=$?
+          set -e
+          if [ "$rc" -eq 0 ]; then
+            echo 'IfcOpenShell installer incorrectly allowed network-capable setup in offline_strict'
+            exit 1
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ifcopenshell-runtime-evidence
+          path: |
+            vendor/ifcopenshell/manifest.json
+            vendor/ifcopenshell/LICENSE
+          if-no-files-found: warn
