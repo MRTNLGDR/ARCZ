@@ -65,6 +65,37 @@ def _replace_once(text: str, old: str, new: str, label: str) -> str:
     return _replace_exact(text, old, new, 1, label)
 
 
+def _patch_headless_scene_store_boundary(fork: Path) -> None:
+    """Expose the real Zustand scene store to the server-side MCP bridge.
+
+    The upstream MCP bridge is intentionally headless and calls
+    `useScene.getState()`. The corresponding core store file is nevertheless
+    marked with Next's top-level `'use client'` directive. When imported through
+    a Next route that directive turns the module into a client reference, so the
+    server receives a proxy instead of the real Zustand store and `getState`
+    fails at runtime. The directive is unnecessary for the store itself: it has
+    no import-time window/document/localStorage access, and client editor
+    components already establish their own client boundaries.
+
+    We remove exactly that directive only in the controlled fork. The store
+    implementation, actions, schemas and undo/redo machinery remain unchanged.
+    """
+
+    path = fork / "packages/core/src/store/use-scene.ts"
+    text = path.read_text(encoding="utf-8")
+    text = _replace_once(
+        text,
+        "'use client'\n\n",
+        "// ARCZ controlled fork: server-safe scene store for the headless MCP bridge.\n",
+        "headless scene store client boundary",
+    )
+    if text.startswith("'use client'"):
+        raise RuntimeError("core scene store continua marcado como use client")
+    if "export default useScene" not in text:
+        raise RuntimeError("core scene store perdeu o export default useScene")
+    path.write_text(text, encoding="utf-8")
+
+
 def _patch_autosave_performance(fork: Path) -> None:
     """Remove scene-wide JSON serialization from the continuous drag hot path.
 
@@ -99,9 +130,6 @@ def _patch_autosave_performance(fork: Path) -> None:
         lastMaterialsRef = state.materials
         lastInstalledPluginsRef = state.installedPlugins
 """
-    # The pinned upstream has this exact refresh block twice: while loading and
-    # while version-preview mode is active. Requiring exactly two occurrences
-    # keeps the rewrite fail-closed if upstream behavior changes.
     text = _replace_exact(
         text,
         refresh_old,
@@ -149,6 +177,8 @@ def _patch_autosave_performance(fork: Path) -> None:
 
 
 def _patch_host_contracts(fork: Path) -> None:
+    _patch_headless_scene_store_boundary(fork)
+
     page = fork / "apps/arcz-floorplanner/app/page.tsx"
     text = page.read_text(encoding="utf-8")
     text = _replace_once(
