@@ -1,5 +1,6 @@
 name: ARCZ Upstream Validation
 
+# Every third-party checkout is pinned, clean and legally evidenced from Git objects.
 on:
   pull_request:
     branches: [main]
