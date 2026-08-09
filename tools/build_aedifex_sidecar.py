@@ -3,7 +3,9 @@
 
 Default behavior is air-gapped: Bun must satisfy the lockfile from its local
 cache. Network is permitted only with both --allow-network and
-ARCZ_NETWORK_MODE=import_assisted. The build is refused unless the generated
+ARCZ_NETWORK_MODE=import_assisted. When ARCZ overlays add workspaces, assisted
+mode resolves the controlled fork lock once and immediately proves the result
+with a frozen offline install. The build is refused unless the generated
 upstream inventory and conversion coverage report match the pinned commit and
 contain zero blockers.
 """
@@ -84,7 +86,7 @@ def require_coverage() -> tuple[dict, dict]:
     inventory_path = INTEGRATION / "generated/UPSTREAM_INVENTORY.json"
     coverage_path = INTEGRATION / "generated/CONVERSION_COVERAGE_REPORT.json"
     if not inventory_path.is_file() or not coverage_path.is_file():
-        raise RuntimeError("Inventário/cobertura ausentes; execute tools/vendor_aedifex.py")
+        raise RuntimeError("Inventário/cobertura ausentes; execute tools/vendor_aedifex_controlled.py")
     inventory = json.loads(inventory_path.read_text(encoding="utf-8"))
     coverage = json.loads(coverage_path.read_text(encoding="utf-8"))
     if inventory.get("commit") != LOCK["commit"] or coverage.get("upstream_commit") != LOCK["commit"]:
@@ -146,7 +148,11 @@ def _copy_required_file(source: Path, destination: Path, *, min_bytes: int = 1) 
         raise RuntimeError(f"asset obrigatório ausente/inválido: {source}")
     destination.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(source, destination)
-    return {"path": destination.as_posix(), "bytes": destination.stat().st_size, "sha256": sha256_file(destination)}
+    return {
+        "path": destination.as_posix(),
+        "bytes": destination.stat().st_size,
+        "sha256": sha256_file(destination),
+    }
 
 
 def prepare_local_public_assets() -> dict[str, object]:
@@ -196,6 +202,18 @@ def prepare_local_public_assets() -> dict[str, object]:
     }
 
 
+def _resolved_lockfile() -> dict[str, object]:
+    lockfile = FORK / "bun.lock"
+    if not lockfile.is_file() or lockfile.stat().st_size == 0:
+        raise RuntimeError("bun.lock controlado ausente após resolução do fork")
+    return {
+        "path": "bun.lock",
+        "bytes": lockfile.stat().st_size,
+        "sha256": sha256_file(lockfile),
+        "verified_frozen_offline": True,
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--allow-network", action="store_true")
@@ -205,7 +223,7 @@ def main() -> int:
     if args.allow_network and os.environ.get("ARCZ_NETWORK_MODE") != "import_assisted":
         raise SystemExit("--allow-network exige ARCZ_NETWORK_MODE=import_assisted")
     if not FORK.is_dir():
-        raise SystemExit("Fork ausente. Execute tools/vendor_aedifex.py primeiro.")
+        raise SystemExit("Fork ausente. Execute tools/vendor_aedifex_controlled.py primeiro.")
     inventory, coverage = require_coverage()
     bun = shutil.which("bun")
     node = shutil.which("node")
@@ -215,11 +233,28 @@ def main() -> int:
         raise SystemExit("Node não instalado; runtime standalone não pode ser validado.")
 
     evidence: list[dict[str, object]] = []
+    resolved_lockfile: dict[str, object] | None = None
     if not args.skip_install:
-        install = [bun, "install", "--frozen-lockfile"]
-        if not args.allow_network:
-            install.append("--offline")
-        evidence.append(run(install, FORK))
+        if args.allow_network:
+            # ARCZ adds local workspaces to the exact upstream tree. Resolve that
+            # controlled fork once, then immediately prove the resulting lock is
+            # sufficient without network or lock mutation.
+            evidence.append(run([bun, "install"], FORK))
+            resolved_lockfile = _resolved_lockfile()
+            evidence.append(run([bun, "install", "--frozen-lockfile", "--offline"], FORK))
+            resolved_lockfile = _resolved_lockfile()
+        else:
+            evidence.append(run([bun, "install", "--frozen-lockfile", "--offline"], FORK))
+            resolved_lockfile = _resolved_lockfile()
+    else:
+        lockfile = FORK / "bun.lock"
+        if lockfile.is_file() and lockfile.stat().st_size:
+            resolved_lockfile = {
+                "path": "bun.lock",
+                "bytes": lockfile.stat().st_size,
+                "sha256": sha256_file(lockfile),
+                "verified_frozen_offline": False,
+            }
 
     public_assets = prepare_local_public_assets()
 
@@ -278,7 +313,7 @@ def main() -> int:
         )
     }
     manifest = {
-        "schema_version": 4,
+        "schema_version": 5,
         "upstream_commit": LOCK["commit"],
         "inventory_hash": inventory["inventory_hash"],
         "coverage_report_hash": coverage["report_hash"],
@@ -294,6 +329,7 @@ def main() -> int:
             "requires_bridge_token": True,
             "loopback_only": True,
         },
+        "resolved_lockfile": resolved_lockfile,
         "quality_commands": evidence,
         "public_assets": public_assets,
         "wasm_integrity": wasm_integrity,
