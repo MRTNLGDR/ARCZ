@@ -34,7 +34,7 @@ jobs:
           python -m pip install -r requirements-dev.txt
           npm install --global typescript@5
       - name: Python compile gate
-        run: python -m compileall -q arcz_server tools tests_python servidor.py arcz_export.py
+        run: python -m compileall -q arcz_server tools tests_python arcz_local.py servidor.py arcz_export.py
       - name: Python tests
         run: python -m pytest -q
       - name: Cancellation/race stress
@@ -54,11 +54,12 @@ jobs:
         run: python tools/build_aedifex_conversion_matrix.py
       - name: Upstream lock dry-run
         run: python tools/materialize_upstreams.py --dry-run
-      - name: Local runtime smoke
+      - name: Local runtime smoke through canonical entrypoint
         shell: bash
         run: |
           set -euo pipefail
-          python servidor.py 8765 > /tmp/arcz-server.log 2>&1 &
+          ARCZ_NETWORK_MODE=import_assisted ARCZ_BANCO=/tmp/forbidden-external-bank \
+            python arcz_local.py 8765 > /tmp/arcz-server.log 2>&1 &
           server_pid=$!
           trap 'kill "$server_pid" 2>/dev/null || true' EXIT
           ready=0
