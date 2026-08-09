@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
-"""Preflight de runtime do ARCZ Earth + Aedifex Global.
+"""Preflight real do runtime ARCZ Earth.
 
-Não instala nada, não baixa dependências e não mascara ausência de runtime.
+Não instala, não baixa e não mascara capacidade ausente. Cada perfil apenas
+inspeciona os arquivos/binários efetivamente disponíveis nesta máquina.
+
 Perfis:
-- gateway: gateway Python/API local.
-- interactive: gateway + Cesium local + sidecar Aedifex compilado + Node.
-- full: interactive + workers Rust + Blender + modelos locais de render/prompts.
+- gateway: API Python local.
+- interactive: gateway + Cesium vendor local + Aedifex compilado + Node 22+.
+- full: interactive + workers Rust 1.97.1 + Blender + modelos locais.
 
-Saída JSON é adequada a instaladores e CI. Exit 0 apenas quando todos os checks
-obrigatórios do perfil selecionado estiverem prontos.
+A preparação com rede é uma etapa explícita e separada (`prepare_local_runtime.py`)
+em ARCZ_NETWORK_MODE=import_assisted. Depois dela, o runtime volta a
+`offline_strict` e não possui CDN/fallback remoto.
 """
 from __future__ import annotations
 
@@ -25,11 +28,15 @@ from typing import Any
 
 ROOT_DEFAULT = Path(__file__).resolve().parents[1]
 PYTHON_MODULES = ("jsonschema", "pyproj", "PIL")
+CESIUM_COMMIT = "6d5d8b1f0725b6f831b336463f4b11c98023427b"
+AEDIFEX_COMMIT = "5319368bae16500ca5267f6f8d68b36c9586d5bb"
+RUST_REQUIRED = (1, 97, 1)
 CESIUM_REQUIRED = (
     "vendor/cesium/Cesium/Cesium.js",
     "vendor/cesium/Cesium/Widgets/widgets.css",
     "vendor/cesium/Cesium/Assets/Textures/NaturalEarthII/tilemapresource.xml",
     "vendor/cesium/LICENSE.md",
+    "vendor/cesium/resolved-package-lock.json",
     "vendor/cesium/manifest.json",
 )
 MODEL_TASKS = ("chat.global", "prompt.enhance", "prompt.translate", "render-diffusion", "upscale")
@@ -50,6 +57,19 @@ def _command_version(command: str, args: list[str], pattern: str) -> tuple[bool,
     return result.returncode == 0, match.group(1) if match else text[:120]
 
 
+def _semver_tuple(value: str | None) -> tuple[int, int, int]:
+    if not value:
+        return (0, 0, 0)
+    parts = value.lstrip("v").split(".")
+    numbers: list[int] = []
+    for part in parts[:3]:
+        match = re.match(r"(\d+)", part)
+        numbers.append(int(match.group(1)) if match else 0)
+    while len(numbers) < 3:
+        numbers.append(0)
+    return tuple(numbers[:3])  # type: ignore[return-value]
+
+
 def _check(name: str, ok: bool, *, required: bool = True, detail: Any = None, action: str | None = None) -> dict[str, Any]:
     return {
         "name": name,
@@ -60,13 +80,21 @@ def _check(name: str, ok: bool, *, required: bool = True, detail: Any = None, ac
     }
 
 
+def _read_json(path: Path) -> dict[str, Any] | None:
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    return value if isinstance(value, dict) else None
+
+
 def _python_checks() -> list[dict[str, Any]]:
     checks = [
         _check(
             "python_version",
             sys.version_info >= (3, 11),
             detail=f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}",
-            action="Instale Python 3.11+ ou use o runtime empacotado.",
+            action="Instale Python 3.11+ ou use o runtime Python empacotado do ARCZ.",
         )
     ]
     for module in PYTHON_MODULES:
@@ -75,7 +103,7 @@ def _python_checks() -> list[dict[str, Any]]:
                 f"python_module:{module}",
                 importlib.util.find_spec(module) is not None,
                 detail=module,
-                action="Execute install.ps1/install.sh com wheelhouse local ou import_assisted.",
+                action="Instale requirements.txt a partir do ambiente local/import_assisted.",
             )
         )
     return checks
@@ -83,25 +111,44 @@ def _python_checks() -> list[dict[str, Any]]:
 
 def _cesium_check(root: Path) -> dict[str, Any]:
     missing = [path for path in CESIUM_REQUIRED if not (root / path).is_file()]
+    manifest = _read_json(root / "vendor/cesium/manifest.json")
+    integrity_ok = bool(
+        not missing
+        and manifest
+        and manifest.get("schema_version") == 2
+        and manifest.get("dependency") == "CesiumJS"
+        and manifest.get("version") == "1.144.0"
+        and manifest.get("runtime_network_required") is False
+        and manifest.get("upstream_commit") == CESIUM_COMMIT
+        and isinstance(manifest.get("resolved_lockfile"), dict)
+        and manifest["resolved_lockfile"].get("verified_frozen_offline") is True
+    )
     return _check(
         "cesium_local_vendor",
-        not missing,
-        detail={"missing": missing},
+        integrity_ok,
+        detail={
+            "missing": missing,
+            "version": manifest.get("version") if manifest else None,
+            "upstream_commit": manifest.get("upstream_commit") if manifest else None,
+            "offline_lock_verified": (
+                (manifest.get("resolved_lockfile") or {}).get("verified_frozen_offline")
+                if manifest else None
+            ),
+        },
         action=(
-            "python tools/vendor_cesium.py --source <Cesium-local-ou-ZIP> "
-            "--license-file <LICENSE-local> --version 1.143.0"
+            "ARCZ_NETWORK_MODE=import_assisted python tools/prepare_local_runtime.py --map; "
+            "depois volte ARCZ_NETWORK_MODE=offline_strict."
         ),
     )
 
 
 def _node_check() -> dict[str, Any]:
     ok, version = _command_version("node", ["--version"], r"v?(\d+(?:\.\d+){1,2})")
-    major = int(version.split(".", 1)[0]) if ok and version and version.split(".", 1)[0].isdigit() else 0
     return _check(
         "node_runtime",
-        bool(ok and major >= 20),
+        bool(ok and _semver_tuple(version) >= (22, 0, 0)),
         detail=version,
-        action="Instale Node.js 20+ localmente.",
+        action="Instale Node.js 22+ localmente (exigência do Cesium pinado).",
     )
 
 
@@ -111,25 +158,41 @@ def _aedifex_check(root: Path) -> dict[str, Any]:
         from arcz_server.aedifex_registry import AedifexRegistry
 
         status = AedifexRegistry(root).status(verify_tree=False)
+        build = _read_json(root / "vendor/aedifex-floorplanner/arcz-aedifex-build.json")
+        build_ok = bool(
+            build
+            and build.get("upstream_commit") == AEDIFEX_COMMIT
+            and isinstance(build.get("resolved_lockfile"), dict)
+            and build["resolved_lockfile"].get("verified_frozen_offline") is True
+            and (build.get("integrity") or {}).get("file_count", 0) > 0
+        )
+        ready = bool(status.get("ready")) and build_ok
         return _check(
             "aedifex_vendor_and_build",
-            bool(status.get("ready")),
+            ready,
             detail={
                 "ready": status.get("ready"),
                 "blockers": status.get("blockers", []),
                 "dist": status.get("paths", {}).get("dist"),
+                "upstream_commit": build.get("upstream_commit") if build else None,
+                "offline_lock_verified": (
+                    (build.get("resolved_lockfile") or {}).get("verified_frozen_offline")
+                    if build else None
+                ),
             },
             action=(
-                "python tools/vendor_aedifex.py --source <checkout-local-no-commit-fixado> && "
-                "python tools/build_aedifex_sidecar.py"
+                "ARCZ_NETWORK_MODE=import_assisted python tools/prepare_local_runtime.py --modeler; "
+                "depois volte ARCZ_NETWORK_MODE=offline_strict."
             ),
         )
-    except Exception as error:  # surfaced as a failed check, never ignored
+    except Exception as error:
         return _check(
             "aedifex_vendor_and_build",
             False,
             detail={"error": error.__class__.__name__, "message": str(error)},
-            action="Valide integrations/aedifex/UPSTREAM_LOCK.json e materialize o checkout fixado.",
+            action=(
+                "ARCZ_NETWORK_MODE=import_assisted python tools/prepare_local_runtime.py --modeler"
+            ),
         )
     finally:
         try:
@@ -149,15 +212,15 @@ def _rust_checks(root: Path) -> list[dict[str, Any]]:
     return [
         _check(
             "cargo_runtime",
-            cargo_ok,
+            bool(cargo_ok and _semver_tuple(cargo_version) >= RUST_REQUIRED),
             detail=cargo_version,
-            action="Instale Rust/Cargo 1.82+ localmente.",
+            action="Instale/use Rust/Cargo 1.97.1 conforme rust-toolchain.toml.",
         ),
         _check(
             "rust_workers_release",
             not missing,
             detail={"missing": missing},
-            action="cargo build --release --workspace",
+            action="cargo +1.97.1 build --release --workspace --locked",
         ),
     ]
 
@@ -170,7 +233,7 @@ def _blender_check() -> dict[str, Any]:
         "blender_cycles",
         bool(executable),
         detail=executable,
-        action="Defina ARCZ_BLENDER para um Blender local com Cycles.",
+        action="Defina ARCZ_BLENDER para um Blender local com Cycles ou coloque Blender no PATH.",
     )
 
 
@@ -180,7 +243,10 @@ def _model_checks(root: Path) -> list[dict[str, Any]]:
         from arcz_server.ai_broker import ModelRegistry
         from arcz_server.schema_validation import SchemaRegistry
 
-        registry = ModelRegistry([root / "resources/models", root / "data/models"], SchemaRegistry(root / "schemas"))
+        registry = ModelRegistry(
+            [root / "resources/models", root / "data/models"],
+            SchemaRegistry(root / "schemas"),
+        )
         models = registry.list(verify=True)
         valid_tasks = {
             str(model.get("task"))
@@ -193,7 +259,7 @@ def _model_checks(root: Path) -> list[dict[str, Any]]:
                 "local_ai_models",
                 False,
                 detail={"error": error.__class__.__name__, "message": str(error)},
-                action="Instale manifestos e pesos locais validados em resources/models ou data/models.",
+                action="Instale pesos locais com manifesto, licença, tamanho e SHA-256 válidos.",
             )
         ]
     finally:
@@ -206,7 +272,7 @@ def _model_checks(root: Path) -> list[dict[str, Any]]:
             f"local_model_task:{task}",
             task in valid_tasks,
             detail={"task": task, "valid_tasks": sorted(valid_tasks)},
-            action="Importe um modelo local com manifesto, licença, tamanho e SHA-256 válidos.",
+            action="Importe um modelo local auditado para esta tarefa.",
         )
         for task in MODEL_TASKS
     ]
@@ -223,10 +289,11 @@ def run_preflight(root: Path, profile: str) -> dict[str, Any]:
         checks.extend(_model_checks(root))
     blocked = [item for item in checks if item["required"] and item["status"] != "READY"]
     return {
-        "schema_version": 1,
-        "product": "ARCZ Earth + Aedifex Global",
+        "schema_version": 2,
+        "product": "ARCZ Earth",
         "profile": profile,
         "root": str(root),
+        "network_mode": os.environ.get("ARCZ_NETWORK_MODE", "offline_strict"),
         "ready": not blocked,
         "summary": {
             "ready": sum(item["status"] == "READY" for item in checks),
