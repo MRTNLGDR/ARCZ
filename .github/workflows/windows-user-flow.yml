@@ -39,17 +39,42 @@ jobs:
         shell: cmd
         run: ARCZ.bat -SkipUpdate -NoBrowser
 
-      - name: Verify real local server after launcher
+      - name: Verify real local server, Modelar sidecar and Cycles
         shell: powershell
         run: |
           $health = Invoke-RestMethod -Uri 'http://127.0.0.1:8123/api/v2/health' -TimeoutSec 10
           if (-not $health.ok) { throw 'ARCZ health returned ok=false' }
           if ($health.network_mode -ne 'offline_strict') { throw "network_mode=$($health.network_mode)" }
+
           if (-not (Test-Path 'vendor/cesium/Cesium/Cesium.js')) { throw 'Cesium vendor absent' }
           if (-not (Test-Path 'vendor/aedifex-floorplanner/arcz-aedifex-build.json')) { throw 'Aedifex vendor absent' }
           if (-not (Test-Path 'vendor/blender/manifest.json')) { throw 'Blender vendor absent' }
           if (-not (Test-Path 'target/release/arcz-generation-cli.exe')) { throw 'Rust release worker absent' }
           if (-not (Test-Path 'target/release/arcz-osm-cli.exe')) { throw 'OSM release worker absent' }
+
+          # Same operation executed by FloorplannerClient.ensureRuntime() when
+          # the user enters the Modelar workspace. It must spawn the real local
+          # Aedifex process; a built vendor sitting idle is not sufficient.
+          $aedifex = Invoke-RestMethod `
+            -Method Post `
+            -Uri 'http://127.0.0.1:8123/api/v2/aedifex/start' `
+            -ContentType 'application/json' `
+            -Body '{"wait_seconds":45}' `
+            -TimeoutSec 60
+          if (-not $aedifex.ready) { throw 'Aedifex start endpoint returned ready=false' }
+          $runtimeUrl = [string]$aedifex.runtime.url
+          $runtimeUri = [Uri]$runtimeUrl
+          if ($runtimeUri.Scheme -ne 'http' -or $runtimeUri.Host -notin @('127.0.0.1','localhost','::1')) {
+            throw "Aedifex runtime is not loopback: $runtimeUrl"
+          }
+          $aedifexHealthUrl = $runtimeUrl.TrimEnd('/') + '/api/health'
+          $aedifexHealth = Invoke-RestMethod -Uri $aedifexHealthUrl -TimeoutSec 15
+          if (-not $aedifexHealth.ok) { throw 'Aedifex sidecar health returned ok=false' }
+
+          # Base photoreal means a real Blender binary + real worker files. It
+          # intentionally does not require a diffusion model.
+          & '.\.venv\Scripts\python.exe' 'tools\photoreal_preflight.py' '--json'
+          if ($LASTEXITCODE -ne 0) { throw "Cycles preflight failed with $LASTEXITCODE" }
 
       - uses: actions/upload-artifact@v4
         if: always()
