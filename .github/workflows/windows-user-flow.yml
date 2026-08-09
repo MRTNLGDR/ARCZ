@@ -10,9 +10,9 @@ permissions:
 
 concurrency:
   group: arcz-windows-user-${{ github.ref }}
-  # This is intentionally false. A real clean-Windows ARCZ.bat run can spend
-  # several minutes materializing Aedifex/Cesium/Rust/Blender. Follow-up commits
-  # must queue instead of destroying that evidence mid-run.
+  # A clean-Windows ARCZ.bat run can spend several minutes materializing the
+  # controlled vendors/toolchains. Follow-up commits queue instead of deleting
+  # the evidence of a run already in progress.
   cancel-in-progress: false
 
 jobs:
@@ -42,7 +42,7 @@ jobs:
         shell: cmd
         run: ARCZ.bat -SkipUpdate -NoBrowser
 
-      - name: Verify real local server, Modelar sidecar and Cycles
+      - name: Verify server, Modelar sidecar and real Cycles render
         shell: powershell
         run: |
           $health = Invoke-RestMethod -Uri 'http://127.0.0.1:8123/api/v2/health' -TimeoutSec 10
@@ -55,9 +55,8 @@ jobs:
           if (-not (Test-Path 'target/release/arcz-generation-cli.exe')) { throw 'Rust release worker absent' }
           if (-not (Test-Path 'target/release/arcz-osm-cli.exe')) { throw 'OSM release worker absent' }
 
-          # Same operation executed by FloorplannerClient.ensureRuntime() when
-          # the user enters the Modelar workspace. It must spawn the real local
-          # Aedifex process; a built vendor sitting idle is not sufficient.
+          # This is the same runtime action used by FloorplannerClient when the
+          # user enters Modelar. A vendor merely present on disk is insufficient.
           $aedifex = Invoke-RestMethod `
             -Method Post `
             -Uri 'http://127.0.0.1:8123/api/v2/aedifex/start' `
@@ -70,14 +69,19 @@ jobs:
           if ($runtimeUri.Scheme -ne 'http' -or $runtimeUri.Host -notin @('127.0.0.1','localhost','::1')) {
             throw "Aedifex runtime is not loopback: $runtimeUrl"
           }
-          $aedifexHealthUrl = $runtimeUrl.TrimEnd('/') + '/api/health'
-          $aedifexHealth = Invoke-RestMethod -Uri $aedifexHealthUrl -TimeoutSec 15
+          $aedifexHealth = Invoke-RestMethod -Uri ($runtimeUrl.TrimEnd('/') + '/api/health') -TimeoutSec 15
           if (-not $aedifexHealth.ok) { throw 'Aedifex sidecar health returned ok=false' }
 
-          # Base photoreal means a real Blender binary + real worker files. It
-          # intentionally does not require a diffusion model.
+          # Base photoreal does not depend on diffusion weights, but it must be
+          # more than a binary/version probe: render through the production ARCZ
+          # worker and validate the generated PNG/.blend/manifest hashes.
           & '.\.venv\Scripts\python.exe' 'tools\photoreal_preflight.py' '--json'
           if ($LASTEXITCODE -ne 0) { throw "Cycles preflight failed with $LASTEXITCODE" }
+          & '.\.venv\Scripts\python.exe' 'tools\smoke_blender_cycles.py' '--keep-output' '.arcz\cycles-smoke'
+          if ($LASTEXITCODE -ne 0) { throw "Real Cycles smoke failed with $LASTEXITCODE" }
+          if (-not (Test-Path '.arcz\cycles-smoke\output\render\cycles-smoke.png')) {
+            throw 'Production Cycles worker did not create the expected PNG'
+          }
 
       - uses: actions/upload-artifact@v4
         if: always()
@@ -86,4 +90,6 @@ jobs:
           path: |
             .arcz/logs/
             .arcz/interactive-preflight.json
+            .arcz/cycles-smoke/output/manifest.json
+            .arcz/cycles-smoke/output/render/cycles-smoke.png
           if-no-files-found: warn
